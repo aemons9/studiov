@@ -1,0 +1,5 @@
+{
+  "name": "AI Image Studio",
+  "description": "An advanced AI-powered image generation studio. Craft detailed prompts across multiple categories like subject, wardrobe, and camera settings to generate high-quality, photo-realistic images using Google's Imagen model.",
+  "requestFramePermissions": []
+}
