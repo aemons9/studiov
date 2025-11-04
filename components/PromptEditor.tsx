@@ -8,6 +8,8 @@ import IntimacyController from './IntimacyController';
 import RiskAnalysisPreview from './RiskAnalysisPreview';
 import { cameraSystems } from '../concepts/cameraSystems';
 import { environmentCategories } from '../concepts/environments';
+import { indianModelVariants } from '../concepts/subjects';
+import { seductressPresets } from '../concepts/seductressPresets';
 
 const presets: { [key: string]: any } = {
   shot: [
@@ -21,19 +23,6 @@ const presets: { [key: string]: any } = {
     { name: 'Full Body Shot', value: 'Full body shot, capturing the entire subject from head to toe, showcasing wardrobe and pose.' },
   ],
   subject: {
-    age: [
-        { name: 'Young Adult (20-25)', value: 'Young adult woman (20-25)' },
-        { name: 'Adult (25-30)', value: 'Adult woman (25-30)' },
-        { name: 'Mature (35-45)', value: 'Mature woman (35-45)' },
-    ],
-    appearance: [
-        { name: 'Indian Fashion Model', value: `Indian fashion model (height 5'8\\"), with body proportions (bust 36\\", waist 28\\", hips 38\\"), radiant skin tone, a captivating and energetic gaze.` },
-        { name: 'Glamour Bold Model', value: `High-fashion glamour model (height 6'0\\"), athletic build (bust 34\\", waist 26\\", hips 36\\"), flawless porcelain skin tone. Piercing, confident gaze.` },
-        { name: 'Ethereal Alt Model', value: `Ethereal alternative model (height 5'9\\"), slender, statuesque figure with pale skin. Bold graphic eyeliner.` },
-        { name: 'Sun-Kissed Fitness Model', value: `Vibrant fitness model (height 5'10\\"), with a toned athletic physique and sun-kissed, glowing skin. Energetic expression and a confident smile.`},
-        { name: 'Scandinavian Athlete', value: 'Scandinavian athletic model, tall with a lean build, clear blue eyes, and a determined expression.' },
-        { name: 'Gothic Artist', value: 'Gothic artist with pale skin, dark makeup, and an introspective, mysterious gaze, adorned with silver jewelry.' },
-    ],
     skin_finish: [
         { name: 'Natural Glow', value: 'Natural, with a soft, healthy glow. Not overly matte or dewy, just authentic.' },
         { name: 'Dewy & Luminous', value: 'Dewy, glowing skin with a soft, luminous quality. Appears healthy and hydrated, with a subtle sheen on the high points of the face.' },
@@ -155,7 +144,7 @@ const presets: { [key: string]: any } = {
     { name: 'Filtered Light Moiré Pattern', value: 'Sunlight filtered through two layers of patterned lace or mesh curtains, creating a complex, soft-edged moiré or cross-hatch shadow pattern.' },
     { name: 'Soft Side-Wrap Light (Octabox)', value: 'A single, large, soft light source (like a large octabox softbox) placed to the side and slightly behind, creating a soft, wrapping light that highlights contours.' },
     { name: 'Graphic Spotlight (\'Throne of Light\')', value: 'A single, hard light source (like a projector or spotlight) casts a sharp, defined rectangle of bright white light on the wall, creating a stark, high-contrast separation.' },
-    { name: 'Painterly Chiaroscuro (Caravaggio)', value: 'Dramatic, single-source Chiaroscuro lighting from the side and slightly above, illuminating part of the form while the rest falls into deep shadow, in the style of Caravaggio.' },
+    { name: 'Painterly Chiaroscuro (Caravaggio)', value: 'Dramatic, single-source Chiaroscuro lighting from the side and slightly above, illuminating part of the form while the rest of a falls into deep shadow, in the style of Caravaggio.' },
     { name: 'Moody Bedside Lamp', value: 'Moody cinematic lighting from a single bedside lamp, creating deep shadows and a glamorous, intimate feel.' },
   ],
   camera: {
@@ -320,6 +309,12 @@ interface PromptEditorProps {
   onConceptChange: (concept: ArtisticConcept) => void;
 }
 
+const seductressVariantNames = [
+  "Indian Glamour Seductress (Dusky)",
+  "Indian Femme Fatale (Dusky)",
+  "Indian Bombshell Diva (Fair)",
+];
+
 const PromptEditor: React.FC<PromptEditorProps> = ({ 
   promptData, onPromptChange, isLoading, 
   generationSettings, onGenerationSettingsChange,
@@ -329,6 +324,28 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
   const [riskAnalysis, setRiskAnalysis] = useState<RiskAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const debounceTimeout = useRef<number | null>(null);
+
+  const isSeductressMode = useMemo(() => {
+    const currentVariantName = indianModelVariants.find(v => v.value === promptData.subject.variant)?.name;
+    return seductressVariantNames.includes(currentVariantName || '');
+  }, [promptData.subject.variant]);
+
+  const dynamicPresets = useMemo(() => {
+    if (isSeductressMode) {
+      return {
+        pose: [...seductressPresets.pose, ...presets.subject.pose],
+        lighting: [...seductressPresets.lighting, ...presets.lighting],
+        style: [...seductressPresets.style, ...presets.style],
+        figure_and_form: [...seductressPresets.figure_and_form, ...presets.figure_and_form],
+      };
+    }
+    return {
+      pose: presets.subject.pose,
+      lighting: presets.lighting,
+      style: presets.style,
+      figure_and_form: presets.figure_and_form,
+    };
+  }, [isSeductressMode]);
   
   const handleFieldChange = useCallback((field: keyof PromptData, value: string) => {
     onPromptChange({ ...promptData, [field]: value });
@@ -374,6 +391,34 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
       onPromptChange({ ...promptData, ...selectedSystem.settings });
     }
   };
+  
+  const handleApplyRiskEnhancements = useCallback((enhancements: { original: string; replacement: string }[]) => {
+    const recursiveReplace = (data: any): any => {
+        if (typeof data === 'string') {
+            let modifiedString = data;
+            for (const { original, replacement } of enhancements) {
+                const regex = new RegExp(`\\b${original}\\b`, 'gi');
+                modifiedString = modifiedString.replace(regex, replacement);
+            }
+            return modifiedString;
+        }
+        if (Array.isArray(data)) {
+            return data.map(item => recursiveReplace(item));
+        }
+        if (typeof data === 'object' && data !== null) {
+            const newData: { [key: string]: any } = {};
+            for (const key in data) {
+                newData[key] = recursiveReplace(data[key]);
+            }
+            return newData;
+        }
+        return data;
+    };
+    
+    const updatedPromptData = recursiveReplace(promptData) as PromptData;
+    onPromptChange(updatedPromptData);
+  }, [promptData, onPromptChange]);
+
 
   useEffect(() => {
     if (debounceTimeout.current) {
@@ -452,14 +497,20 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
       
       <CollapsibleSection title="Core Concept">
         <PresetInput label="Shot" value={promptData.shot} onChange={(v) => handleFieldChange('shot', v)} presets={presets.shot} disabled={isLoading} isTextArea />
-        <PresetInput label="Style / Mood" value={promptData.style} onChange={(v) => handleFieldChange('style', v)} presets={presets.style} disabled={isLoading} isTextArea />
+        <PresetInput label="Style / Mood" value={promptData.style} onChange={(v) => handleFieldChange('style', v)} presets={dynamicPresets.style} disabled={isLoading} isTextArea />
         <PresetInput label="Quality" value={promptData.quality} onChange={(v) => handleFieldChange('quality', v)} presets={presets.quality} disabled={isLoading} isTextArea />
       </CollapsibleSection>
       
       <CollapsibleSection title="Subject Details">
-        <PresetInput label="Age" value={promptData.subject.age} onChange={(v) => handleNestedChange('subject', 'age', v)} presets={presets.subject.age} disabled={isLoading} />
-        <PresetInput label="Appearance" value={promptData.subject.appearance} onChange={(v) => handleNestedChange('subject', 'appearance', v)} presets={presets.subject.appearance} disabled={isLoading} isTextArea />
-        <PresetInput label="Pose" value={promptData.subject.pose} onChange={(v) => handleNestedChange('subject', 'pose', v)} presets={presets.subject.pose} disabled={isLoading} isTextArea />
+        <div className="relative">
+            <PresetInput label="Model Variant" value={promptData.subject.variant} onChange={(v) => handleNestedChange('subject', 'variant', v)} presets={indianModelVariants} disabled={isLoading} isTextArea />
+            {isSeductressMode && (
+                <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                    SEDUCTRESS MODE
+                </div>
+            )}
+        </div>
+        <PresetInput label="Pose" value={promptData.subject.pose} onChange={(v) => handleNestedChange('subject', 'pose', v)} presets={dynamicPresets.pose} disabled={isLoading} isTextArea />
         <PresetInput label="Hair Color" value={promptData.subject.hair_color} onChange={(v) => handleNestedChange('subject', 'hair_color', v)} presets={presets.subject.hair_color} disabled={isLoading} />
         <PresetInput label="Hair Style" value={promptData.subject.hair_style} onChange={(v) => handleNestedChange('subject', 'hair_style', v)} presets={presets.subject.hair_style} disabled={isLoading} />
       </CollapsibleSection>
@@ -498,7 +549,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
             />
         </div>
 
-        <PresetInput label="Figure & Form" value={promptData.figure_and_form} onChange={(v) => handleFieldChange('figure_and_form', v)} presets={presets.figure_and_form} disabled={isLoading} isTextArea />
+        <PresetInput label="Figure & Form" value={promptData.figure_and_form} onChange={(v) => handleFieldChange('figure_and_form', v)} presets={dynamicPresets.figure_and_form} disabled={isLoading} isTextArea />
         <PresetInput label="Tattoos" value={promptData.subject.tattoos} onChange={(v) => handleNestedChange('subject', 'tattoos', v)} presets={presets.subject.tattoos} disabled={isLoading} />
         <PresetInput label="Piercings" value={promptData.subject.piercings} onChange={(v) => handleNestedChange('subject', 'piercings', v)} presets={presets.subject.piercings} disabled={isLoading} />
         <PresetInput label="Body Art" value={promptData.subject.body_art} onChange={(v) => handleNestedChange('subject', 'body_art', v)} presets={presets.subject.body_art} disabled={isLoading} />
@@ -526,7 +577,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
                 ))}
             </select>
         </div>
-        <PresetInput label="Lighting" value={promptData.lighting} onChange={(v) => handleFieldChange('lighting', v)} presets={presets.lighting} disabled={isLoading} isTextArea />
+        <PresetInput label="Lighting" value={promptData.lighting} onChange={(v) => handleFieldChange('lighting', v)} presets={dynamicPresets.lighting} disabled={isLoading} isTextArea />
         <PresetInput label="Color Grade" value={promptData.color_grade} onChange={(v) => handleFieldChange('color_grade', v)} presets={presets.color_grade} disabled={isLoading} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <PresetInput label="Focal Length" value={promptData.camera.focal_length} onChange={(v) => handleNestedChange('camera', 'focal_length', v)} presets={presets.camera.focal_length} disabled={isLoading} />
@@ -538,7 +589,11 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
       </CollapsibleSection>
 
       <CollapsibleSection title="Real-Time Risk Analysis">
-          <RiskAnalysisPreview analysis={riskAnalysis} isLoading={isAnalyzing} />
+          <RiskAnalysisPreview 
+            analysis={riskAnalysis} 
+            isLoading={isAnalyzing} 
+            onApplyEnhancements={handleApplyRiskEnhancements}
+          />
       </CollapsibleSection>
       
        <CollapsibleSection title="Generation Settings">

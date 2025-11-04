@@ -49,4 +49,20 @@ export const conceptArtConcepts: WardrobeConcept[] = [
     category: 'Concept Art',
     tags: { intimacy: 10, formality: 'Haute Couture', coverage: 'Minimal', style: 'Minimalist' }
   },
+  {
+    id: 'concept-art-07',
+    name: 'Molten Gold Drip',
+    description: 'A surreal concept where molten, liquid gold appears to be dripping down the form, solidifying as it goes.',
+    prompt: 'A surrealist concept where thick, viscous, molten gold appears to be dripping down the form, solidifying into beautiful, organic patterns as it cools, creating a dynamic and luxurious second skin.',
+    category: 'Concept Art',
+    tags: { intimacy: 9, formality: 'Avant-Garde', coverage: 'Moderate', style: 'Avant-Garde' }
+  },
+  {
+    id: 'concept-art-08',
+    name: 'Living Vines',
+    description: 'Organic, living vines with small flowers wrap around the body, forming a natural, botanical garment.',
+    prompt: 'Organic, living vines, studded with small, delicate flowers, wrap and twist around the limbs and torso, forming a natural, botanical garment that is both wild and elegant.',
+    category: 'Concept Art',
+    tags: { intimacy: 7, formality: 'Editorial', coverage: 'Moderate', style: 'Classic' }
+  }
 ];

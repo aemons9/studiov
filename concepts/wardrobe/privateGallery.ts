@@ -1,3 +1,4 @@
+
 import type { WardrobeConcept } from '../../types';
 
 export const privateGalleryConcepts: WardrobeConcept[] = [
@@ -56,5 +57,53 @@ export const privateGalleryConcepts: WardrobeConcept[] = [
     prompt: 'A matching set of simple, comfortable foundation garments made from soft-ribbed cotton, emphasizing natural beauty and a relaxed, intimate atmosphere.',
     category: 'Private Gallery',
     tags: { intimacy: 6, formality: 'Casual', coverage: 'Moderate', style: 'Minimalist' }
+  },
+  {
+    id: 'private-gallery-08',
+    name: 'Draped Silk Sheet',
+    description: 'The subject is artfully wrapped in a single, high-thread-count silk bedsheet, creating a classical, statue-like form.',
+    prompt: 'The subject is artfully wrapped in a single, high-thread-count silk bedsheet, creating a classical, statue-like form where the folds of the fabric create a sculptural and intimate wardrobe.',
+    category: 'Private Gallery',
+    tags: { intimacy: 8, formality: 'Haute Couture', coverage: 'Moderate', style: 'Classic' }
+  },
+  {
+    id: 'private-gallery-09',
+    name: 'Sheer Robe, Nothing Underneath',
+    description: 'A floor-length, completely sheer robe, tied loosely at the waist, for an ethereal and sensual look.',
+    prompt: 'A floor-length, completely gossamer robe made from a translucent textile like chiffon, tied loosely at the waist to create an ethereal silhouette where form is suggested through the material.',
+    category: 'Private Gallery',
+    tags: { intimacy: 9, formality: 'Editorial', coverage: 'Full', style: 'Minimalist' }
+  },
+  {
+    id: 'private-gallery-10',
+    name: "Man's Dress Shirt Only",
+    description: 'A single piece of clothing: an oversized, unbuttoned man\'s white dress shirt, creating an intimate, "morning after" feel.',
+    prompt: 'A single piece of clothing: an oversized, unbuttoned man\'s white dress shirt, artfully draped and falling off one shoulder, creating an intimate and candid aesthetic.',
+    category: 'Private Gallery',
+    tags: { intimacy: 7, formality: 'Casual', coverage: 'Moderate', style: 'Classic' }
+  },
+  {
+    id: 'private-gallery-11',
+    name: 'Lace Teddy',
+    description: 'A classic, one-piece lace teddy that is both elegant and sensual, suitable for intimate portraits.',
+    prompt: 'A classic, one-piece lace teddy in a deep color like black or burgundy, featuring intricate floral patterns and a comfortable, form-suggesting fit that is both elegant and sensual.',
+    category: 'Private Gallery',
+    tags: { intimacy: 7, formality: 'Casual', coverage: 'Moderate', style: 'Classic' }
+  },
+  {
+    id: 'private-gallery-12',
+    name: 'Liquid Silk Kimono Robe',
+    description: 'A short, kimono-style robe made from liquid silk that clings and flows, tied loosely with a sash.',
+    prompt: 'A short, kimono-style robe made from heavy liquid silk in a deep crimson color. It is tied loosely with a sash, with the lapels falling open to reveal the form and lines of the body beneath.',
+    category: 'Private Gallery',
+    tags: { intimacy: 8, formality: 'Haute Couture', coverage: 'Moderate', style: 'Classic' }
+  },
+  {
+    id: 'private-gallery-13',
+    name: 'Marabou Feather Robe',
+    description: 'A glamorous, vintage-style sheer robe trimmed with fluffy marabou feathers, evoking old Hollywood.',
+    prompt: 'A glamorous, vintage-inspired floor-length sheer robe, with the cuffs and collar trimmed in fluffy, voluminous marabou feathers. The robe is open, creating a dramatic and luxurious frame for the form.',
+    category: 'Private Gallery',
+    tags: { intimacy: 7, formality: 'Haute Couture', coverage: 'Moderate', style: 'Classic' }
   }
 ];

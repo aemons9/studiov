@@ -57,4 +57,28 @@ export const architecturalLingerieConcepts: WardrobeConcept[] = [
     category: 'Architectural Lingerie',
     tags: { intimacy: 6, formality: 'Avant-Garde', coverage: 'Minimal', style: 'Avant-Garde' }
   },
+  {
+    id: 'arch-lingerie-08',
+    name: 'Open Framework Bodice',
+    description: 'An artistic upper piece composed of a structural wireframe with no fabric, focusing purely on line and form.',
+    prompt: 'An architectural upper bodice featuring a structural underwire framework but composed of open space, creating a powerful graphic outline against the unadorned form. Minimal coverage for fine-art concepts.',
+    category: 'Architectural Lingerie',
+    tags: { intimacy: 10, formality: 'Avant-Garde', coverage: 'Minimal', style: 'Avant-Garde' }
+  },
+  {
+    id: 'arch-lingerie-09',
+    name: 'Structural Garter System',
+    description: 'A high-fashion garter belt system with architectural details, designed to be a standalone statement piece.',
+    prompt: 'A high-fashion, architectural garter system with wide, structured straps and minimalist hardware, designed to be worn as a primary statement piece that sculpts the hips and thighs.',
+    category: 'Architectural Lingerie',
+    tags: { intimacy: 8, formality: 'Editorial', coverage: 'Minimal', style: 'Modern' }
+  },
+  {
+    id: 'arch-lingerie-10',
+    name: 'Panelled Corset Bodysuit',
+    description: 'A modern corset-style bodysuit featuring geometric panels of different textures, like satin and mesh.',
+    prompt: 'A modern corset-style bodysuit featuring geometric panels of matte satin and translucent mesh, using seam lines to create a powerful, sculpted, and architectural silhouette.',
+    category: 'Architectural Lingerie',
+    tags: { intimacy: 7, formality: 'Haute Couture', coverage: 'Moderate', style: 'Modern' }
+  }
 ];

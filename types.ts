@@ -1,3 +1,4 @@
+
 export interface Camera {
   focal_length: string;
   aperture: string;
@@ -6,9 +7,13 @@ export interface Camera {
   framing: string;
 }
 
+export interface SubjectVariant {
+  name: string;
+  value: string;
+}
+
 export interface Subject {
-  age: string;
-  appearance: string;
+  variant: string;
   pose: string;
   hair_color: string;
   hair_style: string;
@@ -92,7 +97,7 @@ export interface ArtisticAnalysisResult {
 }
 
 
-export type GenerationStep = 'analyzing' | 'auto-fixing' | 'weaving' | 'generating';
+export type GenerationStep = 'analyzing' | 'enhancing' | 'weaving' | 'generating';
 
 export type WardrobeConceptCategory = 'Architectural Lingerie' | 'Couture Intimates' | 'Sensual Art' | 'Private Gallery' | 'Concept Art';
 // FIX: Added 'Avant-Garde' to the union type to support its usage in wardrobe concepts.

@@ -4,6 +4,7 @@ import type { RiskAnalysis } from '../types';
 interface RiskAnalysisPreviewProps {
   analysis: RiskAnalysis | null;
   isLoading: boolean;
+  onApplyEnhancements: (enhancements: { original: string; replacement: string }[]) => void;
 }
 
 const ProgressBar: React.FC<{ value: number; color: string }> = ({ value, color }) => (
@@ -13,7 +14,7 @@ const ProgressBar: React.FC<{ value: number; color: string }> = ({ value, color 
 );
 
 
-const RiskAnalysisPreview: React.FC<RiskAnalysisPreviewProps> = ({ analysis, isLoading }) => {
+const RiskAnalysisPreview: React.FC<RiskAnalysisPreviewProps> = ({ analysis, isLoading, onApplyEnhancements }) => {
     if (isLoading) {
         return (
             <div className="text-center text-gray-400 p-4">
@@ -68,22 +69,36 @@ const RiskAnalysisPreview: React.FC<RiskAnalysisPreviewProps> = ({ analysis, isL
             </details>
             
             {analysis.appliedEnhancements.length > 0 && (
-                 <details className="text-sm">
-                    <summary className="cursor-pointer text-gray-400 hover:text-white">
-                        Applied Safety Enhancements ({analysis.appliedEnhancements.length})
-                    </summary>
-                    <div className="mt-2 p-3 bg-gray-800 rounded-md max-h-32 overflow-y-auto">
-                        <ul className="space-y-1">
-                            {analysis.appliedEnhancements.map((e, i) => (
-                                <li key={i} className="font-mono text-xs">
-                                    <span className="text-red-400">{e.original}</span>
-                                    <span className="text-gray-500"> → </span>
-                                    <span className="text-green-400">{e.replacement}</span>
-                                </li>
-                            ))}
-                        </ul>
+                 <div className="p-3 bg-amber-900/30 border border-amber-700/50 rounded-lg space-y-3">
+                    <div className="flex justify-between items-center gap-3">
+                       <div className="flex-grow">
+                         <p className="font-semibold text-amber-300">Safety Suggestions Available</p>
+                         <p className="text-xs text-amber-400">Apply these to improve generation success.</p>
+                       </div>
+                        <button 
+                          onClick={() => onApplyEnhancements(analysis.appliedEnhancements)}
+                          className="px-4 py-2 bg-sky-600 text-white font-semibold text-sm rounded-md hover:bg-sky-500 transition-colors flex-shrink-0"
+                        >
+                            Apply
+                        </button>
                     </div>
-                </details>
+                    <details className="text-sm">
+                        <summary className="cursor-pointer text-gray-400 hover:text-white">
+                            View {analysis.appliedEnhancements.length} suggestions...
+                        </summary>
+                        <div className="mt-2 p-3 bg-gray-800 rounded-md max-h-32 overflow-y-auto">
+                            <ul className="space-y-1">
+                                {analysis.appliedEnhancements.map((e, i) => (
+                                    <li key={i} className="font-mono text-xs">
+                                        <span className="text-red-400">{e.original}</span>
+                                        <span className="text-gray-500"> → </span>
+                                        <span className="text-green-400">{e.replacement}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </details>
+                 </div>
             )}
         </div>
     );

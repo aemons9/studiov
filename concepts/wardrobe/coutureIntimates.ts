@@ -1,3 +1,4 @@
+
 import type { WardrobeConcept } from '../../types';
 
 export const coutureIntimatesConcepts: WardrobeConcept[] = [
@@ -56,5 +57,53 @@ export const coutureIntimatesConcepts: WardrobeConcept[] = [
     prompt: 'A modern, two-piece style bodysuit in stretch nylon with a sensual open back, delicate strap details, and a low-waist minimalist foundation piece.',
     category: 'Couture Intimates',
     tags: { intimacy: 8, formality: 'Editorial', coverage: 'Minimal', style: 'Minimalist' }
+  },
+  {
+    id: 'couture-intimates-08',
+    name: 'Minimalist T-Strap Piece',
+    description: 'An absolute minimalist lower foundation piece with a delicate T-strap string design. Maximum artistic freedom.',
+    prompt: 'An absolute minimalist lower foundation piece, consisting of a mere triangle of black silk at the front and a delicate T-strap string design at the back, offering the bare minimum of coverage for artistic expression.',
+    category: 'Couture Intimates',
+    tags: { intimacy: 9, formality: 'Editorial', coverage: 'Minimal', style: 'Minimalist' }
+  },
+  {
+    id: 'couture-intimates-09',
+    name: 'Bifurcated Foundation Garment',
+    description: 'A haute couture lower garment with a daring open-front design, held by straps. For avant-garde concepts.',
+    prompt: 'A haute couture tailored lower garment featuring a bifurcated, open-front architectural design, held together by delicate pearl-tipped straps at the hips. For artistic, private gallery compositions.',
+    category: 'Couture Intimates',
+    tags: { intimacy: 9, formality: 'Haute Couture', coverage: 'Minimal', style: 'Avant-Garde' }
+  },
+  {
+    id: 'couture-intimates-10',
+    name: 'Pearl Strap Bodice',
+    description: 'A couture upper piece where the straps are made of luminous pearls, contrasting with silk cups.',
+    prompt: 'A couture upper piece where the structural elements and straps are composed of strings of luminous pearls, contrasting beautifully with minimalist cups of black silk.',
+    category: 'Couture Intimates',
+    tags: { intimacy: 8, formality: 'Haute Couture', coverage: 'Minimal', style: 'Classic' }
+  },
+  {
+    id: 'couture-intimates-11',
+    name: 'Suspender Bodysuit',
+    description: 'A high-fashion bodysuit that incorporates suspender/garter elements directly into its structure for a bold, graphic look.',
+    prompt: 'A high-fashion, single-piece suspender bodysuit crafted from matte black fabric, where the garter straps are integrated into the torso\'s seam lines, creating a powerful, unbroken graphic line from shoulder to thigh.',
+    category: 'Couture Intimates',
+    tags: { intimacy: 8, formality: 'Editorial', coverage: 'Minimal', style: 'Modern' }
+  },
+  {
+    id: 'couture-intimates-12',
+    name: 'Asymmetrical Cutout Bodysuit',
+    description: 'A modern bodysuit with a single sleeve and large, geometric cutouts on the torso for an avant-garde feel.',
+    prompt: 'A modern, asymmetrical bodysuit with one long sleeve and one bare shoulder, featuring large, clean-edged geometric cutouts along the torso that play with negative space and create a dynamic, architectural form.',
+    category: 'Couture Intimates',
+    tags: { intimacy: 7, formality: 'Avant-Garde', coverage: 'Minimal', style: 'Avant-Garde' }
+  },
+  {
+    id: 'couture-intimates-13',
+    name: 'Vintage-Inspired Lace Corset',
+    description: 'A classic, vintage-inspired lace-up corset that sculpts the waist, designed as a powerful outer-wear piece.',
+    prompt: 'A classic, vintage-inspired lace-up corset in black Chantilly lace, with visible boning channels and a satin ribbon tie at the front. It is designed to powerfully sculpt the waist and is worn as a primary upper body garment.',
+    category: 'Couture Intimates',
+    tags: { intimacy: 7, formality: 'Haute Couture', coverage: 'Moderate', style: 'Classic' }
   }
 ];

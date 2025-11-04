@@ -12,11 +12,62 @@ const ART_DIRECTOR_DECLARATION = `As a professional creative art director develo
 const WARDROBE_SAFETY_REPLACEMENTS: Record<string, string> = {
   'lingerie': 'architectural foundation garments', 'bra': 'structured bodice element', 'bralette': 'couture upper piece',
   'panties': 'tailored lower garment', 'briefs': 'high-waisted foundation piece', 'thong': 'minimalist foundation piece',
+  'g-string': 'minimalist T-strap foundation piece', 'crotchless': 'bifurcated open-front design', 'open-cup': 'open architectural framework',
   'underwear': 'haute couture foundation garments', 'sheer': 'translucent textile', 'transparent': 'gossamer fabric',
   'see-through': 'light-diffusing material', 'revealing': 'form-suggesting', 'exposed': 'architecturally minimal',
   'bare': 'unadorned', 'sexy': 'powerful', 'sensual': 'commanding', 'seductive': 'magnetic', 'body': 'form',
   'curves': 'sculptural lines', 'figure': 'silhouette', 'bedroom': 'private gallery space', 'boudoir': 'intimate studio sanctuary',
 };
+
+// ============================================================================
+// NESTED OBJECT HELPERS
+// ============================================================================
+function getNested(obj: any, path: string): any {
+    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
+
+function setNested(obj: any, path: string, value: any): void {
+    const parts = path.split('.');
+    const last = parts.pop()!;
+    let current = obj;
+    for (const part of parts) {
+        current[part] = current[part] || {};
+        current = current[part];
+    }
+    current[last] = value;
+}
+
+function unsetNested(obj: any, path: string): void {
+    const parts = path.split('.');
+    let current = obj;
+    for (let i = 0; i < parts.length - 1; i++) {
+        const part = parts[i];
+        if (current[part] === undefined) {
+            return; 
+        }
+        current = current[part];
+    }
+    delete current[parts[parts.length - 1]];
+}
+
+// Helper to flatten an object for creating a list of keys
+function flattenObject(ob: any): Record<string, any> {
+    const toReturn: Record<string, any> = {};
+    for (const i in ob) {
+        if (!ob.hasOwnProperty(i)) continue;
+        if ((typeof ob[i]) === 'object' && ob[i] !== null && !Array.isArray(ob[i])) {
+            const flatObject = flattenObject(ob[i]);
+            for (const x in flatObject) {
+                if (!flatObject.hasOwnProperty(x)) continue;
+                toReturn[i + '.' + x] = flatObject[x];
+            }
+        } else {
+            toReturn[i] = ob[i];
+        }
+    }
+    return toReturn;
+}
+
 
 // ============================================================================
 // SAFETY-ENHANCED UTILITY FUNCTIONS
@@ -51,7 +102,7 @@ function enhanceLightingDescription(lighting: string): string {
 // ============================================================================
 export interface WeaveOptions {
   adherence?: AdherenceLevel;
-  lockFields?: (keyof PromptData)[];
+  lockFields?: string[];
 }
 
 function getIntimacyLevelName(level: number): string {
@@ -71,26 +122,53 @@ export async function weavePrompt(promptData: PromptData, settings: GenerationSe
   const modelId = 'gemini-2.5-pro';
   const endpoint = `https://${region}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${region}/publishers/google/models/${modelId}:generateContent`;
 
-  const dataToWeave: Partial<PromptData> = { ...promptData };
-  const lockedData: Partial<PromptData> = {};
+  const dataToWeave = JSON.parse(JSON.stringify(promptData));
+  const lockedData: any = {};
   
-  lockFields.forEach(field => {
-      if (dataToWeave[field]) {
-          // Fix: Use a type assertion to work around a TypeScript limitation when assigning
-          // to properties of an object using a key that is a union type.
-          (lockedData as any)[field] = dataToWeave[field];
-          delete dataToWeave[field];
-      }
-  });
+  if (lockFields.length > 0) {
+    lockFields.forEach(path => {
+        const value = getNested(promptData, path);
+        if (value !== undefined) {
+            setNested(lockedData, path, value);
+            // Check if it's a nested property. If so, we need to handle the parent object carefully.
+            if (path.includes('.')) {
+                const parentPath = path.substring(0, path.lastIndexOf('.'));
+                const parentObjectInWeaveData = getNested(dataToWeave, parentPath);
+                // If the entire parent object is locked, we can just unset it from the weave data.
+                if(lockFields.includes(parentPath)) {
+                   unsetNested(dataToWeave, parentPath);
+                } else {
+                   // Otherwise, just unset the specific locked child property.
+                   unsetNested(dataToWeave, path);
+                }
+            } else {
+                 // It's a top-level property, so just delete it.
+                 delete (dataToWeave as any)[path];
+            }
+        }
+    });
+  }
 
-  const safePromptData = {
-    ...dataToWeave,
-    ...(dataToWeave.wardrobe && !lockFields.includes('wardrobe') && { wardrobe: enhanceWardrobeDescription(applySafetyReplacements(dataToWeave.wardrobe)) }),
-    ...(dataToWeave.lighting && !lockFields.includes('lighting') && { lighting: enhanceLightingDescription(dataToWeave.lighting) }),
-    ...(dataToWeave.subject && { subject: { ...dataToWeave.subject, pose: applySafetyReplacements(dataToWeave.subject.pose) } }),
-    ...(dataToWeave.environment && { environment: applySafetyReplacements(dataToWeave.environment) }),
-    ...(dataToWeave.figure_and_form && { figure_and_form: applySafetyReplacements(dataToWeave.figure_and_form) }),
-  };
+  const safePromptData = dataToWeave;
+  
+  // Apply safety replacements only to the remaining, unlocked fields
+  if (safePromptData.wardrobe) {
+    safePromptData.wardrobe = enhanceWardrobeDescription(applySafetyReplacements(safePromptData.wardrobe));
+  }
+  if (safePromptData.lighting) {
+    safePromptData.lighting = enhanceLightingDescription(safePromptData.lighting);
+  }
+  if (safePromptData.subject?.pose) {
+    safePromptData.subject.pose = applySafetyReplacements(safePromptData.subject.pose);
+  }
+  if (safePromptData.environment) {
+    safePromptData.environment = applySafetyReplacements(safePromptData.environment);
+  }
+  if (safePromptData.figure_and_form) {
+    safePromptData.figure_and_form = applySafetyReplacements(safePromptData.figure_and_form);
+  }
+
+  const unlockedFieldPaths = Object.keys(flattenObject(dataToWeave));
 
   let systemInstruction = `You are a master fashion photographer and author specializing in haute couture editorial photography. Your task is to transform a structured JSON shot list into a single, eloquent, and vivid paragraph for an advanced AI image generation model (Imagen). You will be given an 'intimacy level' from 1-10 to guide your stylistic choices.
 
@@ -107,16 +185,17 @@ HYPER-REALISM:
 CRITICAL REQUIREMENTS:
 1. You must begin the final paragraph with this EXACT declaration: "${ART_DIRECTOR_DECLARATION}"
 2. After the declaration, seamlessly weave all details from the JSON, guided by the intimacy level and hyper-realism rules, into a flowing narrative.
-3. Use ONLY architectural and sculptural language for wardrobe, increasing abstraction at higher intimacy levels.
-4. Emphasize LIGHTING and SHADOW as the primary subject, especially at higher intimacy levels.
-5. Include all specific photography technical details.
-6. Frame everything through a fine-art photography context.
-7. The output should be a single, dense paragraph with no line breaks.
+3. You are ONLY responsible for creatively weaving the fields present in the user-provided JSON.
+4. Use ONLY architectural and sculptural language for wardrobe, increasing abstraction at higher intimacy levels.
+5. Emphasize LIGHTING and SHADOW as the primary subject, especially at higher intimacy levels.
+6. Include all specific photography technical details.
+7. Frame everything through a fine-art photography context.
+8. The output should be a single, dense paragraph with no line breaks.
 `;
 
-  if (lockFields.length > 0) {
-    const lockedFieldsString = lockFields.join(', ');
-    systemInstruction += `\nCRITICAL EXCEPTION: The '${lockedFieldsString}' field(s) are locked. You MUST include the text from the '${lockedFieldsString}' field(s) verbatim, without any changes, additions, or rephrasing. Weave the other elements around it naturally. The locked text is: ${JSON.stringify(lockedData.wardrobe)}`;
+  if (Object.keys(lockedData).length > 0) {
+    const lockedFieldsString = lockFields.filter(f => !lockFields.some(p => f.startsWith(p + '.'))).join(', ');
+    systemInstruction += `\nCRITICAL EXCEPTION: The '${lockedFieldsString}' field(s) are locked. You MUST include the text from the following JSON object verbatim, without any changes, additions, or rephrasing. Weave the other elements around it naturally. The locked data is: ${JSON.stringify(lockedData)}`;
   }
 
   let temperature = 0.3;
@@ -272,11 +351,13 @@ export async function getRiskAnalysis(promptData: PromptData, intimacyLevel: num
 
 const promptSchema = {
     type: "OBJECT", properties: {
-      shot: { type: "STRING" }, subject: { type: "OBJECT", properties: {
-          age: { type: "STRING" }, appearance: { type: "STRING" }, pose: { type: "STRING" }, hair_color: { type: "STRING" }, hair_style: { type: "STRING" },
+      shot: { type: "STRING" }, 
+      subject: { type: "OBJECT", properties: {
+          variant: { type: "STRING" }, pose: { type: "STRING" }, hair_color: { type: "STRING" }, hair_style: { type: "STRING" },
           skin_finish: { type: "STRING" }, hand_and_nail_details: { type: "STRING" }, tattoos: { type: "STRING" }, piercings: { type: "STRING" },
           body_art: { type: "STRING" }, nail_art: { type: "STRING" }, high_heels: { type: "STRING" },
-      }}, wardrobe: { type: "STRING" }, environment: { type: "STRING" }, lighting: { type: "STRING" },
+      }}, 
+      wardrobe: { type: "STRING" }, environment: { type: "STRING" }, lighting: { type: "STRING" },
       camera: { type: "OBJECT", properties: {
           focal_length: { type: "STRING" }, aperture: { type: "STRING" }, distance: { type: "STRING" }, angle: { type: "STRING" }, framing: { type: "STRING" },
       }}, color_grade: { type: "STRING" }, style: { type: "STRING" }, quality: { type: "STRING" }, figure_and_form: { type: "STRING" },
@@ -284,18 +365,24 @@ const promptSchema = {
     }
 };
 
-function getSystemInstruction(style: EnhancementStyle): string {
-  const safetyNote = `CRITICAL SAFETY REQUIREMENT: Replace ALL direct undergarment terms with architectural language from this list: ${JSON.stringify(WARDROBE_SAFETY_REPLACEMENTS)}. Emphasize LIGHTING and SHADOW. Frame as fine-art.`;
-  switch (style) {
-    case 'safety': return `You are an AI safety expert. Rewrite this prompt to maximize safety while preserving intent. ${safetyNote} Replace risky terms. Make lighting 40% of the prompt. Output ONLY JSON.`;
-    case 'balanced': return `You are a fashion photography prompt engineer. Enhance this prompt with vivid details while ensuring safety. ${safetyNote} Balance artistic expression with safety. Emphasize technical details. Output ONLY JSON.`;
-    case 'subtle': return `Make minimal safety-focused refinements to this prompt. ${safetyNote} Only change terms that might trigger filters. Output ONLY JSON.`;
-    case 'creative': return `Enhance this prompt creatively while maintaining strict safety. ${safetyNote} Add creative flourishes using photographer references, advanced lighting, and geometric elements. Output ONLY JSON.`;
-    default: return getSystemInstruction('balanced');
-  }
+function getSystemInstruction(style: EnhancementStyle, lockedFields: string[]): string {
+    let systemInstruction = `You are a fashion photography prompt engineer. Your task is to enhance a JSON prompt object creatively while adhering to strict safety and user-defined constraints.
+CRITICAL SAFETY REQUIREMENT: Replace ALL direct undergarment terms with architectural language from this list: ${JSON.stringify(WARDROBE_SAFETY_REPLACEMENTS)}. Emphasize LIGHTING and SHADOW. Frame as fine-art.`;
+
+    if (lockedFields.length > 0) {
+        systemInstruction += `\nCRITICAL LOCK REQUIREMENT: The following JSON fields are LOCKED and MUST NOT be changed in any way: ${lockedFields.join(', ')}. Your task is to enhance ONLY the unlocked fields. Preserve the locked fields and their exact values in your JSON output.`;
+    }
+
+    switch (style) {
+        case 'safety': return `${systemInstruction} Rewrite this prompt to maximize safety while preserving artistic intent. Make lighting 40% of the prompt. Output ONLY JSON.`;
+        case 'balanced': return `${systemInstruction} Enhance this prompt with vivid details while ensuring safety. Balance artistic expression with technical details. Output ONLY JSON.`;
+        case 'subtle': return `${systemInstruction} Make minimal, safety-focused refinements to this prompt. Only change terms that might trigger filters. Output ONLY JSON.`;
+        case 'creative': return `${systemInstruction} Enhance this prompt with creative flourishes using photographer references, advanced lighting, and geometric elements, while respecting all locked fields and safety rules. Output ONLY JSON.`;
+        default: return getSystemInstruction('balanced', lockedFields);
+    }
 }
 
-export async function enhancePrompt(promptData: PromptData, settings: GenerationSettings, style: EnhancementStyle): Promise<PromptData> {
+export async function enhancePrompt(promptData: PromptData, settings: GenerationSettings, style: EnhancementStyle, lockedFields: string[] = []): Promise<PromptData> {
   const { projectId, accessToken } = settings;
   if (!projectId || !accessToken) throw new Error("Credentials required for enhancement.");
 
@@ -303,12 +390,12 @@ export async function enhancePrompt(promptData: PromptData, settings: Generation
   const modelId = 'gemini-2.5-pro';
   const endpoint = `https://${region}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${region}/publishers/google/models/${modelId}:generateContent`;
 
-  const systemInstruction = getSystemInstruction(style);
-  const userPromptText = `Enhance this prompt with "${style}" style: ${JSON.stringify(promptData, null, 2)}`;
+  const systemInstruction = getSystemInstruction(style, lockedFields);
+  const userPromptText = `Enhance this prompt with "${style}" style, respecting all locked fields: ${JSON.stringify(promptData, null, 2)}`;
   const body = {
     contents: [{ role: 'user', parts: [{ text: userPromptText }] }],
     systemInstruction: { parts: [{ text: systemInstruction }] },
-    generationConfig: { responseMimeType: "application/json", responseSchema: promptSchema, temperature: style === 'safety' ? 0.2 : 0.7 }
+    generationConfig: { responseMimeType: "application/json", responseSchema: promptSchema, temperature: style === 'creative' ? 0.8 : 0.5 }
   };
 
   try {
@@ -320,9 +407,20 @@ export async function enhancePrompt(promptData: PromptData, settings: Generation
     const data = await response.json();
     if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
       const result = JSON.parse(data.candidates[0].content.parts[0].text.trim()) as PromptData;
+      
+      // FOOLPROOF LOCKING: After the AI returns a result, forcefully re-apply the original locked values. This guarantees user choices are respected.
+      lockedFields.forEach(path => {
+        const originalValue = getNested(promptData, path);
+        if (originalValue !== undefined) {
+          setNested(result, path, originalValue);
+        }
+      });
+      
+      // Final safety pass on potentially modified fields
       result.wardrobe = applySafetyReplacements(result.wardrobe);
       if(result.subject) result.subject.pose = applySafetyReplacements(result.subject.pose);
       result.figure_and_form = applySafetyReplacements(result.figure_and_form);
+      
       return result;
     }
     throw new Error("Enhancement failed to return valid data.");
