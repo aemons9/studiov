@@ -1,7 +1,13 @@
-
-import React, { useCallback, useMemo } from 'react';
-import type { PromptData, Preset, GenerationSettings } from '../types';
+import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
+import type { PromptData, Preset, GenerationSettings, WardrobeConcept, RiskAnalysis } from '../types';
 import { artisticConcepts, ArtisticConcept } from '../concepts/concepts';
+import WardrobeSelectorModal from './WardrobeSelectorModal';
+import { allWardrobeConcepts } from '../concepts/wardrobe';
+import { getRiskAnalysis } from '../services/geminiService';
+import IntimacyController from './IntimacyController';
+import RiskAnalysisPreview from './RiskAnalysisPreview';
+import { cameraSystems } from '../concepts/cameraSystems';
+import { environmentCategories } from '../concepts/environments';
 
 const presets: { [key: string]: any } = {
   shot: [
@@ -28,11 +34,10 @@ const presets: { [key: string]: any } = {
         { name: 'Scandinavian Athlete', value: 'Scandinavian athletic model, tall with a lean build, clear blue eyes, and a determined expression.' },
         { name: 'Gothic Artist', value: 'Gothic artist with pale skin, dark makeup, and an introspective, mysterious gaze, adorned with silver jewelry.' },
     ],
-    skin_details: [
-        { name: 'Authentic (Visible Pores)', value: 'Authentic, high-resolution skin texture with visible pores, subtle freckles, and natural imperfections. No airbrushing, creating a raw and honest depiction of beauty.' },
-        { name: 'Dewy & Glowing', value: 'Dewy, glowing skin with a soft, luminous quality. Appears healthy and hydrated, with a subtle sheen on the high points of the face.' },
+    skin_finish: [
+        { name: 'Natural Glow', value: 'Natural, with a soft, healthy glow. Not overly matte or dewy, just authentic.' },
+        { name: 'Dewy & Luminous', value: 'Dewy, glowing skin with a soft, luminous quality. Appears healthy and hydrated, with a subtle sheen on the high points of the face.' },
         { name: 'Matte & Flawless', value: 'Perfectly smooth, matte skin finish, like a high-fashion editorial. Pores are minimized, but texture is still present to avoid a plastic look.' },
-        { name: 'Cinematic Skin', value: 'Realistic skin with a cinematic feel, showing natural texture and subtle details that catch the light beautifully. Retains a filmic quality.' },
     ],
     hand_and_nail_details: [
         { name: 'Graceful & Anatomically Correct', value: 'Hands are relaxed and anatomically correct, with graceful, natural finger placement. The AI should prioritize correct finger count and structure.' },
@@ -120,51 +125,23 @@ const presets: { [key: string]: any } = {
       { name: 'Architectural High Heels', value: 'architectural black high heels with a bold, unique heel geometry' },
     ],
   },
-  wardrobe: [
-    { name: 'Intimate Lingerie Set', value: 'A delicate and intricate matching lingerie set in silk and lace, perhaps in a soft color like dusty rose or classic black, emphasizing fine details and textures.' },
-    { name: 'Caged Bodysuit (Sensual)', value: 'A sensual caged-style bodysuit with sheer panels and intricate strap details, creating a bold, graphic look.' },
-    { name: 'Open-Back Satin Bodysuit', value: 'An elegant open-back bodysuit made from liquid satin, combining allure with high-fashion sophistication.' },
-    { name: 'Full-Body Micronet Dress', value: 'A daring full-body dress made from a fine, seamless micro-net fishnet, designed for an edgy, high-fashion aesthetic.' },
-    { name: 'Stylized Torn Fishnets', value: 'Artistically torn and styled fishnet stockings, layered to create a graphic, deconstructed look.' },
-    { name: 'Graphic Mesh Thong-Art', value: 'A minimalist yet futuristic piece focusing on a graphic thong made of sheer, structured mesh, creating bold lines against the skin.' },
-    { name: 'Watercolor Transparent Set', value: 'A fine-art concept: a transparent mini-top and skirt with a soft, watercolor-like print, subtly revealing black mesh briefs underneath.' },
-    { name: 'Sheer Lace V-Neck Bodysuit', value: 'A sensual yet high-fashion bodysuit in sheer lace with intricate net-like patterns and a daringly deep V-neckline.' },
-    { name: 'Shimmering Mesh Bodysuit', value: 'A sleek, futuristic, high-neck, long-sleeve bodysuit made from a fine mesh that has a subtle, elegant shimmer.' },
-    { name: 'Nylon Two-Piece Bodysuit', value: 'A modern, two-piece style bodysuit in stretch nylon with a sensual open back, delicate strap details, and a low-waist thong-art bottom.' },
-    { name: 'Bodysuit (Shadow Play)', value: 'A conceptual bodysuit with extreme, artistic cutouts, designed not as clothing but as a tool to create a dynamic interplay of light and shadow on the form.' },
-    { name: 'Ribbon-Bound Bodysuit', value: 'A sensual, gift-wrapped aesthetic created not from fabric, but from strategically wrapped and tied satin ribbons, forming a bodysuit-like shape.' },
-    { name: 'Nude with Shadow & Obscurity', value: 'Artistic nude where the \'wardrobe\' is the clever use of deep shadows, draped fabric, or parts of the body itself to strategically obscure and reveal curves and form.' },
-    { name: 'Graphic Netted Thong & Fabric', value: 'A minimalist, high-fashion aesthetic featuring a transparent, graphic mesh thong, paired with draped sheer fabric to create a composition of lines and obscured forms.' },
-    { name: 'Liquid Metal Body Paint', value: 'The body is covered in reflective, liquid-metal-like body paint, transforming the subject into a living sculpture and highlighting every contour under dramatic light.' },
-    { name: 'Scattered Petals Adornment', value: 'The body is tastefully and artistically adorned with clinging, scattered flower petals (e.g., crimson rose petals), creating a poetic and organic composition.' },
-    { name: 'Unbuttoned Shirt & Briefs', value: 'A crisp, white, slightly oversized formal shirt, unbuttoned and casually draped off one shoulder, paired with simple, elegant lingerie briefs.' },
-    { name: 'Structured Mesh Couture', value: 'Opaque BLACK high-glamour structured mesh innerwear (designer couture, intricate net/lace patterns, fully lined for artistic coverage, sleeveless, modern style), paired with seamless sheer thigh-high stockings.' },
-    { name: 'Sheer Organza Shirt', value: 'An oversized, completely sheer black organza shirt, buttoned up. The dark, transparent fabric both reveals and obscures the form beneath.' },
-    { name: 'Transparent Chiffon Gown', value: 'A long, flowing nightgown made of transparent chiffon, creating an ethereal and dreamy silhouette as light passes through it.' },
-    { name: 'High-Gloss Latex Catsuit', value: 'A skin-tight, full-body catsuit made from high-gloss latex, emphasizing a sleek, futuristic, and powerful silhouette.' },
-    { name: 'Artistic Draped Scarlet Silk', value: 'A single, long piece of flowing scarlet silk fabric, artistically draped around the body to create sculptural shapes that conceal and reveal the form.' },
-    { name: 'Lace Bodysuit (Cutouts)', value: 'A delicate lace bodysuit with strategic, artistic cutouts.' },
-    { name: 'Silk Bralette & High-Waist Briefs', value: 'A matching set of high-waisted silk briefs and a delicate bralette.' },
-    { name: 'Full-Body Sheer Mesh Catsuit', value: 'A skin-tight catsuit made from fine, sheer mesh for a bold, graphic silhouette.' },
+  skin_micro_details: [
+    { name: 'Authentic (Visible Pores)', value: 'Authentic, high-resolution skin texture with visible pores, subtle freckles, and natural imperfections. A hint of subsurface scattering on the cheekbones where the light hits. No airbrushing.' },
+    { name: 'Subtle Subsurface Scattering', value: 'Realistic skin texture with pronounced subsurface scattering, creating a soft, life-like glow as light penetrates and diffuses just below the surface, especially evident around the nose and ears.' },
+    { name: 'Flawless Editorial Skin', value: 'Perfectly smooth, high-fashion editorial skin. While pores are minimized, a micro-texture is retained to avoid a plastic look. Highlights show a gentle falloff.' },
+    { name: 'Cinematic Skin', value: 'Realistic skin with a cinematic feel, showing natural texture and subtle details that catch the light beautifully. Retains a filmic quality with a visible, fine grain texture.' },
   ],
-  environment: [
-    { name: 'Minimalist Dark Wood Studio', value: 'Minimalist fashion studio with dominant, dark, richly grained wooden walls and floor. A single, large, dark wooden block or plinth serves as a subtle, grounding prop.' },
-    { name: 'Bright, Simple Room', value: 'A simple, bright room with white walls and floors, creating a clean canvas for artistic expression.' },
-    { name: 'Luxury Hotel (Night Cityscape)', value: 'A luxurious, modern hotel room with floor-to-ceiling windows revealing a dazzling cityscape at night. The room is immaculate with high-end furniture.' },
-    { name: 'Luxury Hotel (Art Deco)', value: 'A luxury hotel room suite decorated with opulent Art Deco details: geometric patterns, gold accents, and plush velvet furniture.' },
-    { name: 'Messy Luxury Hotel Room', value: 'A dimly lit luxurious hotel room post-celebration, with a messy king-sized bed with silk sheets.' },
-    { name: 'Misty Redwood Forest', value: 'A serene and ancient redwood forest, with towering trees, a lush fern-covered floor, and a gentle, mysterious mist filtering the sunlight.' },
-    { name: 'Sun-Drenched Tuscan Villa', value: 'The rustic stone patio of a Tuscan villa, bathed in the warm, golden light of late afternoon, overlooking rolling hills and vineyards.' },
-    { name: 'Neon-Lit Cyberpunk Alley', value: 'A narrow, rain-slicked alley in a futuristic cyberpunk city, illuminated by the vibrant, chaotic glow of neon signs and holographic advertisements.' },
-    { name: 'Baroque Palace Ballroom', value: 'An opulent, grand ballroom in a Baroque palace, with gilded moldings, crystal chandeliers, and polished marble floors.' },
-    { name: 'Intimate Bedroom', value: 'An intimate bedroom setting with soft, unmade sheets on a bed, morning light filtering through a window, creating a personal and relaxed atmosphere.' },
-    { name: 'Luxury Bathroom & Tub', value: 'A spacious, luxurious bathroom with marble surfaces, a large freestanding bathtub, and soft, ambient lighting.' },
-    { name: 'Dim Cocktail Bar', value: 'The interior of a dimly lit, sophisticated cocktail bar or pub, with leather seats, dark wood, and the soft glow of bar lights.' },
-    { name: 'Modern Office Space', value: 'A sleek, modern office space at night, with glass walls, designer furniture, and the ambient glow from computer monitors.' },
-    { name: 'Empty Dance Studio / Loft', value: "An empty dance studio or artist's loft with smooth, light grey floors and walls. The space is vast and uncluttered." },
-    { name: 'Minimalist Concrete Studio', value: 'A minimalist studio with a dark grey or black textured concrete wall. The floor is polished concrete that reflects subtle highlights.' },
-    { name: 'Dark Room with Wood Floor', value: 'A dark, minimalist room with aged wooden floors and a single, textured, unadorned wall, creating a contemplative atmosphere.' },
-    { name: 'Gritty Urban Loft', value: 'A gritty urban loft with exposed brick, pipes, large industrial windows, and a raw, edgy feel.' },
+  fabric_physics: [
+    { name: 'Natural Linen Drape', value: 'The linen drapes naturally, with realistic creases and folds that follow the subject\'s form. The weave of the fabric is visible upon close inspection, showing subtle textile imperfections.' },
+    { name: 'Flowing Silk Dynamics', value: 'The silk fabric is captured with dynamic, flowing motion. It appears lightweight, with realistic transparency where stretched and bunched, and follows the contours of the body with liquid grace.' },
+    { name: 'Structured Tweed Form', value: 'Heavy tweed fabric holds its shape with architectural precision. The thick, complex weave is clearly visible, and the garment\'s seams create strong, defined lines.' },
+    { name: 'Clinging Wet Look', value: 'Fabric (like cotton or chiffon) clings to the skin as if damp, revealing the form beneath in a subtle, artistic way. Small droplets might be visible on the fabric surface.' },
+  ],
+  material_properties: [
+    { name: 'Matte Linen & Skin Contrast', value: 'The off-white linen has a soft, matte texture that absorbs light, contrasting with the subtle specular highlights on the subject\'s skin. No synthetic sheen.' },
+    { name: 'Liquid Satin Sheen', value: 'Liquid satin with a high specular sheen, creating brilliant, sharp highlights where the light hits directly, and falling into deep, rich shadows. The color shifts with the light angle.' },
+    { name: 'Intricate Lace & Mesh', value: 'The material is a combination of intricate floral lace patterns and fine, sheer mesh. Light passes through the mesh, creating a delicate pattern on the skin, while the lace remains opaque.' },
+    { name: 'High-Gloss Latex', value: 'High-gloss black latex that acts like a mirror, reflecting the light source and environment with sharp, distorted highlights. The material appears slick and futuristic.' },
   ],
   lighting: [
     { name: 'Cinematic Volumetric Lighting', value: 'Cinematic volumetric lighting, with strong beams of light cutting through atmospheric haze, creating a sense of depth and mystery.' },
@@ -348,6 +325,10 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
   generationSettings, onGenerationSettingsChange,
   activeConcept, onConceptChange 
 }) => {
+  const [isWardrobeModalOpen, setIsWardrobeModalOpen] = useState(false);
+  const [riskAnalysis, setRiskAnalysis] = useState<RiskAnalysis | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const debounceTimeout = useRef<number | null>(null);
   
   const handleFieldChange = useCallback((field: keyof PromptData, value: string) => {
     onPromptChange({ ...promptData, [field]: value });
@@ -379,10 +360,54 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
     const randomSeed = Math.floor(Math.random() * 2147483647);
     handleSettingsChange('seed', randomSeed);
   };
+  
+  const handleWardrobeSelect = (concept: WardrobeConcept) => {
+    handleFieldChange('wardrobe', concept.prompt);
+    setIsWardrobeModalOpen(false);
+  };
+
+  const handleSystemSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const systemName = e.target.value;
+    if (!systemName) return;
+    const selectedSystem = cameraSystems.find(s => s.name === systemName);
+    if (selectedSystem) {
+      onPromptChange({ ...promptData, ...selectedSystem.settings });
+    }
+  };
+
+  useEffect(() => {
+    if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+    }
+    if (!generationSettings.projectId || !generationSettings.accessToken) {
+        setRiskAnalysis(null);
+        return;
+    }
+    
+    setIsAnalyzing(true);
+    debounceTimeout.current = window.setTimeout(async () => {
+        try {
+            const analysis = await getRiskAnalysis(promptData, generationSettings.intimacyLevel, generationSettings);
+            setRiskAnalysis(analysis);
+        } catch (error) {
+            console.error("Risk analysis failed:", error);
+            setRiskAnalysis(null);
+        } finally {
+            setIsAnalyzing(false);
+        }
+    }, 750); // 750ms debounce
+
+    return () => {
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+        }
+    };
+  }, [promptData, generationSettings.intimacyLevel, generationSettings.projectId, generationSettings.accessToken]);
+
 
   return (
     <div className="space-y-6">
-      <CollapsibleSection title="Artistic Concepts">
+      <CollapsibleSection title="Artistic Concepts & Systems">
           <div className="flex flex-col gap-2">
             <label htmlFor="concept-selector" className="font-semibold text-gray-300">
               Concept Selector
@@ -403,7 +428,27 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
               ))}
             </select>
           </div>
-        </CollapsibleSection>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="system-selector" className="font-semibold text-gray-300">
+              Photographer Systems
+            </label>
+            <p className="text-sm text-gray-400 mb-2">Apply a complete system inspired by a master photographer to set the style, lighting, color, and camera settings.</p>
+            <select
+              id="system-selector"
+              onChange={handleSystemSelect}
+              disabled={isLoading}
+              className="w-full bg-gray-900/50 border border-gray-600 rounded-md p-2.5 text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors disabled:bg-gray-800/50"
+              value=""
+            >
+              <option value="">-- Apply a Photographer System --</option>
+              {cameraSystems.map((system) => (
+                <option key={system.name} value={system.name}>
+                  {system.name}
+                </option>
+              ))}
+            </select>
+          </div>
+      </CollapsibleSection>
       
       <CollapsibleSection title="Core Concept">
         <PresetInput label="Shot" value={promptData.shot} onChange={(v) => handleFieldChange('shot', v)} presets={presets.shot} disabled={isLoading} isTextArea />
@@ -420,12 +465,39 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
       </CollapsibleSection>
 
       <CollapsibleSection title="Realism & Detail">
-        <PresetInput label="Skin Details" value={promptData.subject.skin_details} onChange={(v) => handleNestedChange('subject', 'skin_details', v)} presets={presets.subject.skin_details} disabled={isLoading} isTextArea />
+        <PresetInput label="Skin Finish" value={promptData.subject.skin_finish} onChange={(v) => handleNestedChange('subject', 'skin_finish', v)} presets={presets.subject.skin_finish} disabled={isLoading} isTextArea />
         <PresetInput label="Hand & Nail Details" value={promptData.subject.hand_and_nail_details} onChange={(v) => handleNestedChange('subject', 'hand_and_nail_details', v)} presets={presets.subject.hand_and_nail_details} disabled={isLoading} isTextArea />
       </CollapsibleSection>
 
+      <CollapsibleSection title="Hyper-Realistic Details">
+          <PresetInput label="Skin Micro-Details" value={promptData.skin_micro_details} onChange={(v) => handleFieldChange('skin_micro_details', v)} presets={presets.skin_micro_details} disabled={isLoading} isTextArea />
+          <PresetInput label="Fabric Physics" value={promptData.fabric_physics} onChange={(v) => handleFieldChange('fabric_physics', v)} presets={presets.fabric_physics} disabled={isLoading} isTextArea />
+          <PresetInput label="Material Properties" value={promptData.material_properties} onChange={(v) => handleFieldChange('material_properties', v)} presets={presets.material_properties} disabled={isLoading} isTextArea />
+      </CollapsibleSection>
+
       <CollapsibleSection title="Styling & Wardrobe">
-        <PresetInput label="Wardrobe" value={promptData.wardrobe} onChange={(v) => handleFieldChange('wardrobe', v)} presets={presets.wardrobe} disabled={isLoading} isTextArea />
+        <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+                <label htmlFor="wardrobe" className="font-semibold text-gray-300">Wardrobe</label>
+                <button 
+                  onClick={() => setIsWardrobeModalOpen(true)}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-gray-700 text-white font-semibold text-xs rounded-md shadow-sm hover:bg-gray-600 disabled:bg-gray-800/50 disabled:cursor-not-allowed transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                    Browse Library
+                </button>
+            </div>
+            <textarea
+                id="wardrobe"
+                value={promptData.wardrobe}
+                onChange={(e) => handleFieldChange('wardrobe', e.target.value)}
+                disabled={isLoading}
+                rows={3}
+                className="w-full bg-gray-900/50 border border-gray-600 rounded-md p-2.5 text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors disabled:bg-gray-800/50"
+            />
+        </div>
+
         <PresetInput label="Figure & Form" value={promptData.figure_and_form} onChange={(v) => handleFieldChange('figure_and_form', v)} presets={presets.figure_and_form} disabled={isLoading} isTextArea />
         <PresetInput label="Tattoos" value={promptData.subject.tattoos} onChange={(v) => handleNestedChange('subject', 'tattoos', v)} presets={presets.subject.tattoos} disabled={isLoading} />
         <PresetInput label="Piercings" value={promptData.subject.piercings} onChange={(v) => handleNestedChange('subject', 'piercings', v)} presets={presets.subject.piercings} disabled={isLoading} />
@@ -435,7 +507,25 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
       </CollapsibleSection>
       
       <CollapsibleSection title="Scene & Camera">
-        <PresetInput label="Environment" value={promptData.environment} onChange={(v) => handleFieldChange('environment', v)} presets={presets.environment} disabled={isLoading} isTextArea />
+         <div className="flex flex-col gap-2">
+            <label htmlFor="environment-selector" className="font-semibold text-gray-300">Environment</label>
+            <select
+                id="environment-selector"
+                value={promptData.environment}
+                onChange={(e) => handleFieldChange('environment', e.target.value)}
+                disabled={isLoading}
+                className="w-full bg-gray-900/50 border border-gray-600 rounded-md p-2.5 text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors disabled:bg-gray-800/50"
+            >
+                <option value={promptData.environment} disabled>-- Select an Environment --</option>
+                {Object.entries(environmentCategories).map(([category, presets]) => (
+                    <optgroup label={category} key={category}>
+                        {presets.map(preset => (
+                            <option key={preset.name} value={preset.value}>{preset.name}</option>
+                        ))}
+                    </optgroup>
+                ))}
+            </select>
+        </div>
         <PresetInput label="Lighting" value={promptData.lighting} onChange={(v) => handleFieldChange('lighting', v)} presets={presets.lighting} disabled={isLoading} isTextArea />
         <PresetInput label="Color Grade" value={promptData.color_grade} onChange={(v) => handleFieldChange('color_grade', v)} presets={presets.color_grade} disabled={isLoading} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -445,6 +535,10 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
             <PresetInput label="Angle" value={promptData.camera.angle} onChange={(v) => handleNestedChange('camera', 'angle', v)} presets={presets.camera.angle} disabled={isLoading} />
         </div>
         <PresetInput label="Framing" value={promptData.camera.framing} onChange={(v) => handleNestedChange('camera', 'framing', v)} presets={presets.camera.framing} disabled={isLoading} isTextArea />
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Real-Time Risk Analysis">
+          <RiskAnalysisPreview analysis={riskAnalysis} isLoading={isAnalyzing} />
       </CollapsibleSection>
       
        <CollapsibleSection title="Generation Settings">
@@ -461,6 +555,14 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
                     You can generate a temporary token using the gcloud CLI: <code className="bg-gray-700 p-1 rounded">gcloud auth print-access-token</code>
                 </p>
             </div>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-gray-700 space-y-4">
+            <IntimacyController 
+              level={generationSettings.intimacyLevel}
+              onLevelChange={(level) => handleSettingsChange('intimacyLevel', level)}
+              disabled={isLoading}
+            />
         </div>
 
         <div className="mt-6 pt-6 border-t border-gray-700 space-y-4">
@@ -533,6 +635,12 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
             </div>
         </div>
       </CollapsibleSection>
+       <WardrobeSelectorModal
+        isOpen={isWardrobeModalOpen}
+        onClose={() => setIsWardrobeModalOpen(false)}
+        concepts={allWardrobeConcepts}
+        onSelect={handleWardrobeSelect}
+      />
     </div>
   );
 };

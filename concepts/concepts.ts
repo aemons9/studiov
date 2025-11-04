@@ -5,6 +5,10 @@ export interface ArtisticConcept {
   data: PromptData;
 }
 
+const defaultSkinMicroDetails = "Authentic, high-resolution skin texture with visible pores, subtle freckles, and natural imperfections. A hint of subsurface scattering on the cheekbones where the light hits. No airbrushing.";
+const defaultFabricPhysics = "The fabric drapes naturally, with realistic creases and folds that follow the subject's form. The weave of the fabric is visible upon close inspection.";
+const defaultMaterialProperties = "The material has a soft, matte texture that absorbs light, contrasting with the subtle specular highlights on the subject's skin.";
+
 export const artisticConcepts: ArtisticConcept[] = [
   {
     name: 'Chiaroscuro Form',
@@ -16,7 +20,7 @@ export const artisticConcepts: ArtisticConcept[] = [
         "pose": "Contemplative Seated Curl: Seated on the floor, curled slightly with knees drawn up and arms wrapped around them, head bowed in a thoughtful, classical pose.",
         "hair_color": "dark",
         "hair_style": "long, loose waves with a few stray strands catching the light",
-        "skin_details": "Authentic, high-resolution skin texture with visible pores, subtle freckles, and natural imperfections. No airbrushing, creating a raw and honest depiction of beauty.",
+        "skin_finish": "Natural Glow",
         "hand_and_nail_details": "Hands are relaxed and anatomically correct, with graceful, natural finger placement. The AI should prioritize correct finger count and structure.",
         "tattoos": "none",
         "piercings": "none",
@@ -37,7 +41,10 @@ export const artisticConcepts: ArtisticConcept[] = [
       "color_grade": "Painterly Desaturated (Timeless)",
       "style": "Classical-Dramatic (Boudoir)",
       "quality": "Shot on Hasselblad X2D. Unmatched 8K detail. Every micro-detail from fabric weave to skin pores is rendered with absolute clarity.",
-      "figure_and_form": "Minimalist Nude (Shadow Play)"
+      "figure_and_form": "Minimalist Nude (Shadow Play)",
+      "skin_micro_details": defaultSkinMicroDetails,
+      "fabric_physics": "The silk fabric is captured with dynamic, flowing motion. It appears lightweight, with realistic transparency where stretched and bunched, and follows the contours of the body with liquid grace.",
+      "material_properties": "Liquid satin with a high specular sheen, creating brilliant, sharp highlights where the light hits directly, and falling into deep, rich shadows."
     }
   },
   {
@@ -50,7 +57,7 @@ export const artisticConcepts: ArtisticConcept[] = [
         "pose": "Silhouette in Profile: Standing or sitting in profile against a light source (like a window), creating a strong, artistic silhouette that highlights the body's form.",
         "hair_color": "dark",
         "hair_style": "a polished, sleek high bun, for an elegant and statuesque profile.",
-        "skin_details": "Authentic, high-resolution skin texture with visible pores, subtle freckles, and natural imperfections. No airbrushing, creating a raw and honest depiction of beauty.",
+        "skin_finish": "Matte & Flawless",
         "hand_and_nail_details": "Hands are relaxed and anatomically correct, with graceful, natural finger placement. The AI should prioritize correct finger count and structure.",
         "tattoos": "none",
         "piercings": "none",
@@ -71,7 +78,10 @@ export const artisticConcepts: ArtisticConcept[] = [
       "color_grade": "High-Contrast B&W",
       "style": "Graphic Fashion-Editorial",
       "quality": "Shot on Hasselblad X2D. Unmatched 8K detail. Extremely sharp focus.",
-      "figure_and_form": "Silhouette Through Sheer Fabric"
+      "figure_and_form": "Silhouette Through Sheer Fabric",
+      "skin_micro_details": "Perfectly smooth, high-fashion editorial skin. While pores are minimized, a micro-texture is retained to avoid a plastic look. Highlights show a gentle falloff.",
+      "fabric_physics": defaultFabricPhysics,
+      "material_properties": defaultMaterialProperties
     }
   },
   {
@@ -84,7 +94,7 @@ export const artisticConcepts: ArtisticConcept[] = [
         "pose": "Commanding Seated Lean: Seated on a low stool, leaning to one side with a powerful, commanding expression, looking down towards the camera.",
         "hair_color": "jet black",
         "hair_style": "long dark hair styled sleek and straight for a graphic, high-fashion look.",
-        "skin_details": "Matte & Flawless",
+        "skin_finish": "Matte & Flawless",
         "hand_and_nail_details": "Impeccably Manicured",
         "tattoos": "none",
         "piercings": "none",
@@ -105,7 +115,10 @@ export const artisticConcepts: ArtisticConcept[] = [
       "color_grade": "Severe Monochromatic B&W",
       "style": "Helmut Newton Inspired",
       "quality": "RAW Cinematic (Helmut Newton)",
-      "figure_and_form": "Sculpted Form (Opaque)"
+      "figure_and_form": "Sculpted Form (Opaque)",
+      "skin_micro_details": "Perfectly smooth, high-fashion editorial skin. While pores are minimized, a micro-texture is retained to avoid a plastic look. Highlights show a gentle falloff.",
+      "fabric_physics": "The latex clings perfectly to the form, creating a second skin with no visible creases or folds, only smooth, continuous surfaces.",
+      "material_properties": "High-gloss black latex that acts like a mirror, reflecting the light source and environment with sharp, distorted highlights. The material appears slick and futuristic."
     }
   },
   {
@@ -118,7 +131,7 @@ export const artisticConcepts: ArtisticConcept[] = [
         "pose": "Relaxed & Vulnerable: Lying on a soft surface like a bed or rug, looking at the camera with a soft, relaxed expression, conveying a sense of trust and vulnerability.",
         "hair_color": "dark",
         "hair_style": "a messy bun with face-framing tendrils for a relaxed, candid feel.",
-        "skin_details": "Dewy & Glowing",
+        "skin_finish": "Dewy & Luminous",
         "hand_and_nail_details": "Natural & Unadorned",
         "tattoos": "none",
         "piercings": "none",
@@ -139,7 +152,10 @@ export const artisticConcepts: ArtisticConcept[] = [
       "color_grade": "Warm & Natural",
       "style": "Private & Personal",
       "quality": "Shot on Kodak Portra 400. 8k, natural textures, beautiful color rendition, and a subtle, pleasing film grain. High-end cinematic quality.",
-      "figure_and_form": "Natural form, emphasizing the realistic drape of fabric over the subject's physique. The lighting and pose are composed to be tasteful and artistic."
+      "figure_and_form": "Natural form, emphasizing the realistic drape of fabric over the subject's physique. The lighting and pose are composed to be tasteful and artistic.",
+      "skin_micro_details": defaultSkinMicroDetails,
+      "fabric_physics": "The cotton shirt has a soft, worn-in texture with natural creases. The delicate weave of the briefs' lace trim is visible.",
+      "material_properties": "The matte cotton of the shirt contrasts with the delicate sheen of the briefs' silk panels."
     }
   },
   {
@@ -152,7 +168,7 @@ export const artisticConcepts: ArtisticConcept[] = [
             "pose": "Thoughtful & Enchanting Glance",
             "hair_color": "honey blonde",
             "hair_style": "long, loose waves with a few stray strands catching the light",
-            "skin_details": "Dewy & Glowing",
+            "skin_finish": "Dewy & Luminous",
             "hand_and_nail_details": "Natural & Unadorned",
             "tattoos": "none",
             "piercings": "none",
@@ -173,7 +189,10 @@ export const artisticConcepts: ArtisticConcept[] = [
         "color_grade": "Warm & Natural",
         "style": "Romantic Fashion",
         "quality": "Shot on Kodak Portra 400. 8k, natural textures, beautiful color rendition, and a subtle, pleasing film grain. High-end cinematic quality.",
-        "figure_and_form": "Natural Form"
+        "figure_and_form": "Natural Form",
+        "skin_micro_details": defaultSkinMicroDetails,
+        "fabric_physics": defaultFabricPhysics,
+        "material_properties": defaultMaterialProperties
     }
   },
   {
@@ -186,7 +205,7 @@ export const artisticConcepts: ArtisticConcept[] = [
             "pose": "Confident Stand",
             "hair_color": "pastel pink",
             "hair_style": "sharp, asymmetrical bob",
-            "skin_details": "Matte & Flawless",
+            "skin_finish": "Matte & Flawless",
             "hand_and_nail_details": "Expressive Artist Hands",
             "tattoos": "Intricate Sleeve",
             "piercings": "Subtle Gold Septum",
@@ -207,7 +226,10 @@ export const artisticConcepts: ArtisticConcept[] = [
         "color_grade": "Cool Cinematic",
         "style": "Gritty Urban Realism",
         "quality": "RAW Cinematic (Helmut Newton)",
-        "figure_and_form": "Sculpted Form (Opaque)"
+        "figure_and_form": "Sculpted Form (Opaque)",
+        "skin_micro_details": defaultSkinMicroDetails,
+        "fabric_physics": "The fishnet material is stretched and torn, creating a chaotic, geometric pattern against the skin. Individual fibers are visible.",
+        "material_properties": "The matte black of the fishnet material absorbs light, creating a stark contrast with the skin visible through the gaps."
     }
   },
   {
@@ -220,7 +242,7 @@ export const artisticConcepts: ArtisticConcept[] = [
             "pose": "Elegant Recline",
             "hair_color": "silver gray",
             "hair_style": "long, loose waves with a few stray strands catching the light",
-            "skin_details": "Authentic (Visible Pores)",
+            "skin_finish": "Natural Glow",
             "hand_and_nail_details": "Graceful & Anatomically Correct",
             "tattoos": "none",
             "piercings": "none",
@@ -241,7 +263,10 @@ export const artisticConcepts: ArtisticConcept[] = [
         "color_grade": "Vintage Sepia",
         "style": "Ethereal Dreamscape",
         "quality": "Shot on a Leica M11 with a Noctilux 50mm f/0.95 lens. Extremely shallow depth of field, beautiful bokeh, and a dreamy, ethereal quality.",
-        "figure_and_form": "Silhouette Through Sheer Fabric"
+        "figure_and_form": "Silhouette Through Sheer Fabric",
+        "skin_micro_details": defaultSkinMicroDetails,
+        "fabric_physics": "The chiffon is almost weightless, captured mid-flutter. It is highly transparent, with light diffusing through it to create a soft halo effect.",
+        "material_properties": "The chiffon has no sheen, acting as a soft diffusion layer for the light. The gold leaf has a hard, metallic specular reflection."
     }
   },
   {
@@ -254,7 +279,7 @@ export const artisticConcepts: ArtisticConcept[] = [
         "pose": "Relaxed & Vulnerable: Lying on a soft surface like a bed or rug, looking at the camera with a soft, relaxed expression, conveying a sense of trust and vulnerability.",
         "hair_color": "dark",
         "hair_style": "a messy bun with face-framing tendrils for a relaxed, candid feel.",
-        "skin_details": "Dewy & Glowing",
+        "skin_finish": "Dewy & Luminous",
         "hand_and_nail_details": "Graceful & Anatomically Correct",
         "tattoos": "none", "piercings": "none", "body_art": "none",
         "nail_art": "Natural manicure, clean and simple", "high_heels": "not visible"
@@ -272,7 +297,10 @@ export const artisticConcepts: ArtisticConcept[] = [
       "color_grade": "Warm & Natural",
       "style": "Private & Personal",
       "quality": "Shot on Kodak Portra 400. 8k, natural textures, beautiful color rendition, and a subtle, pleasing film grain.",
-      "figure_and_form": "Natural Form"
+      "figure_and_form": "Natural Form",
+      "skin_micro_details": defaultSkinMicroDetails,
+      "fabric_physics": defaultFabricPhysics,
+      "material_properties": "The material is a combination of intricate floral lace patterns and fine, sheer mesh. Light passes through the mesh, creating a delicate pattern on the skin, while the lace remains opaque."
     }
   },
   {
@@ -285,7 +313,7 @@ export const artisticConcepts: ArtisticConcept[] = [
         "pose": "Architectural Power Stance: Standing with a powerful, almost architectural posture, creating strong lines that emphasize the structure of the garment.",
         "hair_color": "jet black",
         "hair_style": "a severe, slicked-back style, creating a sharp and modern look.",
-        "skin_details": "Matte & Flawless",
+        "skin_finish": "Matte & Flawless",
         "hand_and_nail_details": "Impeccably Manicured",
         "tattoos": "none", "piercings": "none", "body_art": "none",
         "nail_art": "Glossy Black Polish", "high_heels": "Architectural High Heels"
@@ -303,7 +331,10 @@ export const artisticConcepts: ArtisticConcept[] = [
       "color_grade": "Severe Monochromatic B&W",
       "style": "Graphic Fashion-Editorial",
       "quality": "Shot on Hasselblad X2D. Unmatched 8K detail. Extremely sharp focus.",
-      "figure_and_form": "Silhouette Through Sheer Fabric"
+      "figure_and_form": "Silhouette Through Sheer Fabric",
+      "skin_micro_details": defaultSkinMicroDetails,
+      "fabric_physics": defaultFabricPhysics,
+      "material_properties": defaultMaterialProperties
     }
   },
   {
@@ -316,7 +347,7 @@ export const artisticConcepts: ArtisticConcept[] = [
         "pose": "Leaning on Wall: Casually leaning against a textured wall, one leg bent, creating a relaxed but composed triangular shape with the body.",
         "hair_color": "dark",
         "hair_style": "sharp, asymmetrical bob",
-        "skin_details": "Authentic (Visible Pores)",
+        "skin_finish": "Natural Glow",
         "hand_and_nail_details": "Expressive Artist Hands",
         "tattoos": "none", "piercings": "Subtle Gold Septum", "body_art": "none",
         "nail_art": "Black Matte Nails", "high_heels": "Sharp Stiletto Heels"
@@ -334,7 +365,10 @@ export const artisticConcepts: ArtisticConcept[] = [
       "color_grade": "Cool Cinematic",
       "style": "Neo-noir Sensuality",
       "quality": "RAW Cinematic (Helmut Newton)",
-      "figure_and_form": "Revealing Curves (Shadow Play)"
+      "figure_and_form": "Revealing Curves (Shadow Play)",
+      "skin_micro_details": defaultSkinMicroDetails,
+      "fabric_physics": defaultFabricPhysics,
+      "material_properties": defaultMaterialProperties
     }
   },
   {
@@ -347,7 +381,7 @@ export const artisticConcepts: ArtisticConcept[] = [
         "pose": "Dynamic Floor S-Curve: Sitting on the floor in a dynamic S-curve, one leg extended, torso twisted with one arm braced behind, creating a fluid, sculptural line.",
         "hair_color": "dark",
         "hair_style": "a messy bun with face-framing tendrils for a relaxed, candid feel.",
-        "skin_details": "Authentic, high-resolution skin texture with visible pores",
+        "skin_finish": "Natural Glow",
         "hand_and_nail_details": "Graceful & Anatomically Correct",
         "tattoos": "Subtle Arm & Collarbone", "piercings": "none", "body_art": "none",
         "nail_art": "Natural manicure, clean and simple", "high_heels": "not visible"
@@ -365,7 +399,10 @@ export const artisticConcepts: ArtisticConcept[] = [
       "color_grade": "Warm & Natural",
       "style": "Fine Art Sensuality",
       "quality": "Shot on Hasselblad X2D. Unmatched 8K detail. Extremely sharp focus.",
-      "figure_and_form": "Minimalist Nude (Shadow Play)"
+      "figure_and_form": "Minimalist Nude (Shadow Play)",
+      "skin_micro_details": defaultSkinMicroDetails,
+      "fabric_physics": defaultFabricPhysics,
+      "material_properties": defaultMaterialProperties
     }
   },
   {
@@ -378,7 +415,7 @@ export const artisticConcepts: ArtisticConcept[] = [
             "pose": "Arching Back on Bed: Lying on a bed, back gently arched to create a graceful curve, head turned towards the camera with a soft expression.",
             "hair_color": "jet black",
             "hair_style": "long dark hair tied in a loose, low bun with strands escaping, creating a soft, elegant look.",
-            "skin_details": "Authentic, high-resolution skin texture with visible pores. No airbrushing.",
+            "skin_finish": "Natural Glow",
             "hand_and_nail_details": "Hands are relaxed and anatomically correct, with graceful, natural finger placement.",
             "tattoos": "none", "piercings": "none", "body_art": "none",
             "nail_art": "Natural manicure, clean and simple", "high_heels": "not visible"
@@ -396,7 +433,10 @@ export const artisticConcepts: ArtisticConcept[] = [
         "color_grade": "Warm & Natural",
         "style": "Private & Personal, Fine Art Sensuality",
         "quality": "Shot on Kodak Portra 400. 8k, natural textures, beautiful color rendition, and a subtle, pleasing film grain.",
-        "figure_and_form": "Silhouette Through Sheer Fabric"
+        "figure_and_form": "Silhouette Through Sheer Fabric",
+        "skin_micro_details": defaultSkinMicroDetails,
+        "fabric_physics": defaultFabricPhysics,
+        "material_properties": defaultMaterialProperties
     }
   },
   {
@@ -409,7 +449,7 @@ export const artisticConcepts: ArtisticConcept[] = [
               "pose": "Dynamic Floor S-Curve: Sitting on the floor in a dynamic S-curve, one leg extended, torso twisted with one arm braced behind, creating a fluid, sculptural line.",
               "hair_color": "jet black",
               "hair_style": "a severe, slicked-back style, creating a sharp and modern look.",
-              "skin_details": "Cinematic Skin: Realistic skin with a cinematic feel, showing natural texture.",
+              "skin_finish": "Cinematic",
               "hand_and_nail_details": "Impeccably Manicured with glossy black polish.",
               "tattoos": "none", "piercings": "none", "body_art": "none",
               "nail_art": "Glossy Black Polish", "high_heels": "not visible"
@@ -427,7 +467,10 @@ export const artisticConcepts: ArtisticConcept[] = [
           "color_grade": "Cool Cinematic with deep blues and cyans in the shadows.",
           "style": "Graphic Fashion-Editorial",
           "quality": "Shot on Hasselblad X2D. Unmatched 8K detail. Extremely sharp focus on the eyes and lace details.",
-          "figure_and_form": "The subject's form is sculpted by the tight lace and dramatic lighting."
+          "figure_and_form": "The subject's form is sculpted by the tight lace and dramatic lighting.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
       }
   },
   {
@@ -440,7 +483,7 @@ export const artisticConcepts: ArtisticConcept[] = [
               "pose": "Leaning against a large window, one hand pressed against the glass, looking out at the rain-streaked city.",
               "hair_color": "jet black",
               "hair_style": "long, loose waves, appearing slightly damp from humidity.",
-              "skin_details": "Dewy & Glowing, with subtle reflections from the window.",
+              "skin_finish": "Dewy & Luminous",
               "hand_and_nail_details": "Natural & Unadorned.",
               "tattoos": "none", "piercings": "none", "body_art": "none",
               "nail_art": "Natural manicure, clean and simple", "high_heels": "not visible"
@@ -458,7 +501,10 @@ export const artisticConcepts: ArtisticConcept[] = [
           "color_grade": "Cool Cinematic",
           "style": "Cinematic Noir, Private & Personal",
           "quality": "IMAX 70mm Cinematic still. Incredible detail, rich deep colors, visible film grain.",
-          "figure_and_form": "Silhouette Through Sheer Fabric, with form subtly revealed by the transparent, damp clothing."
+          "figure_and_form": "Silhouette Through Sheer Fabric, with form subtly revealed by the transparent, damp clothing.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
       }
   },
   {
@@ -471,7 +517,7 @@ export const artisticConcepts: ArtisticConcept[] = [
               "pose": "Fine Art Contrapposto: A classic fine art pose inspired by Renaissance sculpture, with the body's weight shifted to one foot, creating a gentle S-curve in the torso.",
               "hair_color": "jet black",
               "hair_style": "a polished, sleek high bun, for an elegant and statuesque profile.",
-              "skin_details": "Authentic, high-resolution skin texture with visible pores.",
+              "skin_finish": "Natural Glow",
               "hand_and_nail_details": "Graceful & Anatomically Correct.",
               "tattoos": "none", "piercings": "none", "body_art": "none",
               "nail_art": "Natural manicure, clean and simple", "high_heels": "not visible"
@@ -489,7 +535,10 @@ export const artisticConcepts: ArtisticConcept[] = [
           "color_grade": "High-Contrast B&W, with deep, crushed blacks and brilliant, clean whites.",
           "style": "Fine-Art Dance Photography, Graphic Fashion-Editorial",
           "quality": "Shot on Hasselblad X2D. Unmatched 8K detail. Extremely sharp focus.",
-          "figure_and_form": "Minimalist Nude (Shadow Play), where light and shadow sculpt the body, revealing and concealing form."
+          "figure_and_form": "Minimalist Nude (Shadow Play), where light and shadow sculpt the body, revealing and concealing form.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
       }
   },
   {
@@ -502,7 +551,7 @@ export const artisticConcepts: ArtisticConcept[] = [
               "pose": "Confident & Bold Stare: Seated on the edge of a large executive desk, leaning forward slightly, looking directly and intensely into the camera.",
               "hair_color": "jet black",
               "hair_style": "elegant, flowing ponytail.",
-              "skin_details": "Matte & Flawless, like a high-fashion editorial.",
+              "skin_finish": "Matte & Flawless",
               "hand_and_nail_details": "Impeccably Manicured with classic red polish.",
               "tattoos": "none", "piercings": "none", "body_art": "none",
               "nail_art": "Classic Red Polish", "high_heels": "Sharp Stiletto Heels"
@@ -520,7 +569,10 @@ export const artisticConcepts: ArtisticConcept[] = [
           "color_grade": "Cool Cinematic, with desaturated tones.",
           "style": "Helmut Newton Inspired, Neo-noir Sensuality",
           "quality": "RAW Cinematic (Helmut Newton). 8k, natural textures, no artificial plastic look, high-end cinematic quality.",
-          "figure_and_form": "The sheer suit reveals the curves and the lingerie beneath, a play on power dressing and sensuality."
+          "figure_and_form": "The sheer suit reveals the curves and the lingerie beneath, a play on power dressing and sensuality.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
       }
   },
   {
@@ -533,7 +585,7 @@ export const artisticConcepts: ArtisticConcept[] = [
             "pose": "Dynamic Floor S-Curve: Sitting on the floor in a dynamic S-curve, one leg extended, torso twisted with one arm braced behind, creating a fluid, sculptural line.",
             "hair_color": "jet black",
             "hair_style": "a severe, slicked-back style, creating a sharp and modern look.",
-            "skin_details": "Authentic, high-resolution skin texture with visible pores. No airbrushing.",
+            "skin_finish": "Natural Glow",
             "hand_and_nail_details": "Hands are relaxed and anatomically correct, with graceful, natural finger placement.",
             "tattoos": "none", "piercings": "none", "body_art": "none",
             "nail_art": "Glossy Black Polish", "high_heels": "not visible"
@@ -549,7 +601,10 @@ export const artisticConcepts: ArtisticConcept[] = [
         "color_grade": "High-Contrast B&W",
         "style": "Fine Art Sensuality",
         "quality": "Shot on Hasselblad X2D. Unmatched 8K detail. Extremely sharp focus.",
-        "figure_and_form": "The subject's form is sculpted by the tight mesh fabric and dramatic lighting, emphasizing the silhouette and texture."
+        "figure_and_form": "The subject's form is sculpted by the tight mesh fabric and dramatic lighting, emphasizing the silhouette and texture.",
+        "skin_micro_details": defaultSkinMicroDetails,
+        "fabric_physics": defaultFabricPhysics,
+        "material_properties": defaultMaterialProperties
     }
   },
   {
@@ -562,7 +617,7 @@ export const artisticConcepts: ArtisticConcept[] = [
               "pose": "Confident & Bold Stare: Seated on the edge of a large executive desk, leaning forward slightly, looking directly and intensely into the camera.",
               "hair_color": "jet black",
               "hair_style": "elegant, flowing ponytail.",
-              "skin_details": "Matte & Flawless, like a high-fashion editorial.",
+              "skin_finish": "Matte & Flawless",
               "hand_and_nail_details": "Impeccably Manicured with classic red polish.",
               "tattoos": "none", "piercings": "none", "body_art": "none",
               "nail_art": "Classic Red Polish", "high_heels": "Sharp Stiletto Heels"
@@ -578,7 +633,10 @@ export const artisticConcepts: ArtisticConcept[] = [
           "color_grade": "Cool Cinematic, with desaturated tones.",
           "style": "Helmut Newton Inspired, Neo-noir Sensuality",
           "quality": "RAW Cinematic (Helmut Newton). 8k, natural textures, no artificial plastic look, high-end cinematic quality.",
-          "figure_and_form": "The transparent outfit reveals curves through the interplay of light and shadow, a play on power dressing and sensuality."
+          "figure_and_form": "The transparent outfit reveals curves through the interplay of light and shadow, a play on power dressing and sensuality.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
       }
   },
   {
@@ -591,7 +649,7 @@ export const artisticConcepts: ArtisticConcept[] = [
               "pose": "Confident Recline on Bed: Reclining on a messy bed with an arm resting behind her head, one leg bent, exuding a bold and natural confidence.",
               "hair_color": "jet black",
               "hair_style": "a messy bun with face-framing tendrils for a relaxed, candid feel.",
-              "skin_details": "Dewy & Glowing, with soft light catching the skin's texture.",
+              "skin_finish": "Dewy & Luminous",
               "hand_and_nail_details": "Natural & Unadorned.",
               "tattoos": "none", "piercings": "none", "body_art": "none",
               "nail_art": "Natural manicure, clean and simple", "high_heels": "not visible"
@@ -607,7 +665,10 @@ export const artisticConcepts: ArtisticConcept[] = [
           "color_grade": "Warm & Natural",
           "style": "Private & Personal",
           "quality": "Shot on Kodak Portra 400. 8k, natural textures, beautiful color rendition, and a subtle, pleasing film grain.",
-          "figure_and_form": "Natural form, emphasizing the realistic drape of fabric over the subject's physique. The lighting and pose are composed to be tasteful and artistic."
+          "figure_and_form": "Natural form, emphasizing the realistic drape of fabric over the subject's physique. The lighting and pose are composed to be tasteful and artistic.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
       }
   },
   {
@@ -620,7 +681,7 @@ export const artisticConcepts: ArtisticConcept[] = [
               "pose": "Fine Art Contrapposto: A classic fine art pose inspired by Renaissance sculpture, with the body's weight shifted to one foot, creating a gentle S-curve in the torso.",
               "hair_color": "jet black",
               "hair_style": "a polished, sleek high bun, for an elegant and statuesque profile.",
-              "skin_details": "Authentic, high-resolution skin texture with visible pores.",
+              "skin_finish": "Natural Glow",
               "hand_and_nail_details": "Graceful & Anatomically Correct.",
               "tattoos": "none", "piercings": "none", "body_art": "none",
               "nail_art": "Natural manicure, clean and simple", "high_heels": "not visible"
@@ -636,7 +697,10 @@ export const artisticConcepts: ArtisticConcept[] = [
           "color_grade": "High-Contrast B&W, with deep, crushed blacks and brilliant, clean whites.",
           "style": "Fine-Art Dance Photography, Graphic Fashion-Editorial",
           "quality": "Shot on Hasselblad X2D. Unmatched 8K detail. Extremely sharp focus.",
-          "figure_and_form": "Minimalist Nude (Shadow Play), where light and shadow sculpt the body, revealing and concealing form."
+          "figure_and_form": "Minimalist Nude (Shadow Play), where light and shadow sculpt the body, revealing and concealing form.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
       }
   },
   {
@@ -649,7 +713,7 @@ export const artisticConcepts: ArtisticConcept[] = [
               "pose": "Confident Stand: Standing confidently, facing the camera with a strong posture, one hand on hip, looking directly into the lens.",
               "hair_color": "jet black",
               "hair_style": "long dark hair styled sleek and straight for a graphic, high-fashion look.",
-              "skin_details": "Cinematic Skin: Realistic skin with a cinematic feel, showing natural texture.",
+              "skin_finish": "Cinematic",
               "hand_and_nail_details": "Impeccably Manicured",
               "tattoos": "none", "piercings": "none", "body_art": "none",
               "nail_art": "Classic Red Polish", "high_heels": "Sharp Stiletto Heels"
@@ -665,7 +729,138 @@ export const artisticConcepts: ArtisticConcept[] = [
           "color_grade": "Cool Cinematic",
           "style": "Gritty Urban Realism",
           "quality": "IMAX 70mm Cinematic still. Incredible detail, epic scope, and rich, deep colors. Visible film grain.",
-          "figure_and_form": "The sheer suit reveals the curves and the lingerie beneath, a play on power dressing and sensuality."
+          "figure_and_form": "The sheer suit reveals the curves and the lingerie beneath, a play on power dressing and sensuality.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
+      }
+  },
+  {
+      name: 'Office: Midnight Boardroom',
+      data: {
+          "shot": "Cinematic medium shot (16:9), exuding power and confidence.",
+          "subject": {
+              "age": "adult woman (25-30)",
+              "appearance": "Indian fashion model (height 5'9\"), with realistic body proportions (bust 38\", waist 28\", hips 39\"), jet black hair, and a commanding, intense gaze.",
+              "pose": "Confident & Bold Stare: Seated on the edge of a large executive desk, leaning forward slightly, looking directly and intensely into the camera.",
+              "hair_color": "jet black",
+              "hair_style": "elegant, flowing ponytail.",
+              "skin_finish": "Matte & Flawless",
+              "hand_and_nail_details": "Impeccably Manicured with classic red polish.",
+              "tattoos": "none", "piercings": "none", "body_art": "none",
+              "nail_art": "Classic Red Polish", "high_heels": "Sharp Stiletto Heels"
+          },
+          "wardrobe": "A crisp, white formal shirt, unbuttoned to the navel, revealing an architectural foundation garment composed of a transparent structured bodice element and matching tailored lower garment.",
+          "environment": "A sleek, modern office space at night, with glass walls and the ambient glow of the city skyline out of focus in the background.",
+          "lighting": "Moody cinematic lighting from a single desk lamp, creating deep shadows and a glamorous, intimate feel.",
+          "camera": {
+              "focal_length": "50mm", "aperture": "f/2.8", "distance": "3 m",
+              "angle": "Low Angle, making the subject appear powerful.",
+              "framing": "Medium shot from the waist up."
+          },
+          "color_grade": "Cool Cinematic, with desaturated tones.",
+          "style": "Helmut Newton Inspired, Neo-noir Sensuality",
+          "quality": "RAW Cinematic (Helmut Newton). 8k, natural textures, no artificial plastic look, high-end cinematic quality.",
+          "figure_and_form": "The interplay of formal wear and foundation garments suggests power and sensuality, sculpted by shadow.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
+      }
+  },
+  {
+      name: 'Office: After Hours Noir',
+      data: {
+          "shot": "Medium portrait (3:4), melancholic and intimate.",
+          "subject": {
+              "age": "adult woman (25-30)",
+              "appearance": "Indian fashion model (height 5'9\"), with realistic body proportions (bust 38\", waist 28\", hips 39\"), jet black hair, and an introspective, mysterious gaze.",
+              "pose": "Leaning against a large window, one hand pressed against the glass, looking out at the rain-streaked city.",
+              "hair_color": "jet black",
+              "hair_style": "long, loose waves, appearing slightly damp from humidity.",
+              "skin_finish": "Dewy & Luminous",
+              "hand_and_nail_details": "Natural & Unadorned.",
+              "tattoos": "none", "piercings": "none", "body_art": "none",
+              "nail_art": "Natural manicure, clean and simple", "high_heels": "not visible"
+          },
+          "wardrobe": "A designer set featuring a high-waisted, black netted tailored lower garment and a matching couture upper piece with intricate patterns.",
+          "environment": "A sleek, modern office space at night, with a floor-to-ceiling window revealing a rain-streaked, out-of-focus city at twilight.",
+          "lighting": "Dappled Light (Venetian Blinds), casting a dramatic pattern of sharp light and shadow stripes across the subject and the room.",
+          "camera": {
+              "focal_length": "50mm", "aperture": "f/2.8", "distance": "2.5 m",
+              "angle": "Eye-Level, shot from slightly inside the room.",
+              "framing": "Medium shot from the waist up, capturing her reflection in the glass."
+          },
+          "color_grade": "Cool Cinematic",
+          "style": "Cinematic Noir, Private & Personal",
+          "quality": "IMAX 70mm Cinematic still. Incredible detail, rich deep colors, visible film grain.",
+          "figure_and_form": "Silhouette Through Sheer Fabric, with form subtly revealed by the transparent, damp clothing.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
+      }
+  },
+  {
+      name: 'Office: Shadow Executive',
+      data: {
+          "shot": "Full body shot, capturing a powerful and modern aesthetic.",
+          "subject": {
+              "age": "adult woman (25-30)",
+              "appearance": "Indian fashion model (height 5'9\"), with realistic body proportions (bust 38\", waist 28\", hips 39\"), jet black hair, and a powerful, direct gaze.",
+              "pose": "Architectural Power Stance: Standing with a powerful, almost architectural posture, creating strong lines that emphasize the structure of the garment.",
+              "hair_color": "jet black",
+              "hair_style": "a severe, slicked-back style, creating a sharp and modern look.",
+              "skin_finish": "Matte & Flawless",
+              "hand_and_nail_details": "Impeccably Manicured",
+              "tattoos": "none", "piercings": "none", "body_art": "none",
+              "nail_art": "Glossy Black Polish", "high_heels": "Architectural High Heels"
+          },
+          "wardrobe": "A two-piece, tight-fitting bodysuit crafted from textured, opaque black mesh netting, creating a powerful and sculptural silhouette.",
+          "environment": "Minimalist Concrete Studio",
+          "lighting": "Graphic Spotlight ('Throne of Light')",
+          "camera": {
+              "focal_length": "35mm", "aperture": "f/8.0 (Sharp BG)", "distance": "5 m",
+              "angle": "Very low angle, shot from near floor level, looking up.",
+              "framing": "Full Body (with Negative Space)"
+          },
+          "color_grade": "Severe Monochromatic B&W",
+          "style": "Graphic Fashion-Editorial",
+          "quality": "Shot on Hasselblad X2D. Unmatched 8K detail. Extremely sharp focus.",
+          "figure_and_form": "The subject's form is sculpted by the tight mesh and dramatic lighting.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
+      }
+  },
+  {
+      name: 'Office: Glass & Steel Serenity',
+      data: {
+          "shot": "Artistic full-body nude study (9:16).",
+          "subject": {
+              "age": "adult woman (25-30)",
+              "appearance": "Indian fashion model (height 5'9\"), with realistic body proportions (bust 38\", waist 28\", hips 39\"), jet black hair, and a serene, direct gaze.",
+              "pose": "Fine Art Contrapposto: A classic fine art pose inspired by Renaissance sculpture, with the body's weight shifted to one foot, creating a gentle S-curve in the torso.",
+              "hair_color": "jet black",
+              "hair_style": "a polished, sleek high bun, for an elegant and statuesque profile.",
+              "skin_finish": "Natural Glow",
+              "hand_and_nail_details": "Graceful & Anatomically Correct.",
+              "tattoos": "none", "piercings": "none", "body_art": "none",
+              "nail_art": "Natural manicure, clean and simple", "high_heels": "Architectural High Heels"
+          },
+          "wardrobe": "A single, long piece of flowing black silk fabric, artistically draped around the body to create sculptural shapes that conceal and reveal the form.",
+          "environment": "A sleek, modern office space at night, with glass walls and the ambient glow of the city skyline out of focus in the background.",
+          "lighting": "Soft, cool, ambient light from the city skyline outside, creating gentle highlights on the form and silk.",
+          "camera": {
+              "focal_length": "35mm", "aperture": "f/4.0", "distance": "5 m",
+              "angle": "Eye-Level",
+              "framing": "Full Body (with Negative Space)"
+          },
+          "color_grade": "Cool Cinematic",
+          "style": "Fine-Art Dance Photography, Minimalist",
+          "quality": "Shot on Hasselblad X2D. Unmatched 8K detail.",
+          "figure_and_form": "Minimalist Nude (Shadow Play), where light and shadow sculpt the body, revealing and concealing form.",
+          "skin_micro_details": defaultSkinMicroDetails,
+          "fabric_physics": defaultFabricPhysics,
+          "material_properties": defaultMaterialProperties
       }
   }
 ];
