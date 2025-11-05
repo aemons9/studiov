@@ -87,7 +87,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Power Stance',
-      description: 'Standing with hands on hips or seated on desk edge, exuding confident corporate power. Direct eye contact with camera, commanding presence.',
+      description: 'Standing confidently with hands on hips, exuding corporate power. Direct eye contact with camera, commanding presence with strong posture.',
       mood: 'Dominant, Professional, Powerful'
     },
     lighting: {
@@ -167,7 +167,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Neo-Noir Drama',
-      description: 'Seated on executive chair, leaning back with arms overhead or gripping the chair arms. Back arched, creating dramatic S-curve. Intense, smoldering gaze.',
+      description: 'Seated on executive chair, leaning back with arms gripping the chair arms. Back arched, creating dramatic S-curve. Intense, smoldering gaze.',
       mood: 'Seductive, Dramatic, Editorial'
     },
     lighting: {
@@ -207,7 +207,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Desk Dominance',
-      description: 'Lying across the executive desk at night, propped on elbows, back arched dramatically. Or seated with one leg crossed over the desk edge, tracing own collarbone.',
+      description: 'Lying across the executive desk at night, propped on elbows, back arched dramatically. One hand elegantly positioned, creating sculptural lines.',
       mood: 'Sensual, Artistic, Intimate'
     },
     lighting: {
@@ -219,8 +219,8 @@ export const intimacyLevels: IntimacyLevel[] = [
       focalLength: '50mm f/1.4 Standard',
       aperture: 'f/1.6',
       distance: '1.5 meters',
-      angle: 'Slightly overhead or eye-level intimate',
-      framing: 'Close medium shot, chest to head or full reclining'
+      angle: 'Slightly overhead, looking down at the reclining pose',
+      framing: 'Full reclining composition showing the desk scene'
     },
     photographerStyle: 'Herb Ritts\' sculptural form studies - geometric composition, body as architecture, intimate minimalism',
     colorGrade: 'Warm cinematic with glowing highlights and rich shadows, emphasizing skin luminosity',
@@ -247,7 +247,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Artistic Sculpture',
-      description: 'Kneeling on the office floor or desk, back dramatically arched creating an S-curve. Arms positioned to create additional lines and negative space. Dancer-inspired flexibility poses.',
+      description: 'Kneeling on the office floor, back dramatically arched creating an S-curve. Arms positioned to create additional lines and negative space. Dancer-inspired flexibility and grace.',
       mood: 'Seductive, Sculptural, High Art'
     },
     lighting: {
