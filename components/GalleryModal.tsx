@@ -1,22 +1,25 @@
 /**
  * GALLERY MODAL COMPONENT
  *
- * Displays all generated images from Cloud Storage with:
+ * Displays all generated images from chosen storage provider with:
  * - Thumbnail grid view
  * - Filtering by concept, date, intimacy level
  * - Image preview and metadata
  * - Download and delete functionality
  * - Storage statistics
+ *
+ * Supports both Google Drive (FREE) and Cloud Storage (paid)
  */
 
 import React, { useState, useEffect } from 'react';
-import type { ImageMetadata, GalleryFilters, CloudStorageConfig } from '../types';
-import { listImagesFromCloudStorage, deleteImageFromCloudStorage, downloadImage, getStorageStats } from '../services/cloudStorageService';
+import type { ImageMetadata, GalleryFilters } from '../types';
+import type { UnifiedStorageConfig } from '../services/storageService';
+import { listImages, deleteImage, getStats } from '../services/storageService';
 
 interface GalleryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  config: CloudStorageConfig;
+  config: UnifiedStorageConfig;
   onSelectImage?: (metadata: ImageMetadata) => void;
 }
 
@@ -46,11 +49,11 @@ export default function GalleryModal({ isOpen, onClose, config, onSelectImage }:
     setLoading(true);
     setError(null);
     try {
-      const loadedImages = await listImagesFromCloudStorage(config);
+      const loadedImages = await listImages(config);
       setImages(loadedImages);
 
       // Load stats
-      const statsData = await getStorageStats(config);
+      const statsData = await getStats(config);
       setStats(statsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load images');
@@ -100,7 +103,7 @@ export default function GalleryModal({ isOpen, onClose, config, onSelectImage }:
     if (!confirm(`Delete "${metadata.filename}"?`)) return;
 
     try {
-      await deleteImageFromCloudStorage(metadata, config);
+      await deleteImage(metadata, config);
       setImages(prev => prev.filter(img => img.id !== metadata.id));
       setSelectedImage(null);
     } catch (err) {

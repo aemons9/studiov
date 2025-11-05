@@ -1,8 +1,9 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
-import type { PromptData, SavedPrompt, GenerationSettings, EnhancementStyle, GeneratedImageData, AnalysisSuggestion, GenerationStep, HistoryEntry, AdherenceLevel, CloudStorageConfig } from './types';
-import { generateImage, enhancePrompt, weavePrompt, generateAndSaveImage } from './services/geminiService';
+import type { PromptData, SavedPrompt, GenerationSettings, EnhancementStyle, GeneratedImageData, AnalysisSuggestion, GenerationStep, HistoryEntry, AdherenceLevel, CloudStorageConfig, StorageProvider } from './types';
+import { generateImage, enhancePrompt, weavePrompt, generateAndSaveImage, type StorageConfig } from './services/geminiService';
 import { DEFAULT_BUCKET_NAME } from './services/cloudStorageService';
+import { DEFAULT_DRIVE_FOLDER } from './services/googleDriveService';
 import Header from './components/Header';
 import PromptEditor from './components/PromptEditor';
 import ImageDisplay from './components/ImageDisplay';
@@ -91,8 +92,10 @@ const App: React.FC = () => {
     intimacyLevel: 6,
   });
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
-  const [enableCloudStorage, setEnableCloudStorage] = useState(true);
+  const [enableStorage, setEnableStorage] = useState(true);
+  const [storageProvider, setStorageProvider] = useState<StorageProvider>('google-drive'); // Default to Google Drive (FREE)
   const [bucketName, setBucketName] = useState(DEFAULT_BUCKET_NAME);
+  const [driveFolderName, setDriveFolderName] = useState(DEFAULT_DRIVE_FOLDER);
 
   const handlePromptChange = useCallback((newPromptData: PromptData) => {
     setPromptData(newPromptData);
@@ -188,15 +191,41 @@ const App: React.FC = () => {
         setWovenPrompt(`RAW PROMPT: ${finalPrompt}`);
       }
 
-      // 4. Generate Image and Save to Cloud Storage
+      // 4. Generate Image and Save to Storage
       setGenerationStep('generating');
+
+      // Build storage config based on user selection
+      let storageConfig: StorageConfig | null = null;
+      if (enableStorage) {
+        if (storageProvider === 'google-drive') {
+          // Use separate Drive token if provided, otherwise use main token
+          const driveToken = generationSettings.driveAccessToken || generationSettings.accessToken;
+          storageConfig = {
+            provider: 'google-drive',
+            googleDrive: {
+              accessToken: driveToken,
+              folderName: driveFolderName
+            }
+          };
+        } else {
+          storageConfig = {
+            provider: 'cloud-storage',
+            cloudStorage: {
+              projectId: generationSettings.projectId,
+              bucketName: bucketName,
+              accessToken: generationSettings.accessToken,
+              region: 'us-east4'
+            }
+          };
+        }
+      }
+
       const result = await generateAndSaveImage(
         finalPrompt,
         generationSettings,
         promptForNextStep,
         activeConcept,
-        enableCloudStorage,
-        bucketName
+        storageConfig
       );
 
       const newImageData = result.images.map(b64 => ({
@@ -210,8 +239,9 @@ const App: React.FC = () => {
       setGeneratedImages(newImageData);
 
       // Log upload results
-      if (enableCloudStorage) {
-        console.log(`✅ Uploaded ${result.metadata.length} images to gallery`);
+      if (enableStorage) {
+        const providerName = storageProvider === 'google-drive' ? 'Google Drive' : 'Cloud Storage';
+        console.log(`✅ Uploaded ${result.metadata.length} images to ${providerName}`);
         if (result.errors.length > 0) {
           console.warn('Upload errors:', result.errors);
         }
@@ -349,10 +379,17 @@ const App: React.FC = () => {
         isOpen={isGalleryModalOpen}
         onClose={() => setIsGalleryModalOpen(false)}
         config={{
-          projectId: generationSettings.projectId || 'creatives-476816',
-          bucketName: bucketName,
-          accessToken: generationSettings.accessToken,
-          region: 'us-east4'
+          provider: storageProvider,
+          cloudStorage: storageProvider === 'cloud-storage' ? {
+            projectId: generationSettings.projectId || 'creatives-476816',
+            bucketName: bucketName,
+            accessToken: generationSettings.accessToken,
+            region: 'us-east4'
+          } : undefined,
+          googleDrive: storageProvider === 'google-drive' ? {
+            accessToken: generationSettings.driveAccessToken || generationSettings.accessToken,
+            folderName: driveFolderName
+          } : undefined
         }}
         onSelectImage={(metadata) => {
           setPromptData(metadata.promptData);

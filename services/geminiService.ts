@@ -479,7 +479,7 @@ export async function generateImage(prompt: string, settings: GenerationSettings
 }
 
 // ============================================================================
-// IMAGE GENERATION WITH CLOUD STORAGE AUTO-UPLOAD
+// IMAGE GENERATION WITH STORAGE AUTO-UPLOAD
 // ============================================================================
 
 export interface GenerateAndSaveResult {
@@ -488,8 +488,14 @@ export interface GenerateAndSaveResult {
   errors: string[]; // Any upload errors (won't block image display)
 }
 
+export interface StorageConfig {
+  provider: 'cloud-storage' | 'google-drive';
+  cloudStorage?: CloudStorageConfig;
+  googleDrive?: { accessToken: string; folderName?: string };
+}
+
 /**
- * Generate images and automatically upload them to Cloud Storage
+ * Generate images and automatically upload them to chosen storage provider
  * Returns both the base64 images and metadata for gallery display
  */
 export async function generateAndSaveImage(
@@ -497,8 +503,7 @@ export async function generateAndSaveImage(
   settings: GenerationSettings,
   promptData: PromptData,
   conceptName: string,
-  enableCloudStorage: boolean = true,
-  bucketName: string = DEFAULT_BUCKET_NAME
+  storageConfig: StorageConfig | null
 ): Promise<GenerateAndSaveResult> {
   // Generate images first
   const images = await generateImage(prompt, settings);
@@ -509,41 +514,28 @@ export async function generateAndSaveImage(
     errors: [],
   };
 
-  // If cloud storage is disabled, return just the images
-  if (!enableCloudStorage) {
+  // If storage is disabled, return just the images
+  if (!storageConfig) {
     return result;
   }
 
-  // Prepare Cloud Storage config
-  const config: CloudStorageConfig = {
-    projectId: settings.projectId,
-    bucketName,
-    accessToken: settings.accessToken,
-    region: 'us-east4',
-  };
+  // Import the unified storage service
+  const { uploadImage } = await import('./storageService');
 
-  // Ensure bucket exists (only tries to create once)
-  try {
-    await createBucketIfNotExists(config);
-  } catch (error) {
-    console.warn('Failed to create/check bucket:', error);
-    result.errors.push(`Bucket setup failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    // Continue anyway - maybe bucket already exists
-  }
-
-  // Upload each image to Cloud Storage
+  // Upload each image to the chosen storage provider
   const uploadPromises = images.map(async (base64Image, index) => {
     try {
       const dataUrl = `data:image/png;base64,${base64Image}`;
-      const metadata = await uploadImageToCloudStorage(
+      const metadata = await uploadImage(
         dataUrl,
         promptData,
         settings,
         conceptName,
-        config
+        storageConfig
       );
       result.metadata.push(metadata);
-      console.log(`✅ Uploaded image ${index + 1}/${images.length}`);
+      const providerName = storageConfig.provider === 'google-drive' ? 'Google Drive' : 'Cloud Storage';
+      console.log(`✅ Uploaded image ${index + 1}/${images.length} to ${providerName}`);
     } catch (error) {
       const errorMsg = `Failed to upload image ${index + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`;
       console.error(errorMsg);
@@ -554,7 +546,8 @@ export async function generateAndSaveImage(
   // Wait for all uploads to complete (but don't block on failures)
   await Promise.allSettled(uploadPromises);
 
-  console.log(`📸 Generated ${images.length} images, uploaded ${result.metadata.length} to Cloud Storage`);
+  const providerName = storageConfig.provider === 'google-drive' ? 'Google Drive' : 'Cloud Storage';
+  console.log(`📸 Generated ${images.length} images, uploaded ${result.metadata.length} to ${providerName}`);
 
   return result;
 }

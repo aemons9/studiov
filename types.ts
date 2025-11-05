@@ -54,6 +54,7 @@ export type AdherenceLevel = 'literal' | 'balanced' | 'creative';
 export interface GenerationSettings {
   projectId: string;
   accessToken: string;
+  driveAccessToken?: string; // Optional separate token for Google Drive (if using different account)
   numberOfImages: number;
   aspectRatio: '9:16' | '16:9' | '1:1' | '4:3' | '3:4';
   personGeneration: 'allow_all' | 'allow_adult' | 'dont_allow';
@@ -132,11 +133,19 @@ export interface GalleryFilters {
   searchQuery?: string;
 }
 
+export type StorageProvider = 'cloud-storage' | 'google-drive';
+
 export interface CloudStorageConfig {
   projectId: string;
   bucketName: string;
   accessToken: string;
   region?: string;
+}
+
+export interface GoogleDriveConfig {
+  accessToken: string;
+  folderId?: string; // Optional folder ID to store images in
+  folderName?: string; // Folder name to create/use (default: "StudioV Images")
 }
 
 export type WardrobeConceptCategory = 'Architectural Lingerie' | 'Couture Intimates' | 'Sensual Art' | 'Private Gallery' | 'Concept Art';
