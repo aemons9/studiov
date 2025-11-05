@@ -428,9 +428,12 @@
 
             <!-- Intimacy Level -->
             <div class="control-group">
-                <label for="intimacyLevel">Intimacy Level</label>
+                <label for="intimacyLevel">Intimacy Level • <span id="intimacyLevelName" style="color: #a0a0a0; font-weight: normal;">Moderate</span></label>
                 <input type="range" id="intimacyLevel" min="1" max="10" value="5">
                 <div class="slider-value"><span id="intimacyValue">5</span> / 10</div>
+                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #a0a0a0; font-style: italic;" id="intimacyDescription">
+                    Balanced artistic expression with moderate coverage
+                </div>
             </div>
 
             <!-- Wardrobe -->
@@ -618,6 +621,49 @@
                     <option value="wet-look">Wet Look</option>
                 </select>
             </div>
+
+            <!-- Nail Art -->
+            <div class="control-group">
+                <label for="nailArt">Nail Art & Finish</label>
+                <select id="nailArt">
+                    <option value="auto">Auto (Match Intimacy Level)</option>
+                    <option value="executive-burgundy">Deep Burgundy • Squared • High-Gloss</option>
+                    <option value="black-gold">Black w/ Gold Leaf • Almond • Semi-Matte</option>
+                    <option value="crimson-mirror">Crimson Red • Stiletto • Mirror Finish</option>
+                    <option value="black-reverse">Black Matte w/ Glossy Tips • Coffin</option>
+                    <option value="nude-gold">Nude w/ Gold Foil • Stiletto • Natural</option>
+                    <option value="natural-pink">Natural Nude/Pink • Almond • Soft Shine</option>
+                    <option value="neutral-clean">Completely Neutral • Natural • Soft Natural</option>
+                </select>
+            </div>
+
+            <!-- Skin Finish -->
+            <div class="control-group">
+                <label for="skinFinish">Skin Finish</label>
+                <select id="skinFinish">
+                    <option value="natural">Natural Healthy Glow</option>
+                    <option value="matte">Soft Matte (Not Dewy)</option>
+                    <option value="luminous">Luminous & Radiant</option>
+                    <option value="dewy">Subtle Dewy Highlights</option>
+                    <option value="powder">Powder Soft</option>
+                    <option value="oil">Natural Skin Oils (Authentic)</option>
+                </select>
+            </div>
+
+            <!-- Color Grade -->
+            <div class="control-group">
+                <label for="colorGrade">Color Grading</label>
+                <select id="colorGrade">
+                    <option value="auto">Auto (Match Style)</option>
+                    <option value="cool-pro">Cool Professional • Deep Blacks • Crisp Highlights</option>
+                    <option value="warm-timeless">Warm Timeless • Rich Blacks • Subtle Desaturation</option>
+                    <option value="cool-cinematic">Cool Cinematic • Crushed Blacks • Desaturated</option>
+                    <option value="warm-intimate">Warm Intimate • Glowing Highlights • Rich Shadows</option>
+                    <option value="high-contrast-bw">High Contrast B&W • Desaturated</option>
+                    <option value="warm-natural">Warm Natural Tones • Painterly Quality</option>
+                    <option value="silver-gelatin">Cool Silver Gelatin Print Aesthetic</option>
+                </select>
+            </div>
         </div>
 
         <div class="advanced-options">
@@ -658,9 +704,41 @@
     </div>
 
     <script>
-        // Update intimacy slider value display
+        // Intimacy level descriptions (7-level progression system)
+        const intimacyLevelInfo = {
+            1: { name: 'Minimal', desc: 'Subtle hints of allure, fully clothed elegance' },
+            2: { name: 'Subtle', desc: 'Tasteful suggestion, sophisticated style' },
+            3: { name: 'Modest', desc: 'Refined sensuality with classic coverage' },
+            4: { name: 'Moderate', desc: 'Balanced artistic expression' },
+            5: { name: 'Professional Elegance', desc: 'Commanding executive presence with structured foundation garments' },
+            6: { name: 'Sophisticated Allure', desc: 'Haute couture intimates with designer details' },
+            7: { name: 'Editorial Sensuality', desc: 'Graphic editorial pieces with bold compositions' },
+            8: { name: 'Intimate Artistry', desc: 'High-fashion artistic bodysuits with transparent elements' },
+            9: { name: 'High Concept', desc: 'Minimalist architectural pieces with maximum artistic expression' },
+            10: { name: 'Pure Artistry', desc: 'Conceptual art wardrobe using shadow, light, and artistic elements' }
+        };
+
+        // Auto nail art based on intimacy level
+        const intimacyNailArt = {
+            1: 'Natural nude with clean, short nails',
+            2: 'Soft pink with natural shine, almond shape',
+            3: 'Classic red with soft gloss, medium length',
+            4: 'Burgundy with high gloss, squared tips',
+            5: 'Deep burgundy with high-gloss executive finish, impeccably manicured squared tips',
+            6: 'Black with subtle gold leaf accent on ring finger, almond-shaped elegant length, semi-matte with metallic details',
+            7: 'Deep crimson red with high-gloss mirror finish, stiletto-shaped bold length',
+            8: 'Matte black with glossy black tips (reverse French), long coffin shape, matte/gloss contrast',
+            9: 'Nude with gold foil geometric accent on accent nail, medium stiletto refined and artistic, natural with metallic art',
+            10: 'Natural nude or soft pink, short to medium almond naturally elegant, soft shine almost natural'
+        };
+
+        // Update intimacy slider value display and description
         document.getElementById('intimacyLevel').addEventListener('input', function() {
-            document.getElementById('intimacyValue').textContent = this.value;
+            const value = parseInt(this.value);
+            document.getElementById('intimacyValue').textContent = value;
+            const info = intimacyLevelInfo[value];
+            document.getElementById('intimacyLevelName').textContent = info.name;
+            document.getElementById('intimacyDescription').textContent = info.desc;
         });
 
         // Comprehensive wardrobe prompts based on intimacy level
@@ -813,6 +891,42 @@
             'wet-look': 'with wet-look styled hair adding edgy sophistication',
         };
 
+        const nailArtPrompts = {
+            'auto': (intimacy) => intimacyNailArt[intimacy],
+            'executive-burgundy': 'Hands with impeccably manicured nails in deep burgundy with squared tips and high-gloss executive finish',
+            'black-gold': 'Hands with almond-shaped nails in black with subtle gold leaf accent on ring finger, semi-matte finish with metallic details',
+            'crimson-mirror': 'Hands with bold stiletto-shaped nails in deep crimson red with high-gloss mirror finish',
+            'black-reverse': 'Hands with long coffin-shaped nails in matte black with glossy black tips creating a reverse French effect',
+            'nude-gold': 'Hands with medium stiletto nails in nude tones with gold foil geometric accent, natural finish with metallic art',
+            'natural-pink': 'Hands with almond-shaped nails in natural nude or soft pink with soft shine, naturally elegant',
+            'neutral-clean': 'Hands with natural-length nails, perfectly groomed with soft natural shine, completely neutral',
+        };
+
+        const skinFinishPrompts = {
+            'natural': 'Her skin has a natural, healthy glow with authentic texture',
+            'matte': 'Her skin shows a soft matte finish, not overly dewy, with controlled shine',
+            'luminous': 'Her skin is luminous and radiant, with a subtle inner glow',
+            'dewy': 'Her skin has subtle dewy highlights on cheekbones and high points',
+            'powder': 'Her skin has a powder-soft, velvety texture',
+            'oil': 'Her skin shows natural skin oils for an authentic, realistic appearance',
+        };
+
+        const colorGradePrompts = {
+            'auto': (style, intimacy) => {
+                if (intimacy >= 9) return 'High contrast black and white aesthetic or heavily desaturated with only skin warmth remaining';
+                if (intimacy >= 7) return 'Cool cinematic with crushed blacks and desaturated tones, selective color on red accents';
+                if (intimacy >= 6) return 'Rich blacks with warm skin tones, subtle desaturation for timeless elegance';
+                return 'Cool professional with deep blacks and crisp highlights';
+            },
+            'cool-pro': 'Color grading: cool professional with deep blacks and crisp highlights',
+            'warm-timeless': 'Color grading: warm timeless aesthetic with rich blacks and subtle desaturation for elegant sophistication',
+            'cool-cinematic': 'Color grading: cool cinematic with crushed blacks and desaturated tones, creating dramatic mood',
+            'warm-intimate': 'Color grading: warm intimate with glowing highlights and rich shadows, emphasizing skin luminosity',
+            'high-contrast-bw': 'Color grading: high contrast black and white aesthetic or heavily desaturated with only skin warmth remaining',
+            'warm-natural': 'Color grading: warm natural tones with painterly quality, soft luminous highlights and gentle contrast',
+            'silver-gelatin': 'Color grading: cool silver gelatin print aesthetic with rich shadows and glowing highlights',
+        };
+
         // All Indian model specifications
         const modelSpecs = {
             'glamour-seductress': {
@@ -939,6 +1053,9 @@
             const photographerStyle = document.getElementById('photographerStyle').value;
             const camera = document.getElementById('camera').value;
             const hairStyle = document.getElementById('hairStyle').value;
+            const nailArt = document.getElementById('nailArt').value;
+            const skinFinish = document.getElementById('skinFinish').value;
+            const colorGrade = document.getElementById('colorGrade').value;
 
             const includeDetails = document.getElementById('includeDetails').checked;
             const includeCamera = document.getElementById('includeCamera').checked;
@@ -980,6 +1097,17 @@
             prompt += openings[Math.floor(Math.random() * openings.length)];
             prompt += ` an Indian fashion model (height ${model.height}) with a ${model.physique} (bust ${model.bust}, waist ${model.waist}, hips ${model.hips}). She has ${model.skinTone}, ${model.features}, and exudes an aura of ${model.aura}. Her hair is `;
             prompt += hairPrompts[hairStyle];
+            prompt += '. ';
+
+            // Skin finish
+            prompt += skinFinishPrompts[skinFinish];
+            prompt += '. ';
+
+            // Nail art
+            const nailPrompt = typeof nailArtPrompts[nailArt] === 'function'
+                ? nailArtPrompts[nailArt](intimacy)
+                : nailArtPrompts[nailArt];
+            prompt += nailPrompt;
             prompt += '. ';
 
             // Pose
@@ -1028,15 +1156,12 @@
                 prompt += details[Math.floor(Math.random() * details.length)] + ' ';
             }
 
-            // Color grading (optional)
-            if (includeColor) {
-                const colorGrades = [
-                    'Color grading: rich, desaturated tones with crushed blacks and creamy highlights, evoking analog film.',
-                    'Color palette: deep shadows with warm midtones and cool highlights, creating dimensional depth.',
-                    'Tonal treatment: low-key with strategic highlights, emphasizing mood and atmosphere.',
-                    'Color science: carefully balanced warm and cool tones with controlled saturation for emotional impact.',
-                ];
-                prompt += colorGrades[Math.floor(Math.random() * colorGrades.length)] + ' ';
+            // Color grading (always included if not "auto")
+            if (includeColor || colorGrade !== 'auto') {
+                const gradePrompt = typeof colorGradePrompts[colorGrade] === 'function'
+                    ? colorGradePrompts[colorGrade](photographerStyle, intimacy)
+                    : colorGradePrompts[colorGrade];
+                prompt += gradePrompt + '. ';
             }
 
             // Quality markers
