@@ -1,7 +1,8 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
-import type { PromptData, SavedPrompt, GenerationSettings, EnhancementStyle, GeneratedImageData, AnalysisSuggestion, GenerationStep, HistoryEntry, AdherenceLevel } from './types';
-import { generateImage, enhancePrompt, weavePrompt } from './services/geminiService';
+import type { PromptData, SavedPrompt, GenerationSettings, EnhancementStyle, GeneratedImageData, AnalysisSuggestion, GenerationStep, HistoryEntry, AdherenceLevel, CloudStorageConfig } from './types';
+import { generateImage, enhancePrompt, weavePrompt, generateAndSaveImage } from './services/geminiService';
+import { DEFAULT_BUCKET_NAME } from './services/cloudStorageService';
 import Header from './components/Header';
 import PromptEditor from './components/PromptEditor';
 import ImageDisplay from './components/ImageDisplay';
@@ -11,6 +12,7 @@ import AnalysisModal from './components/AnalysisModal';
 import HistoryModal from './components/HistoryModal';
 import LockFieldsDropdown from './components/LockFieldsDropdown';
 import MasterGenerationControl, { MasterGenerateOptions } from './components/MasterGenerationControl';
+import GalleryModal from './components/GalleryModal';
 
 const initialPromptJson = `{
   "shot": "Masterful portrait (4:5), capturing the interplay of light and emotion with profound depth.",
@@ -88,6 +90,9 @@ const App: React.FC = () => {
     safetySetting: 'block_few', addWatermark: true, enhancePrompt: true, modelId: 'imagen-4.0-ultra-generate-001', seed: null,
     intimacyLevel: 6,
   });
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  const [enableCloudStorage, setEnableCloudStorage] = useState(true);
+  const [bucketName, setBucketName] = useState(DEFAULT_BUCKET_NAME);
 
   const handlePromptChange = useCallback((newPromptData: PromptData) => {
     setPromptData(newPromptData);

@@ -99,6 +99,46 @@ export interface ArtisticAnalysisResult {
 
 export type GenerationStep = 'analyzing' | 'enhancing' | 'weaving' | 'generating';
 
+// ============================================================================
+// IMAGE GALLERY & CLOUD STORAGE TYPES
+// ============================================================================
+
+export interface ImageMetadata {
+  id: string; // Unique identifier (timestamp-based)
+  filename: string; // e.g., "seductress-auto-level-3-20251105-143022.png"
+  storageUrl: string; // Google Cloud Storage public URL
+  downloadUrl: string; // Signed URL for downloading
+  thumbnailUrl?: string; // Optional thumbnail URL
+  timestamp: number; // Unix timestamp
+  date: string; // ISO date string for filtering
+  promptData: PromptData; // Full prompt data used
+  settings: GenerationSettings; // Generation settings used
+  conceptName: string; // e.g., "Seductress Auto: Level 3"
+  intimacyLevel: number; // 1-10
+  aspectRatio: string; // e.g., "16:9"
+  modelId: string; // Imagen model used
+  seed: number | null; // Seed if used
+  size: number; // File size in bytes
+  width: number; // Image width in pixels
+  height: number; // Image height in pixels
+}
+
+export interface GalleryFilters {
+  conceptName?: string;
+  intimacyLevel?: number;
+  startDate?: string;
+  endDate?: string;
+  aspectRatio?: string;
+  searchQuery?: string;
+}
+
+export interface CloudStorageConfig {
+  projectId: string;
+  bucketName: string;
+  accessToken: string;
+  region?: string;
+}
+
 export type WardrobeConceptCategory = 'Architectural Lingerie' | 'Couture Intimates' | 'Sensual Art' | 'Private Gallery' | 'Concept Art';
 // FIX: Added 'Avant-Garde' to the union type to support its usage in wardrobe concepts.
 export type WardrobeFormality = 'Casual' | 'Editorial' | 'Haute Couture' | 'Avant-Garde';

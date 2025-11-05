@@ -1,5 +1,6 @@
 // UPDATED services/geminiService.ts with enhanced safety framework
-import type { PromptData, GenerationSettings, EnhancementStyle, ArtisticAnalysisResult, AdherenceLevel, RiskAnalysis } from '../types';
+import type { PromptData, GenerationSettings, EnhancementStyle, ArtisticAnalysisResult, AdherenceLevel, RiskAnalysis, ImageMetadata, CloudStorageConfig } from '../types';
+import { uploadImageToCloudStorage, createBucketIfNotExists, DEFAULT_BUCKET_NAME } from './cloudStorageService';
 
 // ============================================================================
 // ENHANCED SAFETY DECLARATION
@@ -475,4 +476,85 @@ export async function generateImage(prompt: string, settings: GenerationSettings
     }
     throw new Error("The model did not return any images. This is likely due to the prompt violating safety policies.");
   } catch (error) { console.error("Generation error:", error); throw error; }
+}
+
+// ============================================================================
+// IMAGE GENERATION WITH CLOUD STORAGE AUTO-UPLOAD
+// ============================================================================
+
+export interface GenerateAndSaveResult {
+  images: string[]; // Base64 images for immediate display
+  metadata: ImageMetadata[]; // Metadata for each uploaded image
+  errors: string[]; // Any upload errors (won't block image display)
+}
+
+/**
+ * Generate images and automatically upload them to Cloud Storage
+ * Returns both the base64 images and metadata for gallery display
+ */
+export async function generateAndSaveImage(
+  prompt: string,
+  settings: GenerationSettings,
+  promptData: PromptData,
+  conceptName: string,
+  enableCloudStorage: boolean = true,
+  bucketName: string = DEFAULT_BUCKET_NAME
+): Promise<GenerateAndSaveResult> {
+  // Generate images first
+  const images = await generateImage(prompt, settings);
+
+  const result: GenerateAndSaveResult = {
+    images,
+    metadata: [],
+    errors: [],
+  };
+
+  // If cloud storage is disabled, return just the images
+  if (!enableCloudStorage) {
+    return result;
+  }
+
+  // Prepare Cloud Storage config
+  const config: CloudStorageConfig = {
+    projectId: settings.projectId,
+    bucketName,
+    accessToken: settings.accessToken,
+    region: 'us-east4',
+  };
+
+  // Ensure bucket exists (only tries to create once)
+  try {
+    await createBucketIfNotExists(config);
+  } catch (error) {
+    console.warn('Failed to create/check bucket:', error);
+    result.errors.push(`Bucket setup failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    // Continue anyway - maybe bucket already exists
+  }
+
+  // Upload each image to Cloud Storage
+  const uploadPromises = images.map(async (base64Image, index) => {
+    try {
+      const dataUrl = `data:image/png;base64,${base64Image}`;
+      const metadata = await uploadImageToCloudStorage(
+        dataUrl,
+        promptData,
+        settings,
+        conceptName,
+        config
+      );
+      result.metadata.push(metadata);
+      console.log(`✅ Uploaded image ${index + 1}/${images.length}`);
+    } catch (error) {
+      const errorMsg = `Failed to upload image ${index + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      console.error(errorMsg);
+      result.errors.push(errorMsg);
+    }
+  });
+
+  // Wait for all uploads to complete (but don't block on failures)
+  await Promise.allSettled(uploadPromises);
+
+  console.log(`📸 Generated ${images.length} images, uploaded ${result.metadata.length} to Cloud Storage`);
+
+  return result;
 }
