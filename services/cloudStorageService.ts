@@ -30,11 +30,12 @@ export async function uploadImageToCloudStorage(
 ): Promise<ImageMetadata> {
   const { projectId, bucketName, accessToken, region = 'us-east4' } = config;
 
-  // Generate unique filename with timestamp
+  // Generate unique filename with timestamp (including milliseconds to prevent collisions)
   const timestamp = Date.now();
   const date = new Date(timestamp);
   const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
   const timeStr = date.toTimeString().split(' ')[0].replace(/:/g, ''); // HHMMSS
+  const milliseconds = String(timestamp % 1000).padStart(3, '0'); // Get last 3 digits for milliseconds
 
   // Sanitize concept name for filename
   const safeConcept = conceptName
@@ -42,7 +43,7 @@ export async function uploadImageToCloudStorage(
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
-  const filename = `${safeConcept}-${dateStr}-${timeStr}.png`;
+  const filename = `${safeConcept}-${dateStr}-${timeStr}-${milliseconds}.png`;
   const filepath = `images/${dateStr}/${filename}`;
   const metadataFilepath = `images/${dateStr}/${filename}.json`;
 
@@ -182,11 +183,17 @@ export async function listImagesFromCloudStorage(
     // Filter for metadata JSON files
     const metadataFiles = items.filter((item: any) => item.name.endsWith('.json'));
 
-    // Fetch and parse each metadata file
+    // Fetch and parse each metadata file using JSON API to avoid CORS issues
     const metadataPromises = metadataFiles.map(async (file: any) => {
       try {
-        const metadataUrl = `https://storage.googleapis.com/${bucketName}/${file.name}`;
-        const metadataResponse = await fetch(metadataUrl);
+        // Use the JSON API with Authorization header to avoid CORS errors
+        const metadataUrl = `https://storage.googleapis.com/storage/v1/b/${bucketName}/o/${encodeURIComponent(file.name)}?alt=media`;
+        const metadataResponse = await fetch(metadataUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        });
 
         if (metadataResponse.ok) {
           return await metadataResponse.json() as ImageMetadata;

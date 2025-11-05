@@ -188,10 +188,18 @@ const App: React.FC = () => {
         setWovenPrompt(`RAW PROMPT: ${finalPrompt}`);
       }
 
-      // 4. Generate Image
+      // 4. Generate Image and Save to Cloud Storage
       setGenerationStep('generating');
-      const imagesB64 = await generateImage(finalPrompt, generationSettings);
-      const newImageData = imagesB64.map(b64 => ({
+      const result = await generateAndSaveImage(
+        finalPrompt,
+        generationSettings,
+        promptForNextStep,
+        activeConcept,
+        enableCloudStorage,
+        bucketName
+      );
+
+      const newImageData = result.images.map(b64 => ({
         url: `data:image/jpeg;base64,${b64}`,
         settings: {
           modelId: generationSettings.modelId,
@@ -200,6 +208,14 @@ const App: React.FC = () => {
         }
       }));
       setGeneratedImages(newImageData);
+
+      // Log upload results
+      if (enableCloudStorage) {
+        console.log(`✅ Uploaded ${result.metadata.length} images to gallery`);
+        if (result.errors.length > 0) {
+          console.warn('Upload errors:', result.errors);
+        }
+      }
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
