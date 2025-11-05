@@ -87,7 +87,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Power Stance',
-      description: 'Standing with hands on hips or seated on desk edge, exuding confident corporate power. Direct eye contact with camera, commanding presence.',
+      description: 'Standing confidently with hands on hips, exuding corporate power. Direct eye contact with camera, commanding presence with strong posture.',
       mood: 'Dominant, Professional, Powerful'
     },
     lighting: {
@@ -167,7 +167,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Neo-Noir Drama',
-      description: 'Seated on executive chair, leaning back with arms overhead or gripping the chair arms. Back arched, creating dramatic S-curve. Intense, smoldering gaze.',
+      description: 'Seated on executive chair, leaning back with arms gripping the chair arms. Back arched, creating dramatic S-curve. Intense, smoldering gaze.',
       mood: 'Seductive, Dramatic, Editorial'
     },
     lighting: {
@@ -207,7 +207,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Desk Dominance',
-      description: 'Lying across the executive desk at night, propped on elbows, back arched dramatically. Or seated with one leg crossed over the desk edge, tracing own collarbone.',
+      description: 'Lying across the executive desk at night, propped on elbows, back arched dramatically. One hand elegantly positioned, creating sculptural lines.',
       mood: 'Sensual, Artistic, Intimate'
     },
     lighting: {
@@ -219,8 +219,8 @@ export const intimacyLevels: IntimacyLevel[] = [
       focalLength: '50mm f/1.4 Standard',
       aperture: 'f/1.6',
       distance: '1.5 meters',
-      angle: 'Slightly overhead or eye-level intimate',
-      framing: 'Close medium shot, chest to head or full reclining'
+      angle: 'Slightly overhead, looking down at the reclining pose',
+      framing: 'Full reclining composition showing the desk scene'
     },
     photographerStyle: 'Herb Ritts\' sculptural form studies - geometric composition, body as architecture, intimate minimalism',
     colorGrade: 'Warm cinematic with glowing highlights and rich shadows, emphasizing skin luminosity',
@@ -247,7 +247,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Artistic Sculpture',
-      description: 'Kneeling on the office floor or desk, back dramatically arched creating an S-curve. Arms positioned to create additional lines and negative space. Dancer-inspired flexibility poses.',
+      description: 'Kneeling on the office floor, back dramatically arched creating an S-curve. Arms positioned to create additional lines and negative space. Dancer-inspired flexibility and grace.',
       mood: 'Seductive, Sculptural, High Art'
     },
     lighting: {
@@ -287,7 +287,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Classical Fine Art',
-      description: 'Reclining on desk or floor in classical odalisque poses. Standing in profile silhouetted against window. Poses that reference classical sculpture and fine art painting.',
+      description: 'Reclining in a classical odalisque pose inspired by fine art painting masters. The body creates elegant, flowing lines with natural curves emphasized by the positioning. One arm may be extended or resting gracefully, creating a sculptural composition.',
       mood: 'Artistic, Timeless, Museum Quality'
     },
     lighting: {
@@ -327,7 +327,7 @@ export const intimacyLevels: IntimacyLevel[] = [
     },
     pose: {
       category: 'Master\'s Vision',
-      description: 'Classical art poses: reclining like Titian\'s Venus, standing like Botticelli\'s Venus, or modern interpretations of classical sculpture. The pose references art history while maintaining contemporary sensuality.',
+      description: 'A single classical art pose inspired by Renaissance masters like Titian or Botticelli - a graceful, sculptural composition where the form itself becomes the primary subject. The body creates timeless lines that reference art history while maintaining contemporary elegance.',
       mood: 'Transcendent, Artistic, Timeless'
     },
     lighting: {
@@ -365,6 +365,7 @@ export function generateSeductressConceptByIntimacy(
 
   return {
     shot: `Cinematic shot (16:9), ${intimacyConfig.camera.framing.toLowerCase()}.`,
+    // FIX: Added missing properties 'tattoos', 'piercings', and 'body_art' to satisfy the 'Subject' type.
     subject: {
       variant: baseSubjectVariant,
       pose: intimacyConfig.pose.description,
@@ -372,6 +373,9 @@ export function generateSeductressConceptByIntimacy(
       hair_style: 'long, loose waves cascading dramatically',
       skin_finish: 'Dewy & Luminous with subtle highlight on high points',
       hand_and_nail_details: `${intimacyConfig.nailArt.color}, ${intimacyConfig.nailArt.style}, ${intimacyConfig.nailArt.finish}.`,
+      tattoos: 'none',
+      piercings: 'none',
+      body_art: 'none',
       nail_art: intimacyConfig.nailArt.color,
       high_heels: level <= 3 ? 'Sharp Stiletto Heels (4-5 inch)' : 'Barefoot or minimal strappy heels'
     },

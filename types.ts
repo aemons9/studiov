@@ -1,4 +1,3 @@
-
 export interface Camera {
   focal_length: string;
   aperture: string;
@@ -63,6 +62,14 @@ export interface GenerationSettings {
   modelId: string;
   seed: number | null;
   intimacyLevel: number;
+}
+
+export interface StorageSettings {
+  enableStorage: boolean;
+  provider: StorageProvider;
+  bucketName: string;
+  driveFolderName: string;
+  driveAccessToken?: string; // Optional separate token for Google Drive
 }
 
 export interface SavedPrompt {
@@ -132,11 +139,19 @@ export interface GalleryFilters {
   searchQuery?: string;
 }
 
+export type StorageProvider = 'cloud-storage' | 'google-drive';
+
 export interface CloudStorageConfig {
   projectId: string;
   bucketName: string;
   accessToken: string;
   region?: string;
+}
+
+export interface GoogleDriveConfig {
+  accessToken: string;
+  folderId?: string; // Optional folder ID to store images in
+  folderName?: string; // Folder name to create/use (default: "StudioV Images")
 }
 
 export type WardrobeConceptCategory = 'Architectural Lingerie' | 'Couture Intimates' | 'Sensual Art' | 'Private Gallery' | 'Concept Art';

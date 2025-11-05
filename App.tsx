@@ -1,8 +1,8 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
-import type { PromptData, SavedPrompt, GenerationSettings, EnhancementStyle, GeneratedImageData, AnalysisSuggestion, GenerationStep, HistoryEntry, AdherenceLevel, CloudStorageConfig } from './types';
-import { generateImage, enhancePrompt, weavePrompt, generateAndSaveImage } from './services/geminiService';
+import type { PromptData, SavedPrompt, GenerationSettings, EnhancementStyle, GeneratedImageData, AnalysisSuggestion, GenerationStep, HistoryEntry, AdherenceLevel, CloudStorageConfig, StorageProvider, StorageSettings } from './types';
+import { generateImage, enhancePrompt, weavePrompt, generateAndSaveImage, type StorageConfig } from './services/geminiService';
 import { DEFAULT_BUCKET_NAME } from './services/cloudStorageService';
+import { DEFAULT_DRIVE_FOLDER } from './services/googleDriveService';
 import Header from './components/Header';
 import PromptEditor from './components/PromptEditor';
 import ImageDisplay from './components/ImageDisplay';
@@ -13,6 +13,7 @@ import HistoryModal from './components/HistoryModal';
 import LockFieldsDropdown from './components/LockFieldsDropdown';
 import MasterGenerationControl, { MasterGenerateOptions } from './components/MasterGenerationControl';
 import GalleryModal from './components/GalleryModal';
+import StorageConfigModal from './components/StorageConfigModal';
 
 const initialPromptJson = `{
   "shot": "Masterful portrait (4:5), capturing the interplay of light and emotion with profound depth.",
@@ -91,8 +92,15 @@ const App: React.FC = () => {
     intimacyLevel: 6,
   });
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
-  const [enableCloudStorage, setEnableCloudStorage] = useState(true);
-  const [bucketName, setBucketName] = useState(DEFAULT_BUCKET_NAME);
+  const [isStorageModalOpen, setIsStorageModalOpen] = useState(false);
+  const [storageSettings, setStorageSettings] = useState<StorageSettings>({
+    enableStorage: true,
+    provider: 'google-drive',
+    bucketName: DEFAULT_BUCKET_NAME,
+    driveFolderName: DEFAULT_DRIVE_FOLDER,
+    driveAccessToken: '',
+  });
+
 
   const handlePromptChange = useCallback((newPromptData: PromptData) => {
     setPromptData(newPromptData);
@@ -148,6 +156,27 @@ const App: React.FC = () => {
   };
 
   useEffect(() => { setPromptHistory(loadHistoryFromStorage()); }, []);
+  // Load tokens from localStorage on startup
+  useEffect(() => {
+    const mainToken = localStorage.getItem('mainToken');
+    const driveToken = localStorage.getItem('driveToken');
+    
+    if (mainToken) {
+      setGenerationSettings(prev => ({ ...prev, accessToken: mainToken }));
+      console.log('✅ Work token loaded from localStorage');
+    } else {
+      console.log('⚠️ No work token found in localStorage');
+      console.log('Paste in console: localStorage.setItem("mainToken", "YOUR_WORK_TOKEN");');
+    }
+
+    if (driveToken) {
+      setStorageSettings(prev => ({ ...prev, driveAccessToken: driveToken }));
+      console.log('✅ Drive token loaded from localStorage');
+    } else {
+      console.log('⚠️ No drive token found in localStorage');
+      console.log('Paste in console: localStorage.setItem("driveToken", "YOUR_DRIVE_TOKEN");');
+    }
+  }, []);
 
   const handleMasterGenerate = async (options: MasterGenerateOptions) => {
     if (!validateCredentials()) return;
@@ -188,15 +217,41 @@ const App: React.FC = () => {
         setWovenPrompt(`RAW PROMPT: ${finalPrompt}`);
       }
 
-      // 4. Generate Image and Save to Cloud Storage
+      // 4. Generate Image and Save to Storage
       setGenerationStep('generating');
+
+      // Build storage config based on user selection
+      let storageConfig: StorageConfig | null = null;
+      if (storageSettings.enableStorage) {
+        if (storageSettings.provider === 'google-drive') {
+          // Use separate Drive token if provided, otherwise use main token
+          const driveToken = storageSettings.driveAccessToken || generationSettings.accessToken;
+          storageConfig = {
+            provider: 'google-drive',
+            googleDrive: {
+              accessToken: driveToken,
+              folderName: storageSettings.driveFolderName
+            }
+          };
+        } else {
+          storageConfig = {
+            provider: 'cloud-storage',
+            cloudStorage: {
+              projectId: generationSettings.projectId,
+              bucketName: storageSettings.bucketName,
+              accessToken: generationSettings.accessToken,
+              region: 'us-east4'
+            }
+          };
+        }
+      }
+
       const result = await generateAndSaveImage(
         finalPrompt,
         generationSettings,
         promptForNextStep,
         activeConcept,
-        enableCloudStorage,
-        bucketName
+        storageConfig
       );
 
       const newImageData = result.images.map(b64 => ({
@@ -210,8 +265,9 @@ const App: React.FC = () => {
       setGeneratedImages(newImageData);
 
       // Log upload results
-      if (enableCloudStorage) {
-        console.log(`✅ Uploaded ${result.metadata.length} images to gallery`);
+      if (storageSettings.enableStorage) {
+        const providerName = storageSettings.provider === 'google-drive' ? 'Google Drive' : 'Cloud Storage';
+        console.log(`✅ Uploaded ${result.metadata.length} images to ${providerName}`);
         if (result.errors.length > 0) {
           console.warn('Upload errors:', result.errors);
         }
@@ -316,7 +372,11 @@ const App: React.FC = () => {
       
       <div className="sticky bottom-0 left-0 right-0 p-4 bg-gray-900/80 backdrop-blur-sm border-t border-gray-700 flex justify-center items-center gap-2 sm:gap-4 flex-wrap">
         <button onClick={handleOpenLoadModal} disabled={isLoading} className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 text-white font-semibold text-base rounded-lg shadow-md hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-300">
-          <svg xmlns="http://www.w.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>Load
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>Load
+        </button>
+        <button onClick={() => setIsStorageModalOpen(true)} disabled={isLoading} className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 text-white font-semibold text-base rounded-lg shadow-md hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z" /></svg>
+          Storage
         </button>
         <button onClick={() => setIsGalleryModalOpen(true)} disabled={isLoading || !generationSettings.projectId} className="flex items-center justify-center gap-2 px-4 py-2 bg-indigo-700 text-white font-semibold text-base rounded-lg shadow-md hover:bg-indigo-600 disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-300">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Gallery
@@ -345,14 +405,27 @@ const App: React.FC = () => {
       <LoadPromptModal isOpen={isLoadModalOpen} onClose={() => setIsLoadModalOpen(false)} prompts={savedPrompts} onLoad={handleLoadSelectedPrompt} onDelete={handleDeletePrompt} />
       <HistoryModal isOpen={isHistoryModalOpen} onClose={() => setIsHistoryModalOpen(false)} history={promptHistory} onLoad={handleLoadFromHistory} onClear={handleClearHistory} />
       <AnalysisModal isOpen={!!analysisSuggestions && analysisSuggestions.length > 0} onClose={() => setAnalysisSuggestions(null)} suggestions={analysisSuggestions || []} onApply={handleApplySuggestion} />
+      <StorageConfigModal
+        isOpen={isStorageModalOpen}
+        onClose={() => setIsStorageModalOpen(false)}
+        settings={storageSettings}
+        onSettingsChange={setStorageSettings}
+      />
       <GalleryModal
         isOpen={isGalleryModalOpen}
         onClose={() => setIsGalleryModalOpen(false)}
         config={{
-          projectId: generationSettings.projectId || 'creatives-476816',
-          bucketName: bucketName,
-          accessToken: generationSettings.accessToken,
-          region: 'us-east4'
+          provider: storageSettings.provider,
+          cloudStorage: storageSettings.provider === 'cloud-storage' ? {
+            projectId: generationSettings.projectId || 'creatives-476816',
+            bucketName: storageSettings.bucketName,
+            accessToken: generationSettings.accessToken,
+            region: 'us-east4'
+          } : undefined,
+          googleDrive: storageSettings.provider === 'google-drive' ? {
+            accessToken: storageSettings.driveAccessToken || generationSettings.accessToken,
+            folderName: storageSettings.driveFolderName
+          } : undefined
         }}
         onSelectImage={(metadata) => {
           setPromptData(metadata.promptData);
