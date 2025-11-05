@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seductress Prompt Generator | StudioV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #a0a0a0;
+            letter-spacing: 0.05em;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .control-group {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .control-group:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #d4af37;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        select, input[type="range"] {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:hover, select:focus {
+            border-color: #d4af37;
+            background: rgba(0, 0, 0, 0.6);
+            outline: none;
+        }
+
+        select option {
+            background: #1a1a2e;
+            padding: 0.5rem;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #d4af37;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #d4af37;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 0, 0, 0.8);
+        }
+
+        .slider-value {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 1.2rem;
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        .generate-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #d4af37 0%, #aa8b2a 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .output-section {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .output-title {
+            font-size: 1.3rem;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .copy-btn {
+            padding: 0.6rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        #promptOutput {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1.5rem;
+            border-radius: 4px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            min-height: 200px;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #f0f0f0;
+            font-family: 'Georgia', serif;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        #promptOutput.empty {
+            color: #666;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copy-notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: #d4af37;
+            color: #1a1a2e;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .advanced-options {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="copy-notification" id="copyNotification">Prompt copied to clipboard!</div>
+
+    <div class="container">
+        <header>
+            <h1>Seductress Prompt Generator</h1>
+            <p class="subtitle">Art Director's Studio • Linguistic Weaving Engine</p>
+        </header>
+
+        <div class="controls-grid">
+            <!-- Intimacy Level -->
+            <div class="control-group">
+                <label for="intimacyLevel">Intimacy Level</label>
+                <input type="range" id="intimacyLevel" min="1" max="10" value="5">
+                <div class="slider-value"><span id="intimacyValue">5</span> / 10</div>
+            </div>
+
+            <!-- Wardrobe -->
+            <div class="control-group">
+                <label for="wardrobe">Wardrobe Concept</label>
+                <select id="wardrobe">
+                    <optgroup label="Architectural Lingerie">
+                        <option value="arch-bodice">Structured Bodice Element</option>
+                        <option value="arch-highwaist">High-Waisted Foundation Piece</option>
+                        <option value="arch-couture">Couture Upper Piece</option>
+                        <option value="arch-minimalist">Minimalist Foundation Piece</option>
+                        <option value="arch-geometric">Geometric Strap Bodysuit</option>
+                        <option value="arch-longline">Sculptural Longline Bodice</option>
+                    </optgroup>
+                    <optgroup label="Couture Intimates">
+                        <option value="couture-silk">Silk Kimono Robe</option>
+                        <option value="couture-lace">French Lace Ensemble</option>
+                        <option value="couture-satin">Satin Slip Dress</option>
+                        <option value="couture-corset">Vintage Corset</option>
+                    </optgroup>
+                    <optgroup label="Sensual Art">
+                        <option value="art-sheer">Sheer Fabric Drape</option>
+                        <option value="art-silk">Silk Sheet Wrap</option>
+                        <option value="art-minimal">Minimal Coverage Art</option>
+                        <option value="art-shadow">Shadow Play Concept</option>
+                    </optgroup>
+                    <optgroup label="Editorial Fashion">
+                        <option value="fashion-blazer">Oversized Blazer Only</option>
+                        <option value="fashion-shirt">Men's White Shirt</option>
+                        <option value="fashion-leather">Leather Jacket</option>
+                        <option value="fashion-fur">Vintage Fur Coat</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- Environment -->
+            <div class="control-group">
+                <label for="environment">Environment</label>
+                <select id="environment">
+                    <optgroup label="Professional">
+                        <option value="exec-office">Modern Executive Office (Night)</option>
+                        <option value="corner-office">Corner Office (Day)</option>
+                        <option value="boardroom">Luxury Boardroom</option>
+                        <option value="law-library">Law Library</option>
+                        <option value="penthouse">Penthouse Apartment</option>
+                        <option value="private-jet">Private Jet Interior</option>
+                    </optgroup>
+                    <optgroup label="Artistic">
+                        <option value="gallery">Minimalist Art Gallery</option>
+                        <option value="loft">Gritty Urban Loft</option>
+                        <option value="studio">Dance Studio</option>
+                        <option value="palace">Baroque Palace Ballroom</option>
+                        <option value="museum">Museum (Classical)</option>
+                        <option value="conservatory">Modern Conservatory</option>
+                    </optgroup>
+                    <optgroup label="Intimate">
+                        <option value="hotel-night">Luxury Hotel (Night Cityscape)</option>
+                        <option value="bedroom">Intimate Bedroom (Morning)</option>
+                        <option value="library">Private Library (Fireplace)</option>
+                        <option value="bathroom">Luxury Bathroom</option>
+                        <option value="boudoir">Velvet-Draped Boudoir</option>
+                        <option value="villa">Tuscan Villa Patio</option>
+                    </optgroup>
+                    <optgroup label="Conceptual">
+                        <option value="white-void">Infinite White Void</option>
+                        <option value="black-void">Infinite Black Void</option>
+                        <option value="mirrors">Room of Mirrors</option>
+                        <option value="geometric">Abstract Geometric Set</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- Lighting -->
+            <div class="control-group">
+                <label for="lighting">Lighting Style</label>
+                <select id="lighting">
+                    <option value="venetian">Venetian Blinds (Striped Shadows)</option>
+                    <option value="bedside">Single Bedside Lamp (Film Noir)</option>
+                    <option value="firelight">Firelight Glow (Warm & Flickering)</option>
+                    <option value="neon">Neon Sign Buzz (Urban Noir)</option>
+                    <option value="window">Soft Window Light (Natural)</option>
+                    <option value="dramatic">Dramatic Chiaroscuro</option>
+                    <option value="rim">Rim Lighting (Silhouette)</option>
+                    <option value="golden">Golden Hour Glow</option>
+                    <option value="moonlight">Moonlight Through Sheer Curtains</option>
+                </select>
+            </div>
+
+            <!-- Pose -->
+            <div class="control-group">
+                <label for="pose">Pose & Composition</label>
+                <select id="pose">
+                    <option value="languid">Languid Recline on Chaise</option>
+                    <option value="power-stare">Power Stare (Throne Pose)</option>
+                    <option value="shoulder">Over-the-Shoulder Glance</option>
+                    <option value="window-arch">Window Arch (Back Arch)</option>
+                    <option value="tracing">Tracing the Form (Self-Touch)</option>
+                    <option value="desk">Draped on Executive Desk</option>
+                    <option value="bed-sheet">Bed Sheet Drape</option>
+                    <option value="stocking">Pulling on Stocking</option>
+                    <option value="mirror">Mirror Reflection (Dual Portrait)</option>
+                    <option value="kneeling">Kneeling Back-Arch</option>
+                    <option value="fireplace">Lounging by Fireplace</option>
+                    <option value="balcony">Balcony Silhouette</option>
+                    <option value="dominant">Dominant Stand (Hands on Hips)</option>
+                    <option value="bathtub">Bathtub Recline</option>
+                    <option value="curtain">Unveiling Glance (Behind Curtain)</option>
+                    <option value="lipstick">Lipstick Application</option>
+                </select>
+            </div>
+
+            <!-- Style -->
+            <div class="control-group">
+                <label for="style">Artistic Style</label>
+                <select id="style">
+                    <option value="neo-noir">Neo-Noir Film</option>
+                    <option value="private">Private & Personal</option>
+                    <option value="baroque">Baroque Glamour</option>
+                    <option value="newton">Helmut Newton Glam</option>
+                    <option value="fashion">High Fashion Editorial</option>
+                    <option value="fine-art">Fine Art Photography</option>
+                    <option value="cinematic">Cinematic Portrait</option>
+                </select>
+            </div>
+
+            <!-- Camera -->
+            <div class="control-group">
+                <label for="camera">Camera System</label>
+                <select id="camera">
+                    <option value="portrait">Portrait (85mm f/1.4)</option>
+                    <option value="intimate">Intimate Close-Up (50mm f/1.2)</option>
+                    <option value="editorial">Editorial (35mm f/1.8)</option>
+                    <option value="fashion">Fashion (70-200mm f/2.8)</option>
+                    <option value="wide">Environmental Wide (24mm f/1.4)</option>
+                    <option value="medium-format">Medium Format (Hasselblad)</option>
+                </select>
+            </div>
+
+            <!-- Subject Details -->
+            <div class="control-group">
+                <label for="hairStyle">Hair Style</label>
+                <select id="hairStyle">
+                    <option value="long-flowing">Long & Flowing</option>
+                    <option value="pinned-up">Elegantly Pinned Up</option>
+                    <option value="messy-bun">Messy Bun</option>
+                    <option value="side-swept">Side-Swept Waves</option>
+                    <option value="straight">Sleek Straight</option>
+                    <option value="curls">Soft Curls</option>
+                    <option value="wet-look">Wet Look</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="advanced-options">
+            <h2 class="section-title">Enhancement Options</h2>
+            <div class="controls-grid">
+                <div class="control-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeDetails" checked>
+                        <label for="includeDetails">Include Micro-Details (skin, fabric physics)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeCamera" checked>
+                        <label for="includeCamera">Include Technical Camera Details</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="includeColor">
+                        <label for="includeColor">Add Color Grading Suggestions</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="poeticLanguage" checked>
+                        <label for="poeticLanguage">Use Poetic/Artistic Language</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="generate-section">
+            <button onclick="generatePrompt()">Generate Prompt</button>
+        </div>
+
+        <div class="output-section">
+            <div class="output-header">
+                <h2 class="output-title">Generated Prompt</h2>
+                <button class="copy-btn" onclick="copyPrompt()">Copy to Clipboard</button>
+            </div>
+            <div id="promptOutput" class="empty">Click "Generate Prompt" to create your artistic vision...</div>
+        </div>
+    </div>
+
+    <script>
+        // Update intimacy slider value display
+        document.getElementById('intimacyLevel').addEventListener('input', function() {
+            document.getElementById('intimacyValue').textContent = this.value;
+        });
+
+        // Wardrobe prompts based on intimacy level
+        const wardrobePrompts = {
+            'arch-bodice': (intimacy) => intimacy >= 7
+                ? 'A structured, architectural bodice element with daring cutouts, crafted from a matte, form-fitting textile that emphasizes clean lines and a powerful silhouette'
+                : 'A structured, architectural bodice element, crafted from a matte, form-fitting textile that emphasizes clean lines and a powerful silhouette',
+            'arch-highwaist': (intimacy) => 'A high-waisted foundation piece with seamless construction, designed to create a flawless and elongated silhouette',
+            'arch-couture': (intimacy) => 'A couture upper piece with delicate but strong graphic lines, featuring a unique interplay of opaque panels and minimalist straps',
+            'arch-minimalist': (intimacy) => 'A minimalist foundation piece designed with a single, continuous line of fabric, creating a graphic and almost invisible effect',
+            'arch-geometric': (intimacy) => 'A full-body architectural foundation garment defined by interconnected geometric straps, creating a powerful, graphic statement that plays with negative space',
+            'arch-longline': (intimacy) => 'A sculptural longline bodice element, featuring boning-inspired seam details and a smooth, matte finish that sculpts the torso',
+            'couture-silk': (intimacy) => intimacy >= 6
+                ? 'A flowing silk kimono robe in deep jewel tones, partially open and draping gracefully off one shoulder'
+                : 'An elegant silk kimono robe in deep jewel tones, loosely tied at the waist',
+            'couture-lace': (intimacy) => 'An intricate French lace ensemble featuring delicate floral patterns and scalloped edges, embodying timeless elegance',
+            'couture-satin': (intimacy) => 'A bias-cut satin slip dress in champagne or midnight blue, clinging to curves with liquid-like fluidity',
+            'couture-corset': (intimacy) => 'A vintage-inspired corset with intricate boning and ribbon lacing, creating a dramatic hourglass silhouette',
+            'art-sheer': (intimacy) => 'Delicate sheer fabric draped artfully across the form, creating an interplay of concealment and revelation through translucent layers',
+            'art-silk': (intimacy) => 'White silk sheets wrapped around the body in sculptural folds, reminiscent of classical marble drapery',
+            'art-minimal': (intimacy) => 'Strategic minimal coverage emphasizing the sculptural qualities of the human form as living art',
+            'art-shadow': (intimacy) => 'Form suggested through masterful shadow play and fabric draping, details obscured for artistic effect',
+            'fashion-blazer': (intimacy) => intimacy >= 7
+                ? 'An oversized designer blazer worn alone, hanging open to reveal the form beneath, sleeves pushed up elegantly'
+                : 'An oversized designer blazer, strategically buttoned, creating sophisticated tension between corporate and intimate',
+            'fashion-shirt': (intimacy) => intimacy >= 6
+                ? 'A crisp white men\'s dress shirt, unbuttoned and falling off one shoulder, the collar popped'
+                : 'A crisp white men\'s dress shirt, loosely worn with several buttons undone',
+            'fashion-leather': (intimacy) => 'A vintage leather motorcycle jacket worn against bare skin, creating striking textural contrast',
+            'fashion-fur': (intimacy) => 'A luxurious vintage fur coat draped across shoulders, evoking old Hollywood glamour',
+        };
+
+        const environmentPrompts = {
+            'exec-office': 'A sleek, modern executive office at night, with floor-to-ceiling glass walls, designer furniture including an Eames chair, and the ambient glow from the city skyline and computer monitors creating pools of cool blue light',
+            'corner-office': 'A sun-drenched corner office with panoramic floor-to-ceiling windows overlooking a bustling city during golden hour. Minimalist, high-end decor with clean lines',
+            'boardroom': 'A state-of-the-art boardroom with a long, polished mahogany table, supple leather chairs, and advanced technology subtly integrated into the sophisticated space',
+            'law-library': 'A classic, grand law library with floor-to-ceiling mahogany bookshelves, green banker\'s lamps casting warm pools of light, and a quiet, studious atmosphere thick with knowledge',
+            'penthouse': 'A minimalist penthouse apartment with stark white walls, polished concrete floors, and designer furniture, offering a stunning view of the city lights below through massive windows',
+            'private-jet': 'The luxurious interior of a private jet, with cream leather seats, polished wood trim, soft ambient lighting, and the subtle hum of altitude',
+            'gallery': 'A sterile, white-walled art gallery with impossibly high ceilings and polished concrete floors, featuring a single, large abstract painting that echoes the composition',
+            'loft': 'A raw, gritty urban loft with exposed brick walls, visible industrial pipes, large steel-framed windows, and a raw, edgy, creative atmosphere',
+            'studio': 'An empty dance studio with sprung wooden floors, a wall of mirrors reflecting infinite possibilities, and soft, diffused light from large north-facing windows',
+            'palace': 'An opulent, grand ballroom in a Baroque palace, with gilded moldings, crystal chandeliers casting prismatic light, and polished marble floors reflecting the grandeur',
+            'museum': 'A quiet hall in a museum of classical antiquity, surrounded by ancient Greek and Roman marble statues, creating a timeless dialogue between past and present',
+            'conservatory': 'A large, modern conservatory with a steel and glass structure, filled with exotic, oversized tropical plants and orchids, creating a humid, verdant sanctuary',
+            'hotel-night': 'A luxurious, modern hotel room with floor-to-ceiling windows revealing a dazzling cityscape at night. The room features high-end furniture and an unmade bed with silk sheets',
+            'bedroom': 'An intimate bedroom setting with soft, unmade linen sheets on a large bed, gentle morning light filtering through sheer curtains, creating a private, vulnerable moment',
+            'library': 'A cozy, private library with dark wood paneling, a crackling fireplace casting dancing light and shadow, and comfortable leather armchairs inviting contemplation',
+            'bathroom': 'A spacious, luxurious bathroom with marble surfaces, a large freestanding soaking tub, and soft, ambient lighting creating an atmosphere of indulgent solitude',
+            'boudoir': 'A classic boudoir setting with heavy velvet curtains in deep burgundy, antique furniture with ornate details, and a soft, sensual, deeply private atmosphere',
+            'villa': 'The rustic stone patio of a private Tuscan villa, bathed in the warm, golden light of late afternoon, overlooking rolling hills of vineyards and olive groves',
+            'white-void': 'An infinite, seamless white cyclorama void, where the subject becomes the only element of reality, creating isolation and absolute focus on pure form',
+            'black-void': 'An infinite, light-absorbing black void, where form is carved out of primordial darkness by carefully placed lighting, existing in negative space',
+            'mirrors': 'A room where the walls, floor, and ceiling are covered in mirrors, creating an endless, fragmented kaleidoscope of reflections and perspectives',
+            'geometric': 'A physical set made of large, monochromatic geometric shapes—cubes, spheres, pyramids—that the subject can interact with, creating a surreal, architectural landscape',
+        };
+
+        const lightingPrompts = {
+            'venetian': 'Harsh directional light filtering through Venetian blinds, casting a dramatic pattern of sharp, parallel light and shadow stripes across the form and environment, evoking classic film noir',
+            'bedside': 'Moody, warm, and cinematic lighting from a single bedside lamp with a cloth shade, creating deep, soft-edged shadows and pools of amber light with a glamorous, intimate feel',
+            'firelight': 'The warm, flickering, low-angle light from a crackling fireplace, casting dynamic, dancing shadows and highlighting the form with a primal, orange-gold glow',
+            'neon': 'The cool, moody, and colorful glow from a neon sign outside the window, bathing the space in saturated magenta or cyan light, creating a lonely, urban-noir atmosphere',
+            'window': 'Soft, diffused natural light from a large window, creating gentle gradations of light and shadow, with a luminous, ethereal quality',
+            'dramatic': 'High-contrast chiaroscuro lighting with dramatic interplay between bright highlights and deep shadows, inspired by Baroque painting and creating sculptural definition',
+            'rim': 'Strong rim lighting from behind, creating a glowing outline that separates the subject from the background, emphasizing silhouette and form',
+            'golden': 'Warm, golden hour sunlight streaming through windows at a low angle, creating long, dramatic shadows and bathing everything in honeyed light',
+            'moonlight': 'Cool, silvery moonlight filtering through sheer curtains, creating a mysterious, dreamlike atmosphere with soft, diffused shadows',
+        };
+
+        const posePrompts = {
+            'languid': 'Reclining languidly on a velvet chaise lounge, one hand draped delicately over her forehead in a gesture of romantic reverie, exuding an air of sophisticated ennui',
+            'power-stare': 'Seated regally on a grand chair like a throne, leaning forward with elbows resting on knees, gazing directly and intensely into the camera with unwavering confidence and quiet power',
+            'shoulder': 'Standing with her back mostly to the camera, glancing alluringly over a bare shoulder with a subtle, knowing smile that invites and challenges in equal measure',
+            'window-arch': 'Arching her back gracefully against a large window, creating a sensual curve against the city lights or natural light beyond',
+            'tracing': 'One hand gently tracing the curve of her own hip or the line of her collarbone, a gesture of intimate self-awareness and embodied confidence',
+            'desk': 'Draped languorously across a large, polished executive desk, surrounded by the soft glow of a desk lamp, embodying the intersection of corporate power and sensuality',
+            'bed-sheet': 'Sitting up in bed with white silk sheets draped artfully around her form, concealing and revealing in a delicate dance of fabric and skin',
+            'stocking': 'Seated on the edge of a bed, captured in the intimate act of slowly pulling on a sheer stocking, a classic and timelessly evocative gesture',
+            'mirror': 'Looking at her own reflection in an ornate, vintage mirror, with the camera capturing both her and her reflection, creating a dual portrait of introspection and allure',
+            'kneeling': 'Kneeling on a plush surface, arching her back to create a dramatic, sculptural S-curve with her spine, head tilted back in graceful abandon',
+            'fireplace': 'Lying on her side on a luxurious rug in front of a crackling fireplace, propped up on one elbow, gazing contemplatively into the flames',
+            'balcony': 'Standing on a high-rise balcony at twilight, her form creating a striking silhouette against the fading city skyline, embodying mystery and urban romance',
+            'dominant': 'Standing with feet shoulder-width apart, hands confidently placed on hips, looking down towards the camera with a commanding and dominant expression',
+            'bathtub': 'Reclining in a vintage claw-foot bathtub, surrounded by rose petals floating on milky water, eyes closed in a state of blissful, sensual serenity',
+            'curtain': 'Partially obscured behind a sheer silk curtain, peering through with one eye visible, creating a sense of voyeuristic intimacy and mystery',
+            'lipstick': 'Captured in intimate close-up as she meticulously applies bold red lipstick while looking in a compact mirror, a ritualistic moment of transformation',
+        };
+
+        const stylePrompts = {
+            'neo-noir': 'Styled as a modern neo-noir film still, blending dark, moody atmosphere with a focus on sensual, intimate, and mysterious narratives, with hints of danger and desire',
+            'private': 'An intimate, candid, and deeply personal style that feels like a private moment has been captured, with natural lighting and a relaxed, authentic atmosphere',
+            'baroque': 'Opulent Baroque glamour characterized by rich textures—velvet, silk, brocade—deep jewel colors, and complex, moody chiaroscuro lighting reminiscent of old master paintings',
+            'newton': 'Bold, cinematic glamour inspired by Helmut Newton, featuring powerful female subjects in luxurious, stark settings with high contrast and a hint of decadence',
+            'fashion': 'High fashion editorial style with impeccable styling, dramatic composition, and sophisticated color palette, ready for the pages of Vogue or Harper\'s Bazaar',
+            'fine-art': 'Fine art photography approach emphasizing composition, form, and artistic vision over documentation, treating the subject as living sculpture',
+            'cinematic': 'Cinematic portrait style with film-like color grading, dramatic lighting, and compositional techniques borrowed from auteur cinema',
+        };
+
+        const cameraPrompts = {
+            'portrait': 'Shot on a portrait lens (85mm f/1.4) with shallow depth of field, creating beautiful bokeh and isolating the subject with creamy background blur',
+            'intimate': 'Captured with an intimate close-up lens (50mm f/1.2) at minimum focus distance, emphasizing facial features and emotional nuance with extremely shallow depth of field',
+            'editorial': 'Photographed with an editorial lens (35mm f/1.8) that includes environmental context while maintaining subject emphasis',
+            'fashion': 'Shot on a fashion telephoto lens (70-200mm f/2.8) from a distance, creating flattering compression and isolating the subject from the background',
+            'wide': 'Captured on a wide-angle lens (24mm f/1.4) that emphasizes the environment and creates dynamic spatial relationships',
+            'medium-format': 'Photographed on medium format film (Hasselblad 500C/M with 80mm lens), creating exceptional detail, tonal gradation, and that distinctive medium format look',
+        };
+
+        const hairPrompts = {
+            'long-flowing': 'with long, flowing hair cascading naturally',
+            'pinned-up': 'with hair elegantly pinned up in a sophisticated updo',
+            'messy-bun': 'with hair styled in an artfully messy bun',
+            'side-swept': 'with hair swept to one side in soft, romantic waves',
+            'straight': 'with sleek, straight hair that catches the light',
+            'curls': 'with voluminous soft curls framing the face',
+            'wet-look': 'with wet-look styled hair adding edgy sophistication',
+        };
+
+        function weavePrompt() {
+            const intimacy = parseInt(document.getElementById('intimacyLevel').value);
+            const wardrobe = document.getElementById('wardrobe').value;
+            const environment = document.getElementById('environment').value;
+            const lighting = document.getElementById('lighting').value;
+            const pose = document.getElementById('pose').value;
+            const style = document.getElementById('style').value;
+            const camera = document.getElementById('camera').value;
+            const hairStyle = document.getElementById('hairStyle').value;
+
+            const includeDetails = document.getElementById('includeDetails').checked;
+            const includeCamera = document.getElementById('includeCamera').checked;
+            const includeColor = document.getElementById('includeColor').checked;
+            const poeticLanguage = document.getElementById('poeticLanguage').checked;
+
+            // Linguistic weaving: Create varied sentence structures
+            const openings = [
+                'A striking photographic composition featuring',
+                'An evocative portrait of',
+                'A cinematic study presenting',
+                'An artistic vision capturing',
+                'A sophisticated portrait showcasing',
+            ];
+
+            const transitions = [
+                '. The scene unfolds within',
+                '. The composition is set in',
+                '. This intimate moment takes place in',
+                '. The environment is',
+                '. She inhabits',
+            ];
+
+            const lightingTransitions = [
+                '. The lighting design features',
+                '. Illumination is provided by',
+                '. Light sculpts the scene through',
+                '. The atmosphere is defined by',
+                '. Luminosity is achieved via',
+            ];
+
+            // Build the prompt with artistic variation
+            let prompt = '';
+
+            // Opening
+            prompt += openings[Math.floor(Math.random() * openings.length)];
+            prompt += ' a stunning woman ';
+            prompt += hairPrompts[hairStyle];
+            prompt += ', ';
+
+            // Pose
+            prompt += posePrompts[pose];
+            prompt += '. ';
+
+            // Wardrobe
+            if (poeticLanguage) {
+                prompt += 'She is adorned in ';
+            } else {
+                prompt += 'She wears ';
+            }
+            prompt += wardrobePrompts[wardrobe](intimacy);
+            prompt += transitions[Math.floor(Math.random() * transitions.length)] + ' ';
+
+            // Environment
+            prompt += environmentPrompts[environment];
+            prompt += lightingTransitions[Math.floor(Math.random() * lightingTransitions.length)] + ' ';
+
+            // Lighting
+            prompt += lightingPrompts[lighting];
+            prompt += '. ';
+
+            // Style
+            prompt += stylePrompts[style];
+            prompt += '. ';
+
+            // Camera (optional)
+            if (includeCamera) {
+                prompt += cameraPrompts[camera];
+                prompt += '. ';
+            }
+
+            // Micro-details (optional)
+            if (includeDetails) {
+                const details = [
+                    'Exceptional attention to skin micro-details: subtle texture, natural luminosity, and delicate tonal variations.',
+                    'Fabric physics rendered with precision: natural draping, weight, and interaction with form.',
+                    'Material properties are exquisitely rendered: the sheen of silk, the texture of lace, the weight of fabric.',
+                ];
+
+                if (intimacy >= 6) {
+                    details.push('The composition is a masterclass in suggestion, using light and shadow to sculpt form while maintaining artistic sophistication.');
+                }
+
+                prompt += details[Math.floor(Math.random() * details.length)] + ' ';
+            }
+
+            // Color grading (optional)
+            if (includeColor) {
+                const colorGrades = [
+                    'Color grading: rich, desaturated tones with crushed blacks and creamy highlights, evoking analog film.',
+                    'Color palette: deep shadows with warm midtones and cool highlights, creating dimensional depth.',
+                    'Tonal treatment: low-key with strategic highlights, emphasizing mood and atmosphere.',
+                    'Color science: carefully balanced warm and cool tones with controlled saturation for emotional impact.',
+                ];
+                prompt += colorGrades[Math.floor(Math.random() * colorGrades.length)] + ' ';
+            }
+
+            // Quality markers
+            const qualityMarkers = [
+                'Professional studio quality. Museum-worthy composition. 8K resolution. Award-winning photography.',
+                'Exceptional technical execution. Gallery-quality artistry. Ultra-high resolution. Masterful technique.',
+                'Professional exhibition standard. Impeccable craftsmanship. Maximum detail. Artistic excellence.',
+            ];
+
+            prompt += qualityMarkers[Math.floor(Math.random() * qualityMarkers.length)];
+
+            return prompt;
+        }
+
+        function generatePrompt() {
+            const prompt = weavePrompt();
+            const output = document.getElementById('promptOutput');
+            output.textContent = prompt;
+            output.classList.remove('empty');
+
+            // Smooth scroll to output
+            output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function copyPrompt() {
+            const output = document.getElementById('promptOutput');
+            const text = output.textContent;
+
+            if (text && !output.classList.contains('empty')) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const notification = document.getElementById('copyNotification');
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 2000);
+                });
+            }
+        }
+
+        // Enable Enter key to generate
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                generatePrompt();
+            }
+        });
+    </script>
+</body>
+</html>
