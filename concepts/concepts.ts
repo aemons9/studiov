@@ -214,5 +214,218 @@ export const artisticConcepts: ArtisticConcept[] = [
         "figure_and_form": "Minimalist Nude (Shadow Play), where light and shadow sculpt the body, revealing and concealing form.",
         "skin_micro_details": defaultSkinMicroDetails, "fabric_physics": defaultFabricPhysics, "material_properties": defaultMaterialProperties
     }
+  },
+
+  // ============================================================================
+  // SEDUCTRESS NOIR COLLECTION - Executive Office Series
+  // Dedicated concepts for Indian Glamour Seductress in Executive Office
+  // ============================================================================
+
+  {
+    name: 'Seductress Noir: Desk Command',
+    data: {
+      "shot": "Cinematic medium shot (16:9), intimate yet powerful.",
+      "subject": {
+        "variant": indianModelVariants.find(v => v.name.includes("Glamour Seductress"))!.value,
+        "pose": "Seated on Desk Edge: Perched confidently on the edge of the executive desk, legs elegantly crossed, one hand resting on thigh, the other touching her hair. Direct, commanding gaze into camera.",
+        "hair_color": "jet black",
+        "hair_style": "long, loose waves cascading over one shoulder, creating a soft yet powerful look.",
+        "skin_finish": "Dewy & Luminous",
+        "hand_and_nail_details": "Impeccably Manicured with deep burgundy polish.",
+        "tattoos": "none", "piercings": "none", "body_art": "none",
+        "nail_art": "Deep Burgundy Polish", "high_heels": "Sharp Stiletto Heels"
+      },
+      "wardrobe": "A form-fitting black pencil dress with a deep V-neckline and sheer lace panels at the sides, paired with an open black blazer that drapes off her shoulders. The architectural foundation garments beneath are subtly visible through the strategic transparency.",
+      "environment": "A sleek, modern executive office at night, with glass walls, and the ambient glow of the city skyline out of focus in the background.",
+      "lighting": "Moody cinematic lighting from a single desk lamp positioned low, creating dramatic side-lighting with soft shadows that sculpt her features and form.",
+      "camera": { "focal_length": "85mm f/1.4 Portrait Lens", "aperture": "f/2.0", "distance": "2.5 m", "angle": "Slightly low angle, positioned just below eye level to emphasize confidence.", "framing": "Medium shot from mid-thigh up, using rule of thirds." },
+      "color_grade": "Cool Cinematic, with desaturated tones and deep blue shadows.",
+      "style": "Helmut Newton Inspired, Neo-noir Sensuality with a focus on powerful femininity.",
+      "quality": "RAW Cinematic (Helmut Newton). 8k, natural textures, no artificial plastic look, high-end cinematic quality.",
+      "figure_and_form": "The dress and sheer panels reveal the hourglass silhouette, emphasizing curves while maintaining an air of professional sophistication.",
+      "skin_micro_details": defaultSkinMicroDetails, "fabric_physics": defaultFabricPhysics, "material_properties": "The sheer lace has a soft, diffuse quality that creates subtle moiré patterns, contrasting with the structured matte fabric of the dress."
+    }
+  },
+
+  {
+    name: 'Seductress Noir: Power Recline',
+    data: {
+      "shot": "Dramatic wide shot (16:9), emphasizing the full scene and power dynamics.",
+      "subject": {
+        "variant": indianModelVariants.find(v => v.name.includes("Glamour Seductress"))!.value,
+        "pose": "Arching Back on Desk: Reclining back on the executive desk with arms stretched above her head, back arched gracefully, one leg bent with heel on desk edge, the other extended. Head tilted back, eyes looking at camera with intense confidence.",
+        "hair_color": "jet black",
+        "hair_style": "long dark hair cascading off the edge of the desk, creating dramatic flowing lines.",
+        "skin_finish": "Matte & Flawless",
+        "hand_and_nail_details": "Impeccably Manicured with classic red polish.",
+        "tattoos": "none", "piercings": "none", "body_art": "none",
+        "nail_art": "Classic Red Polish", "high_heels": "Sharp Stiletto Heels"
+      },
+      "wardrobe": "A gossamer fabric black silk bodysuit with strategic cutouts and an unbuttoned black vest that frames the torso. The architectural foundation garments create geometric patterns beneath the sheer fabric, playing with transparency and structure.",
+      "environment": "A sleek, modern executive office at night, with glass walls, and the ambient glow of the city skyline out of focus in the background.",
+      "lighting": "Dramatic chiaroscuro lighting from above and to the side, creating strong contrasts between illuminated skin and deep shadows. The desk lamp casts a warm glow that highlights the curve of her back.",
+      "camera": { "focal_length": "35mm", "aperture": "f/2.8", "distance": "3.5 m", "angle": "High angle, shot from above and to the side, creating a dramatic overhead perspective.", "framing": "Three-quarters shot showing full desk scene from waist to head." },
+      "color_grade": "Cool Cinematic with deep blacks and steely blue undertones.",
+      "style": "Neo-noir Sensuality meets Fine Art Sensuality, inspired by Helmut Newton's bold compositions.",
+      "quality": "Shot on Phase One XF IQ4 for hyper-realistic 150MP 8K RAW output.",
+      "figure_and_form": "Revealing Curves (Shadow Play): The pose and lighting emphasize the natural S-curve of the spine and the sculptural form, with strategic shadows concealing while revealing.",
+      "skin_micro_details": defaultSkinMicroDetails, "fabric_physics": "The sheer silk clings and drapes with realistic weight, creating subtle bunching and transparency gradients.", "material_properties": "High-sheen silk with specular highlights contrasting against matte skin texture."
+    }
+  },
+
+  {
+    name: 'Seductress Noir: Chair Dominance',
+    data: {
+      "shot": "Intimate medium shot (9:16), capturing sensual confidence.",
+      "subject": {
+        "variant": indianModelVariants.find(v => v.name.includes("Glamour Seductress"))!.value,
+        "pose": "Straddling Office Chair: Sitting backwards on a leather executive chair, straddling it with legs apart, arms resting on the chair back, leaning forward slightly. Direct, seductive gaze with a subtle smile.",
+        "hair_color": "jet black",
+        "hair_style": "a messy bun with intentional loose strands framing the face, creating a 'just-finished-work' allure.",
+        "skin_finish": "Dewy & Luminous",
+        "hand_and_nail_details": "Impeccably Manicured with glossy black polish.",
+        "tattoos": "none", "piercings": "none", "body_art": "none",
+        "nail_art": "Glossy Black Polish", "high_heels": "Sharp Stiletto Heels"
+      },
+      "wardrobe": "An unbuttoned crisp white dress shirt (oversized) with sleeves rolled up, revealing architectural black lace foundation garments beneath. The shirt falls open to create a deep V, with just enough coverage to maintain sophistication. Black high-waisted tailored trousers.",
+      "environment": "A sleek, modern executive office at night, with glass walls, and the ambient glow of the city skyline out of focus in the background.",
+      "lighting": "Soft wraparound lighting from a large window to the side, creating gentle shadows that sculpt the form. The desk lamp adds a warm accent light to her face.",
+      "camera": { "focal_length": "50mm", "aperture": "f/1.8", "distance": "2 m", "angle": "Eye-level, creating intimate direct connection with the subject.", "framing": "Bust close-up, from chest up, tight framing emphasizing expression and décolletage." },
+      "color_grade": "Warm & Natural with cool shadows, creating a lived-in, authentic feel.",
+      "style": "Private & Personal meets Executive Power, inspired by Paolo Roversi's intimacy.",
+      "quality": "Shot on Leica M11 with Noctilux 50mm f/0.95. Extremely shallow depth of field, beautiful bokeh, dreamy quality.",
+      "figure_and_form": "Silhouette Through Sheer Fabric: The white shirt creates a soft silhouette effect, with the architectural foundation pieces visible as sculptural shadows beneath.",
+      "skin_micro_details": defaultSkinMicroDetails, "fabric_physics": "The oversized shirt drapes naturally with realistic wrinkles and folds, the cotton fabric shows authentic textile texture.", "material_properties": "Crisp cotton with matte finish contrasting with high-gloss lace and specular skin highlights."
+    }
+  },
+
+  {
+    name: 'Seductress Noir: Window Silhouette',
+    data: {
+      "shot": "Dramatic full body silhouette (9:16), artistic and graphic.",
+      "subject": {
+        "variant": indianModelVariants.find(v => v.name.includes("Glamour Seductress"))!.value,
+        "pose": "Silhouette in Profile: Standing in profile by the floor-to-ceiling window, one hand touching the glass, the other hand on hip. Back slightly arched, creating an elegant S-curve. Looking out at the cityscape.",
+        "hair_color": "jet black",
+        "hair_style": "long dark hair flowing down her back, creating a dramatic silhouette against the window.",
+        "skin_finish": "Natural Glow",
+        "hand_and_nail_details": "Graceful & Anatomically Correct.",
+        "tattoos": "none", "piercings": "none", "body_art": "none",
+        "nail_art": "Natural manicure, clean and simple", "high_heels": "Architectural High Heels"
+      },
+      "wardrobe": "A floor-length sheer black silk robe with architectural structure, worn open to reveal a high-waisted minimalist foundation piece. The robe creates flowing, dramatic lines that catch the backlight.",
+      "environment": "A sleek, modern executive office at night, with floor-to-ceiling glass walls showcasing the glowing city skyline in sharp focus behind her.",
+      "lighting": "Dramatic rim lighting from the city lights behind, creating a strong backlit silhouette with a thin rim of light defining her profile and form. Minimal front fill light preserves the silhouette effect.",
+      "camera": { "focal_length": "85mm f/1.4 Portrait Lens", "aperture": "f/4.0", "distance": "4 m", "angle": "Eye-level, perfectly perpendicular to her profile.", "framing": "Full body shot with significant negative space, emphasizing the silhouette against the bright window." },
+      "color_grade": "High-Contrast B&W with deep, crushed blacks and brilliant window highlights.",
+      "style": "Fine-Art Dance Photography meets Graphic Fashion-Editorial, emphasizing form over detail.",
+      "quality": "Shot on Hasselblad X2D. Unmatched 8K detail with perfect edge definition in the silhouette.",
+      "figure_and_form": "Silhouette Through Sheer Fabric: The entire form is rendered as an artistic silhouette, with the curves and architectural garments visible as dark shapes against the bright cityscape.",
+      "skin_micro_details": "Minimal visibility due to silhouette effect, focus on form and outline.", "fabric_physics": "The sheer robe flows with liquid grace, creating dynamic shapes as it catches the backlight.", "material_properties": "Translucent silk that glows at the edges where light passes through."
+    }
+  },
+
+  {
+    name: 'Seductress Noir: Table Lean',
+    data: {
+      "shot": "Intimate close-up (16:9), emphasizing connection and details.",
+      "subject": {
+        "variant": indianModelVariants.find(v => v.name.includes("Glamour Seductress"))!.value,
+        "pose": "Leaning Forward Intently: Leaning forward over the executive desk with both hands planted flat on the surface, arms creating a frame. Direct, intense eye contact with camera, lips slightly parted. Décolletage and shoulders prominently featured.",
+        "hair_color": "jet black",
+        "hair_style": "long dark hair falling forward over shoulders, framing the face and creating depth.",
+        "skin_finish": "Dewy & Luminous",
+        "hand_and_nail_details": "Impeccably Manicured with deep burgundy polish, hands prominently visible on desk.",
+        "tattoos": "none", "piercings": "none", "body_art": "none",
+        "nail_art": "Deep Burgundy Polish", "high_heels": "Sharp Stiletto Heels"
+      },
+      "wardrobe": "A plunging black silk camisole with delicate lace trim, revealing architectural black lace foundation garments with intricate geometric patterns. The garments are designed to be showcased from this angle, creating visual interest through texture and pattern.",
+      "environment": "A sleek, modern executive office at night, with glass walls, and the ambient glow of the city skyline out of focus in the background.",
+      "lighting": "Clamshell lighting setup: soft light from above and subtle fill from below via desk reflection, creating a classic beauty lighting pattern that illuminates her face and décolletage evenly with minimal shadows.",
+      "camera": { "focal_length": "105mm f/2.8 Macro Lens", "aperture": "f/2.8", "distance": "1.5 m", "angle": "Slightly high angle, as if viewer is standing at desk edge looking down.", "framing": "Tight bust close-up, from chest to top of head, emphasizing facial expression and neckline details." },
+      "color_grade": "Cool Cinematic with subtle warmth in skin tones, creating an intimate yet sophisticated mood.",
+      "style": "Romantic Fashion meets Helmut Newton's bold intimacy, focusing on connection and sensuality.",
+      "quality": "Shot on Hasselblad X2D with macro lens for extreme detail on lace patterns, skin texture, and jewelry.",
+      "figure_and_form": "Décolletage Close-up: The framing and pose emphasize the chest and collarbone area, highlighting the architectural foundation garments and the interplay of skin and lace texture.",
+      "skin_micro_details": "Extreme detail showing pores, fine vellus hair, subsurface scattering on collarbones, and the way light catches the dewy skin finish.", "fabric_physics": "The lace patterns are rendered in microscopic detail, showing individual threads and the way the material sits against the skin.", "material_properties": "Intricate lace with semi-specular properties, silk with subtle sheen, and skin with realistic translucency."
+    }
+  },
+
+  {
+    name: 'Seductress Noir: After Hours',
+    data: {
+      "shot": "Bold full-body shot (9:16), capturing uninhibited confidence.",
+      "subject": {
+        "variant": indianModelVariants.find(v => v.name.includes("Glamour Seductress"))!.value,
+        "pose": "Confident Desk-Chair Combo: Sitting in the executive leather chair with one stiletto-clad foot propped up on the desk edge, the other leg crossed beneath. One arm draped over the chair back, the other hand resting on her raised knee. Head tilted back slightly with a bold, unapologetic gaze.",
+        "hair_color": "jet black",
+        "hair_style": "wild, tousled waves suggesting the end of a long night, creating a raw, authentic energy.",
+        "skin_finish": "Natural Glow",
+        "hand_and_nail_details": "Impeccably Manicured with classic red polish.",
+        "tattoos": "none", "piercings": "none", "body_art": "none",
+        "nail_art": "Classic Red Polish", "high_heels": "Sharp Stiletto Heels prominently featured"
+      },
+      "wardrobe": "A partially unbuttoned black silk shirt (men's cut, oversized) that falls off one shoulder, revealing an intricate architectural black lace bodysuit with geometric cutouts. The shirt is untucked and casually disheveled, creating an 'after-hours' aesthetic.",
+      "environment": "A sleek, modern executive office at night, with glass walls, and the ambient glow of the city skyline out of focus in the background.",
+      "lighting": "Moody cinematic lighting from the desk lamp creating dramatic uplighting on her face and strong shadows. Additional rim light from the city windows separates her from the background.",
+      "camera": { "focal_length": "35mm", "aperture": "f/2.8", "distance": "3 m", "angle": "Low angle from near floor level, looking up to emphasize power and dominance.", "framing": "Full body shot from mid-shin up, showing the entire power pose including the desk and chair." },
+      "color_grade": "Cool Cinematic with desaturated tones and inky blacks, subtle film grain for texture.",
+      "style": "Neo-noir Sensuality meets Fine Art Sensuality, channeling raw, unapologetic power.",
+      "quality": "Shot on IMAX 70mm film for incredible detail and rich, deep colors with visible fine grain.",
+      "figure_and_form": "Revealing Curves (Shadow Play): The strategic lighting and pose emphasize the hourglass silhouette, with the architectural bodysuit creating geometric patterns that guide the eye along the form's natural curves.",
+      "skin_micro_details": defaultSkinMicroDetails, "fabric_physics": "The oversized shirt drapes with authentic weight and wrinkles, the lace bodysuit shows realistic tension and compression on the curves.", "material_properties": "Matte silk shirt contrasting with semi-gloss lace and highly specular patent leather heels."
+    }
+  },
+
+  {
+    name: 'Seductress Noir: Corner Office',
+    data: {
+      "shot": "Powerful full-body portrait (9:16), emphasizing authority and presence.",
+      "subject": {
+        "variant": indianModelVariants.find(v => v.name.includes("Glamour Seductress"))!.value,
+        "pose": "Architectural Power Stance: Standing tall beside the desk corner, weight shifted to one hip creating a subtle S-curve, one hand resting on the desk, the other at her side. Strong, unwavering gaze directly into camera with chin slightly raised.",
+        "hair_color": "jet black",
+        "hair_style": "a severe, slicked-back style pulled into a low ponytail, creating sharp, angular lines that emphasize bone structure.",
+        "skin_finish": "Matte & Flawless",
+        "hand_and_nail_details": "Impeccably Manicured with glossy black polish.",
+        "tattoos": "none", "piercings": "none", "body_art": "none",
+        "nail_art": "Glossy Black Polish", "high_heels": "Architectural High Heels"
+      },
+      "wardrobe": "A bespoke black power suit with architectural tailoring - the jacket features sharp, geometric lines and is worn with nothing beneath except intricate architectural black lace foundation garments visible through the deep V of the jacket. High-waisted cigarette pants complete the power ensemble.",
+      "environment": "A sleek, modern executive office at night, with glass walls, and the ambient glow of the city skyline out of focus in the background.",
+      "lighting": "Graphic Spotlight ('Throne of Light'): A single hard light source creates a sharp, defined rectangle of bright light on the wall behind her, creating stark high-contrast separation and emphasizing her commanding presence.",
+      "camera": { "focal_length": "85mm f/1.4 Portrait Lens", "aperture": "f/4.0", "distance": "4 m", "angle": "Slightly low angle to emphasize stature and power.", "framing": "Full body shot with negative space, composed using rule of thirds with subject positioned dominantly." },
+      "color_grade": "Severe Monochromatic B&W with deep, crushed blacks and neutral skin tones.",
+      "style": "Graphic Fashion-Editorial meets Helmut Newton's architectural fashion photography, emphasizing structure and power.",
+      "quality": "Shot on Hasselblad X2D. Unmatched 8K detail with razor-sharp focus on fabric texture and facial features.",
+      "figure_and_form": "Sculpted Form (Opaque): The tailored suit sculptures the hourglass form through structure rather than revelation, with the architectural foundation garments adding geometric visual interest.",
+      "skin_micro_details": defaultSkinMicroDetails, "fabric_physics": "The suit holds its architectural shape with precision tailoring, showing clean lines and structured seams.", "material_properties": "Matte wool suiting with no sheen, contrasting with the geometric lace patterns and glossy patent leather accessories."
+    }
+  },
+
+  {
+    name: 'Seductress Noir: Close Quarters',
+    data: {
+      "shot": "Ultra close-up portrait (9:16), macro intimacy and detail.",
+      "subject": {
+        "variant": indianModelVariants.find(v => v.name.includes("Glamour Seductress"))!.value,
+        "pose": "Intimate Close-up: Head and shoulders only, face turned slightly to the side, eyes looking directly at camera with sultry, half-lidded gaze. One hand visible, delicately touching her collarbone or neck. Lips slightly parted.",
+        "hair_color": "jet black",
+        "hair_style": "long dark hair swept to one side, falling over one shoulder, with a few strategic strands across the face.",
+        "skin_finish": "Dewy & Luminous with pronounced subsurface scattering",
+        "hand_and_nail_details": "Impeccably Manicured with deep burgundy polish, hand delicately positioned near face or neck.",
+        "tattoos": "none", "piercings": "none", "body_art": "none",
+        "nail_art": "Deep Burgundy Polish", "high_heels": "not visible"
+      },
+      "wardrobe": "Only the strap of an intricate architectural black lace foundation garment visible over the shoulder, with most focus on bare skin, collarbones, and neck. Minimal coverage to emphasize skin texture and form.",
+      "environment": "A sleek, modern executive office at night, completely out of focus - only bokeh of city lights visible in background.",
+      "lighting": "Soft, diffused side lighting creating gentle shadows that sculpt facial features. Subtle catchlights in the eyes. Chiaroscuro effect with gradual falloff into shadow on the far side of the face.",
+      "camera": { "focal_length": "105mm f/2.8 Macro Lens", "aperture": "f/1.8", "distance": "0.8 m", "angle": "Eye-level, creating intimate direct connection.", "framing": "Ultra close-up from upper chest to top of head, with extreme shallow depth of field isolating the face." },
+      "color_grade": "Warm & Natural with soft, luminous highlights and painterly quality.",
+      "style": "Fine Art Sensuality meets Private & Personal, inspired by Annie Leibovitz's intimate portraiture.",
+      "quality": "Shot on Leica M11 with Noctilux 50mm f/0.95 for extreme shallow depth, beautiful bokeh, and hyper-realistic skin rendering.",
+      "figure_and_form": "Natural form with emphasis on neck, shoulders, and décolletage curves. Minimal clothing to showcase authentic skin texture and the interplay of light on form.",
+      "skin_micro_details": "Hyper-realistic rendering at macro scale: every pore, fine vellus hair, freckle, and skin irregularity visible. Pronounced subsurface scattering creates a luminous, life-like quality where light penetrates the skin. Individual eyelashes and lip texture rendered in extreme detail.", "fabric_physics": "Minimal fabric visible - only the delicate lace strap showing realistic tension and the way it sits against the skin.", "material_properties": "Focus on skin: realistic translucency with specular highlights on the dewy finish, matte zones in shadows, and the subtle color variations in natural skin tone."
+    }
   }
 ];
