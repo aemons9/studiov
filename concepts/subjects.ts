@@ -10,6 +10,10 @@ export const indianModelVariants: SubjectVariant[] = [
     value: "Indian fashion model (height 5'7\"), with a sensual and curvaceous hourglass figure (bust 38DD\", waist 27\", hips 42\"). Features a captivating, magnetic gaze, full lips, and a beautiful dusky skin tone that glows under soft light. Exudes an aura of confident, commanding seduction."
   },
   {
+    name: "Indian Super-Seductress Artist (Dusky)",
+    value: "Elite Indian artistic model (height 5'7\") specializing in modern concept films, private editorial art, and expressive erotic-art photography. Possesses an exceptionally curvaceous bombshell hourglass figure (bust 40DD\", waist 26\", hips 44\") with pronounced wide hips and dramatic curves. Her luminous dusky skin tone responds beautifully to diverse lighting scenarios. Features include: intensely expressive eyes capable of conveying complex intimate emotions, full sensual lips, high cheekbones, and an exceptionally photogenic face from all angles. Trained in artistic movement, body language mastery, and emotional expression for role-based sessions. Her presence combines raw sensuality with sophisticated artistic intelligence - she understands light, shadow, composition, and how to embody diverse artistic concepts. Experienced in fine-art nude studies, intimate portraiture, fashion editorial, and private collection work. Exudes confident, fearless artistic expression with natural ability to transition between powerful dominance and vulnerable intimacy. Her proportions and expressive range make her ideal for maximum artistic intimacy while maintaining high-art sophistication."
+  },
+  {
     name: "Indian Fitness Athlete (Wheatish)",
     value: "Indian fitness model (height 5'9\"), with a powerful and athletic physique (bust 34C\", waist 26\", hips 36\"). Displays lean, defined musculature, especially in the abs and legs. Has a healthy, sun-kissed wheatish skin tone and an energetic, determined expression."
   },
