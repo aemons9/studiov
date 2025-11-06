@@ -167,15 +167,17 @@ export async function generateWithFlux(
     safetyTolerance: input.safety_tolerance,
   });
 
-  // Create prediction
-  const createResponse = await fetch('https://api.replicate.com/v1/predictions', {
+  // Use proxy server to avoid CORS issues
+  const PROXY_URL = import.meta.env.VITE_PROXY_URL || 'http://localhost:3001';
+
+  // Create prediction via proxy
+  const createResponse = await fetch(`${PROXY_URL}/api/replicate/predictions`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiToken}`,
       'Content-Type': 'application/json',
-      'Prefer': 'wait', // Wait for completion
     },
     body: JSON.stringify({
+      token: apiToken, // Pass token in body for proxy
       version: await getModelVersion(model),
       input,
     }),
@@ -206,7 +208,7 @@ export async function generateWithFlux(
   ) {
     await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
 
-    const pollResponse = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
+    const pollResponse = await fetch(`${PROXY_URL}/api/replicate/predictions/${prediction.id}`, {
       headers: {
         'Authorization': `Bearer ${apiToken}`,
       },
@@ -247,17 +249,17 @@ export async function generateWithFlux(
     predictTime: finalPrediction.metrics?.predict_time,
   });
 
-  // Download images and convert to base64
+  // Download images via proxy and convert to base64
   const base64Images: string[] = [];
   for (const url of imageUrls) {
-    const imageResponse = await fetch(url);
+    // Use proxy to download images (avoid CORS)
+    const imageResponse = await fetch(`${PROXY_URL}/api/replicate/download?url=${encodeURIComponent(url)}`);
     if (!imageResponse.ok) {
       console.warn('⚠️ Failed to download image:', url);
       continue;
     }
 
-    const blob = await imageResponse.blob();
-    const arrayBuffer = await blob.arrayBuffer();
+    const arrayBuffer = await imageResponse.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString('base64');
     base64Images.push(base64);
   }
