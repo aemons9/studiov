@@ -102,7 +102,7 @@ const App: React.FC = () => {
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [isStorageModalOpen, setIsStorageModalOpen] = useState(false);
   const [storageSettings, setStorageSettings] = useState<StorageSettings>({
-    enableStorage: true,
+    enableStorage: false, // Disabled by default - user must enable explicitly
     provider: 'google-drive',
     bucketName: DEFAULT_BUCKET_NAME,
     driveFolderName: DEFAULT_DRIVE_FOLDER,
@@ -171,34 +171,54 @@ const App: React.FC = () => {
   };
 
   useEffect(() => { setPromptHistory(loadHistoryFromStorage()); }, []);
+
   // Load tokens from localStorage on startup
   useEffect(() => {
     const mainToken = localStorage.getItem('mainToken');
     const driveToken = localStorage.getItem('driveToken');
     const replicateToken = localStorage.getItem('replicateToken');
 
+    let loadedCount = 0;
+    const missingTokens: string[] = [];
+
     if (mainToken) {
       setGenerationSettings(prev => ({ ...prev, accessToken: mainToken }));
-      console.log('✅ Work token loaded from localStorage');
+      loadedCount++;
     } else {
-      console.log('⚠️ No work token found in localStorage');
-      console.log('Paste in console: localStorage.setItem("mainToken", "YOUR_WORK_TOKEN");');
+      missingTokens.push('Vertex AI');
     }
 
     if (driveToken) {
       setStorageSettings(prev => ({ ...prev, driveAccessToken: driveToken }));
-      console.log('✅ Drive token loaded from localStorage');
+      loadedCount++;
     } else {
-      console.log('⚠️ No drive token found in localStorage');
-      console.log('Paste in console: localStorage.setItem("driveToken", "YOUR_DRIVE_TOKEN");');
+      missingTokens.push('Google Drive');
     }
 
     if (replicateToken) {
       setGenerationSettings(prev => ({ ...prev, replicateApiToken: replicateToken }));
-      console.log('✅ Replicate token loaded from localStorage');
+      loadedCount++;
     } else {
-      console.log('⚠️ No Replicate token found in localStorage');
-      console.log('Paste in console: localStorage.setItem("replicateToken", "YOUR_REPLICATE_TOKEN");');
+      missingTokens.push('Replicate');
+    }
+
+    // Single consolidated message
+    if (loadedCount > 0) {
+      console.log(`✅ Loaded ${loadedCount} token(s) from localStorage`);
+    }
+
+    if (missingTokens.length > 0) {
+      console.log(`ℹ️ Missing tokens for: ${missingTokens.join(', ')}`);
+      console.log('💡 To set tokens, open console and paste:');
+      if (missingTokens.includes('Vertex AI')) {
+        console.log('   localStorage.setItem("mainToken", "YOUR_VERTEX_TOKEN");');
+      }
+      if (missingTokens.includes('Google Drive')) {
+        console.log('   localStorage.setItem("driveToken", "YOUR_DRIVE_TOKEN");');
+      }
+      if (missingTokens.includes('Replicate')) {
+        console.log('   localStorage.setItem("replicateToken", "YOUR_REPLICATE_TOKEN");');
+      }
     }
   }, []);
 
