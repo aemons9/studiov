@@ -462,17 +462,26 @@ const promptSchema = {
 
 function getSystemInstruction(style: EnhancementStyle, lockedFields: string[]): string {
     let systemInstruction = `You are a fashion photography prompt engineer. Your task is to enhance a JSON prompt object creatively while adhering to strict safety and user-defined constraints.
-CRITICAL SAFETY REQUIREMENT: Replace ALL direct undergarment terms with architectural language from this list: ${JSON.stringify(WARDROBE_SAFETY_REPLACEMENTS)}. Emphasize LIGHTING and SHADOW. Frame as fine-art.`;
+
+CRITICAL SUBJECT PRESERVATION RULES:
+1. NEVER change the ethnicity, cultural identity, or origin of the subject (e.g., "Indian", "Asian", "African", etc.)
+2. NEVER change subject height, body measurements, or physical proportions unless field is explicitly unlocked
+3. If subject.variant contains ethnic/cultural descriptors, preserve them EXACTLY
+4. Focus enhancements on artistic technique, not changing WHO the subject is
+
+CRITICAL SAFETY REQUIREMENT: Replace ALL direct undergarment terms with architectural language from this list: ${JSON.stringify(WARDROBE_SAFETY_REPLACEMENTS)}. Emphasize LIGHTING and SHADOW. Frame as fine-art.
+
+COLOR PRESERVATION: Unless color_grade is explicitly mentioned or the original prompt requests monochrome/B&W, maintain NATURAL COLOR RENDERING. Default to warm, natural tones that showcase realistic skin tones. Do not default to monochrome or B&W.`;
 
     if (lockedFields.length > 0) {
-        systemInstruction += `\nCRITICAL LOCK REQUIREMENT: The following JSON fields are LOCKED and MUST NOT be changed in any way: ${lockedFields.join(', ')}. Your task is to enhance ONLY the unlocked fields. Preserve the locked fields and their exact values in your JSON output.`;
+        systemInstruction += `\n\nCRITICAL LOCK REQUIREMENT: The following JSON fields are LOCKED and MUST NOT be changed in any way: ${lockedFields.join(', ')}. Your task is to enhance ONLY the unlocked fields. Preserve the locked fields and their exact values in your JSON output.`;
     }
 
     switch (style) {
-        case 'safety': return `${systemInstruction} Rewrite this prompt to maximize safety while preserving artistic intent. Make lighting 40% of the prompt. Output ONLY JSON.`;
-        case 'balanced': return `${systemInstruction} Enhance this prompt with vivid details while ensuring safety. Balance artistic expression with technical details. Output ONLY JSON.`;
-        case 'subtle': return `${systemInstruction} Make minimal, safety-focused refinements to this prompt. Only change terms that might trigger filters. Output ONLY JSON.`;
-        case 'creative': return `${systemInstruction} Enhance this prompt with creative flourishes using photographer references, advanced lighting, and geometric elements, while respecting all locked fields and safety rules. Output ONLY JSON.`;
+        case 'safety': return `${systemInstruction}\n\nRewrite this prompt to maximize safety while preserving artistic intent and subject identity. Make lighting 40% of the prompt. Output ONLY JSON.`;
+        case 'balanced': return `${systemInstruction}\n\nEnhance this prompt with vivid details while ensuring safety and preserving subject ethnicity/identity. Balance artistic expression with technical details. Output ONLY JSON.`;
+        case 'subtle': return `${systemInstruction}\n\nMake minimal, safety-focused refinements to this prompt. Only change terms that might trigger filters. Preserve subject identity completely. Output ONLY JSON.`;
+        case 'creative': return `${systemInstruction}\n\nEnhance this prompt with artistic flourishes, but FOCUS ON THE SUBJECT FIRST. Add photographer references sparingly (max 1-2). Keep the subject's ethnicity, identity, and measurements intact. Enhance lighting and composition tastefully without overwhelming the core subject description. Maintain natural color unless monochrome is explicitly requested. Output ONLY JSON.`;
         default: return getSystemInstruction('balanced', lockedFields);
     }
 }
@@ -490,7 +499,7 @@ export async function enhancePrompt(promptData: PromptData, settings: Generation
   const body = {
     contents: [{ role: 'user', parts: [{ text: userPromptText }] }],
     systemInstruction: { parts: [{ text: systemInstruction }] },
-    generationConfig: { responseMimeType: "application/json", responseSchema: promptSchema, temperature: style === 'creative' ? 0.8 : 0.5 }
+    generationConfig: { responseMimeType: "application/json", responseSchema: promptSchema, temperature: style === 'creative' ? 0.6 : 0.5 }
   };
 
   try {
@@ -512,6 +521,48 @@ export async function enhancePrompt(promptData: PromptData, settings: Generation
         }
       });
 
+      // CRITICAL ETHNICITY PRESERVATION: Always preserve subject ethnicity/identity even if subject not locked
+      // This prevents the AI from changing "Indian" to generic or other ethnicities
+      if (promptData.subject?.variant && !lockedFields.includes('subject.variant') && !lockedFields.includes('subject')) {
+        const originalVariant = promptData.subject.variant;
+        const enhancedVariant = result.subject?.variant || '';
+
+        // Extract key identity markers that must be preserved
+        const identityMarkers = ['Indian', 'Asian', 'African', 'Latina', 'European', 'Middle Eastern', 'indigenous'];
+        const originalMarker = identityMarkers.find(marker => originalVariant.toLowerCase().includes(marker.toLowerCase()));
+        const enhancedMarker = identityMarkers.find(marker => enhancedVariant.toLowerCase().includes(marker.toLowerCase()));
+
+        // If original had ethnicity but enhanced doesn't, or if it changed, restore original
+        if (originalMarker && (!enhancedMarker || originalMarker !== enhancedMarker)) {
+          console.warn(`⚠️ Enhancement changed subject ethnicity from ${originalMarker} to ${enhancedMarker || 'generic'}. Restoring original.`);
+          result.subject.variant = originalVariant;
+        }
+
+        // Also preserve exact measurements if present (bust-waist-hips pattern)
+        const measurementPattern = /\(bust \d+[A-Z]+"?, waist \d+"?, hips \d+"?\)/i;
+        const originalMeasurements = originalVariant.match(measurementPattern)?.[0];
+        if (originalMeasurements && !enhancedVariant.includes(originalMeasurements)) {
+          // Measurements were removed or changed - restore them
+          if (!result.subject.variant.match(measurementPattern)) {
+            result.subject.variant = result.subject.variant.replace(
+              /\(height [^)]+\)/i,
+              `$& ${originalMeasurements}`
+            );
+          }
+        }
+      }
+
+      // Reduce temperature effect: If color_grade was changed to monochrome but wasn't in original, restore natural color
+      if (result.color_grade && !lockedFields.includes('color_grade')) {
+        const isMonochrome = /monochrome|black.?and.?white|b&w|grayscale/i.test(result.color_grade);
+        const wasMonochrome = /monochrome|black.?and.?white|b&w|grayscale/i.test(promptData.color_grade || '');
+
+        if (isMonochrome && !wasMonochrome) {
+          console.warn('⚠️ Enhancement made color monochrome. Restoring natural color rendering.');
+          result.color_grade = promptData.color_grade || 'Warm, natural color grading with realistic skin tones. Soft contrast preserving natural beauty.';
+        }
+      }
+
       // Final safety pass ONLY on UNLOCKED fields
       // CRITICAL: Do NOT apply safety replacements to locked fields!
       const safetyFields = ['wardrobe', 'subject.pose', 'figure_and_form'];
@@ -523,7 +574,7 @@ export async function enhancePrompt(promptData: PromptData, settings: Generation
           }
         }
       });
-      
+
       return result;
     }
     throw new Error("Enhancement failed to return valid data.");
