@@ -3,6 +3,7 @@ import { indianModelVariants } from './subjects';
 import { generateSeductressConceptByIntimacy, intimacyLevels } from './seductressAutoSelector';
 import { seductressNoirExpanded } from './seductressNoirExpanded';
 import { corporateSeductionCollection } from './corporateSeductionCollection';
+import { seductressMaxCollection } from './seductressMaxCollection';
 
 export interface ArtisticConcept {
   name: string;
@@ -513,5 +514,16 @@ export const artisticConcepts: ArtisticConcept[] = [
   // Environments: executive office, boardroom, reception, lounge, restroom, after-hours
   // Photographer styles: Newton, Penn, Avedon, Leibovitz, Lindbergh, Roversi
   // ============================================================================
-  ...corporateSeductionCollection
+  ...corporateSeductionCollection,
+
+  // ============================================================================
+  // SEDUCTRESS MAX COLLECTION
+  // 15 bold maximum intimacy concepts pushing artistic boundaries
+  // Themes: fine art nude studies, architectural body forms, intimate boudoir
+  // chiaroscuro masterpieces, goddess studies, noir luxury, urban edge
+  // dance forms, water studies, gothic romance, leather dominance
+  // Maximum artistic expression with sophisticated high-fashion photography
+  // Photographer styles: Newton, Penn, Avedon, Leibovitz, Lindbergh, Roversi
+  // ============================================================================
+  ...seductressMaxCollection
 ];
