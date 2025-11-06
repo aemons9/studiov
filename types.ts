@@ -50,6 +50,8 @@ export type EnhancementStyle = 'balanced' | 'subtle' | 'creative' | 'safety';
 
 export type AdherenceLevel = 'literal' | 'balanced' | 'creative';
 
+export type WeavingMode = 'master' | 'passion' | 'intimate' | 'seductive';
+
 export interface GenerationSettings {
   projectId: string;
   accessToken: string;

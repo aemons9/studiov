@@ -221,7 +221,11 @@ const App: React.FC = () => {
       if (options.weave.enabled) {
         setGenerationStep('weaving');
         try {
-          finalPrompt = await weavePrompt(promptForNextStep, generationSettings, { adherence: options.weave.adherence, lockFields: lockedFields });
+          finalPrompt = await weavePrompt(promptForNextStep, generationSettings, {
+            adherence: options.weave.adherence,
+            lockFields: lockedFields,
+            weavingMode: options.weave.weavingMode
+          });
           setWovenPrompt(finalPrompt);
         } catch (weaveError) {
           console.error('Weaving failed:', weaveError);
