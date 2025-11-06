@@ -1,4 +1,6 @@
 import type { VisualNode } from '../types';
+import comprehensiveWardrobeNodes from './wardrobeCollection';
+import seductressConceptNodes from './seductressConceptNodes';
 
 /**
  * Visual Node Definitions for Experimental Mode
@@ -698,9 +700,13 @@ export const styleNodes: VisualNode[] = [
 // COMBINED EXPORTS
 // ===========================================================================
 
+// Combine basic wardrobe with comprehensive collection
+const allWardrobeNodes = [...wardrobeNodes, ...comprehensiveWardrobeNodes];
+
 export const allNodes: VisualNode[] = [
+  ...seductressConceptNodes, // Concepts first for priority
   ...subjectNodes,
-  ...wardrobeNodes,
+  ...allWardrobeNodes,
   ...poseNodes,
   ...environmentNodes,
   ...lightingNodes,
@@ -710,8 +716,9 @@ export const allNodes: VisualNode[] = [
 ];
 
 export const nodesByCategory = {
+  concept: seductressConceptNodes,
   subject: subjectNodes,
-  wardrobe: wardrobeNodes,
+  wardrobe: allWardrobeNodes,
   pose: poseNodes,
   environment: environmentNodes,
   lighting: lightingNodes,
