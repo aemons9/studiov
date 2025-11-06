@@ -6,6 +6,7 @@ import { corporateSeductionCollection } from './corporateSeductionCollection';
 import { seductressMaxCollection } from './seductressMaxCollection';
 import { seductressNaturalParadise } from './seductressNaturalParadise';
 import { seductressSteamRoom } from './seductressSteamRoom';
+import { superSeductressArtistConcepts } from './superSeductressArtistConcepts';
 
 export interface ArtisticConcept {
   name: string;
@@ -552,5 +553,37 @@ export const artisticConcepts: ArtisticConcept[] = [
   // Focus on wide hips, narrow waist, hourglass form in humid heat
   // Photographer styles: Newton, Penn, Avedon, Leibovitz, Lindbergh, Roversi
   // ============================================================================
-  ...seductressSteamRoom
+  ...seductressSteamRoom,
+
+  // ============================================================================
+  // SUPER-SEDUCTRESS ARTIST COLLECTION
+  // 15 concepts showcasing the NEW Indian Super-Seductress Artist variant
+  // Bi-polar range: Corporate power dominance to vulnerable erotic-muse
+  // Enhanced dramatic curves: bust 40DD", waist 26", hips 44"
+  // Artistic intelligence with role-based expression expertise
+  //
+  // INDOOR PRIVATE (8 concepts):
+  // - Private Studio Command (power dominance)
+  // - Luxury Loft Vulnerability (vulnerable erotic-muse)
+  // - Art Gallery Dominance (artistic authority power)
+  // - Private Screening Room Vulnerability (cinematic intimate)
+  // - Penthouse Suite Power (ultimate luxury dominance)
+  // - Studio Erotic-Muse Vulnerability (fine art maximum vulnerable)
+  // - Private Apartment Transition (bi-polar power-to-vulnerability)
+  // - Loft Midnight Artistic Expression (ultimate vulnerable creative soul)
+  //
+  // OUTDOOR PRIVATE (7 concepts):
+  // - Private Rooftop Urban Dominance (city goddess power)
+  // - Secret Garden Erotic-Muse (nature sanctuary vulnerability)
+  // - Secluded Forest Clearing Ultimate Vulnerability (forest goddess)
+  // - Private Beach Power (ocean commanding dominance)
+  // - Hidden Terrace Artistic Expression (outdoor vulnerable)
+  // - Private Garden Power Balance (integrated bi-polar equilibrium)
+  // - Secluded Natural Pool Goddess (ultimate water vulnerable erotic-muse)
+  //
+  // Showcases complete artistic range from corporate dominance to pure vulnerability
+  // Uses advanced prompting framework, wardrobe selectors, quality presets
+  // Photographer styles: Newton, Penn, Avedon, Leibovitz, Lindbergh, Roversi
+  // ============================================================================
+  ...superSeductressArtistConcepts
 ];
