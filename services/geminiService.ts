@@ -1,6 +1,9 @@
 // UPDATED services/geminiService.ts with enhanced safety framework
 import type { PromptData, GenerationSettings, EnhancementStyle, ArtisticAnalysisResult, AdherenceLevel, RiskAnalysis, ImageMetadata, CloudStorageConfig } from '../types';
 import { uploadImageToCloudStorage, createBucketIfNotExists, DEFAULT_BUCKET_NAME } from './cloudStorageService';
+import { intimateWeavingStrategies, applyIntimateWeavingStrategy } from '../concepts/intimateWeavingStrategies';
+import { sensualWardrobeCollection } from '../concepts/sensualWardrobeCollection';
+import { imageQualityPresets, generateQualityPromptString, qualityEnhancementGuidelines } from '../concepts/imageQualityPresets';
 
 // ============================================================================
 // ENHANCED SAFETY DECLARATION
@@ -96,6 +99,91 @@ function enhanceLightingDescription(lighting: string): string {
   const enhancements = ['This dramatic lighting scheme', 'The chiaroscuro treatment', 'The sculptural use of light and shadow'];
   const enhancement = enhancements[Math.floor(Math.random() * enhancements.length)];
   return `${enhancement} defines the composition: ${lighting}. The interplay of illumination and shadow becomes the primary visual narrative, sculpting form from darkness.`;
+}
+
+// ============================================================================
+// ADVANCED SELECTORS APPLICATION
+// ============================================================================
+export interface AdvancedSelections {
+  intimateWeaving?: { enabled: boolean; strategy: string; };
+  wardrobeSelection?: { enabled: boolean; option: string; };
+  qualityPreset?: { enabled: boolean; preset: string; };
+}
+
+/**
+ * Applies advanced selector choices to prompt data
+ * This integrates the new intimate weaving strategies, wardrobe collection, and quality presets
+ */
+export function applyAdvancedSelections(promptData: PromptData, selections: AdvancedSelections): PromptData {
+  const enhanced = JSON.parse(JSON.stringify(promptData)); // Deep copy
+
+  // Apply Intimate Weaving Strategy
+  if (selections.intimateWeaving?.enabled && selections.intimateWeaving.strategy) {
+    const strategy = intimateWeavingStrategies.find(s => s.name === selections.intimateWeaving!.strategy);
+    if (strategy) {
+      // Apply strategy patterns to relevant fields
+      if (enhanced.subject?.pose && !enhanced.subject.pose.includes(strategy.subjectPromptPattern.substring(0, 30))) {
+        enhanced.subject.pose = `${strategy.subjectPromptPattern} ${enhanced.subject.pose}`;
+      }
+
+      // Apply composition guidance to shot description
+      if (enhanced.shot && !enhanced.shot.includes('composition')) {
+        enhanced.shot = `${enhanced.shot}. Composition: ${strategy.compositionGuidance}`;
+      }
+
+      // Enhance lighting with strategy emphasis
+      if (enhanced.lighting && !enhanced.lighting.includes(strategy.lightingEmphasis.substring(0, 30))) {
+        enhanced.lighting = `${strategy.lightingEmphasis} ${enhanced.lighting}`;
+      }
+
+      // Add figure_and_form guidance based on strategy
+      if (!enhanced.figure_and_form || enhanced.figure_and_form === 'Natural proportions and form') {
+        enhanced.figure_and_form = strategy.subjectPromptPattern.includes('sculptural')
+          ? 'Sculptural form emphasis with classical proportions, chiaroscuro defining three-dimensional curves'
+          : 'Natural authentic form with realistic proportions and organic beauty';
+      }
+    }
+  }
+
+  // Apply Sensual Wardrobe Selection
+  if (selections.wardrobeSelection?.enabled && selections.wardrobeSelection.option) {
+    const wardrobe = sensualWardrobeCollection.find(w => w.name === selections.wardrobeSelection!.option);
+    if (wardrobe) {
+      // Replace wardrobe field with pattern from collection
+      enhanced.wardrobe = wardrobe.promptPattern;
+
+      // Also update lighting and pose guidance if not already customized
+      if (enhanced.lighting === 'Soft studio lighting' || !enhanced.lighting) {
+        enhanced.lighting = wardrobe.lightingRecommendation;
+      }
+
+      if (enhanced.subject?.pose === 'Standing confidently' || !enhanced.subject?.pose) {
+        enhanced.subject = enhanced.subject || {} as any;
+        enhanced.subject.pose = wardrobe.poseGuidance;
+      }
+    }
+  }
+
+  // Apply Image Quality Preset
+  if (selections.qualityPreset?.enabled && selections.qualityPreset.preset) {
+    const preset = imageQualityPresets.find(p => p.name === selections.qualityPreset!.preset);
+    if (preset) {
+      // Generate comprehensive quality string
+      const qualityString = generateQualityPromptString(preset.name, 'natural');
+      enhanced.quality = qualityString;
+
+      // Apply specific detail enhancements
+      enhanced.skin_micro_details = preset.skinDetail;
+      enhanced.fabric_physics = preset.fabricDetail;
+
+      // Update material properties to match quality level
+      if (!enhanced.material_properties || enhanced.material_properties === 'Natural material behavior') {
+        enhanced.material_properties = `${preset.rendering} Material quality: ${preset.fabricDetail.substring(0, 100)}`;
+      }
+    }
+  }
+
+  return enhanced;
 }
 
 // ============================================================================

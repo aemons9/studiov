@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import type { PromptData, SavedPrompt, GenerationSettings, EnhancementStyle, GeneratedImageData, AnalysisSuggestion, GenerationStep, HistoryEntry, AdherenceLevel, CloudStorageConfig, StorageProvider, StorageSettings } from './types';
-import { generateImage, enhancePrompt, weavePrompt, generateAndSaveImage, type StorageConfig } from './services/geminiService';
+import { generateImage, enhancePrompt, weavePrompt, generateAndSaveImage, type StorageConfig, applyAdvancedSelections } from './services/geminiService';
 import { DEFAULT_BUCKET_NAME } from './services/cloudStorageService';
 import { DEFAULT_DRIVE_FOLDER } from './services/googleDriveService';
 import Header from './components/Header';
@@ -187,6 +187,22 @@ const App: React.FC = () => {
     let finalPrompt = '';
 
     try {
+      // 0. (Optional) Apply Advanced Selectors FIRST
+      const hasAdvancedSelections =
+        options.intimateWeaving?.enabled ||
+        options.wardrobeSelection?.enabled ||
+        options.qualityPreset?.enabled;
+
+      if (hasAdvancedSelections) {
+        console.log('🎨 Applying Advanced Super-Seductress Selectors...');
+        promptForNextStep = applyAdvancedSelections(promptForNextStep, {
+          intimateWeaving: options.intimateWeaving,
+          wardrobeSelection: options.wardrobeSelection,
+          qualityPreset: options.qualityPreset
+        });
+        setPromptData(promptForNextStep); // Update UI to show enhanced prompt
+      }
+
       // 1. (Optional) Enhance Prompt
       if (options.enhance.enabled) {
         setGenerationStep('enhancing');
