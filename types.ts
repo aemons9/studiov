@@ -134,6 +134,11 @@ export interface GenerationSettings {
   fluxRawMode?: boolean; // For ultra model - hyper-realistic candid style
   fluxSafetyTolerance?: number; // 1-5, higher = more permissive
 
+  // Weaving Settings (for using Google Gemini weaving with Flux generation)
+  weavingProjectId?: string; // Google Cloud Project ID for weaving only
+  weavingAccessToken?: string; // Google OAuth2 token for weaving only
+  useGoogleForWeaving?: boolean; // Enable Google weaving even with Flux generation
+
   // Common Settings
   numberOfImages: number;
   aspectRatio: '9:16' | '16:9' | '1:1' | '4:3' | '3:4';

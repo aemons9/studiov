@@ -98,6 +98,10 @@ const App: React.FC = () => {
     fluxModel: 'black-forest-labs/flux-1.1-pro-ultra',
     fluxRawMode: true,
     fluxSafetyTolerance: 4,
+    // Weaving Settings (for using Google Gemini weaving with Flux generation)
+    weavingProjectId: '',
+    weavingAccessToken: '',
+    useGoogleForWeaving: false,
   });
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [isStorageModalOpen, setIsStorageModalOpen] = useState(false);
@@ -120,7 +124,8 @@ const App: React.FC = () => {
     setActiveConcept(concept.name);
   }, []);
 
-  const validateCredentials = () => {
+  const validateCredentials = (options?: MasterGenerateOptions) => {
+    // Validate generation provider credentials
     if (generationSettings.provider === 'vertex-ai') {
       if (!generationSettings.projectId || !generationSettings.accessToken) {
         setError('Please provide a valid Google Cloud Project ID and OAuth2 Access Token in the Generation Settings section.');
@@ -132,6 +137,17 @@ const App: React.FC = () => {
         return false;
       }
     }
+
+    // Validate weaving credentials if weaving/enhancement enabled with Flux + Google weaving
+    if (options?.weave?.enabled || options?.enhance?.enabled) {
+      if (generationSettings.provider === 'replicate-flux' && generationSettings.useGoogleForWeaving) {
+        if (!generationSettings.weavingProjectId || !generationSettings.weavingAccessToken) {
+          setError('Google weaving enabled but missing credentials. Please provide Project ID and Token for weaving, or disable "Use Google for Weaving".');
+          return false;
+        }
+      }
+    }
+
     return true;
   };
 
@@ -177,6 +193,7 @@ const App: React.FC = () => {
     const mainToken = localStorage.getItem('mainToken');
     const driveToken = localStorage.getItem('driveToken');
     const replicateToken = localStorage.getItem('replicateToken');
+    const weavingToken = localStorage.getItem('weavingToken');
 
     let loadedCount = 0;
     const missingTokens: string[] = [];
@@ -202,6 +219,12 @@ const App: React.FC = () => {
       missingTokens.push('Replicate');
     }
 
+    if (weavingToken) {
+      setGenerationSettings(prev => ({ ...prev, weavingAccessToken: weavingToken }));
+      loadedCount++;
+      console.log('✅ Weaving token loaded (for Google Gemini weaving with Flux)');
+    }
+
     // Single consolidated message
     if (loadedCount > 0) {
       console.log(`✅ Loaded ${loadedCount} token(s) from localStorage`);
@@ -219,11 +242,12 @@ const App: React.FC = () => {
       if (missingTokens.includes('Replicate')) {
         console.log('   localStorage.setItem("replicateToken", "YOUR_REPLICATE_TOKEN");');
       }
+      console.log('   localStorage.setItem("weavingToken", "YOUR_GOOGLE_TOKEN_FOR_WEAVING");');
     }
   }, []);
 
   const handleMasterGenerate = async (options: MasterGenerateOptions) => {
-    if (!validateCredentials()) return;
+    if (!validateCredentials(options)) return;
     addToHistory(promptData, generationSettings);
     resetGenerationState();
 

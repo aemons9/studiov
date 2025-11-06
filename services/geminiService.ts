@@ -427,7 +427,12 @@ const WEAVING_TEMPERATURES = {
 };
 
 export async function weavePrompt(promptData: PromptData, settings: GenerationSettings, options: WeaveOptions = {}): Promise<string> {
-  const { projectId, accessToken, intimacyLevel = 6 } = settings;
+  // Use weaving credentials if Flux + Google weaving is enabled, otherwise use main credentials
+  const useWeavingCreds = settings.provider === 'replicate-flux' && settings.useGoogleForWeaving;
+  const projectId = useWeavingCreds ? settings.weavingProjectId : settings.projectId;
+  const accessToken = useWeavingCreds ? settings.weavingAccessToken : settings.accessToken;
+  const intimacyLevel = settings.intimacyLevel || 6;
+
   if (!projectId || !accessToken) throw new Error("Project ID and Access Token are required to weave the prompt.");
 
   const { adherence = 'balanced', lockFields = [], weavingMode = 'master' } = options;
@@ -689,7 +694,11 @@ COLOR PRESERVATION: Unless color_grade is explicitly mentioned or the original p
 }
 
 export async function enhancePrompt(promptData: PromptData, settings: GenerationSettings, style: EnhancementStyle, lockedFields: string[] = []): Promise<PromptData> {
-  const { projectId, accessToken } = settings;
+  // Use weaving credentials if Flux + Google weaving is enabled, otherwise use main credentials
+  const useWeavingCreds = settings.provider === 'replicate-flux' && settings.useGoogleForWeaving;
+  const projectId = useWeavingCreds ? settings.weavingProjectId : settings.projectId;
+  const accessToken = useWeavingCreds ? settings.weavingAccessToken : settings.accessToken;
+
   if (!projectId || !accessToken) throw new Error("Credentials required for enhancement.");
 
   const region = 'us-east4';

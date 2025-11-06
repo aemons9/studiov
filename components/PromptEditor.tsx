@@ -741,6 +741,63 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
                         <span>Permissive</span>
                     </div>
                 </div>
+
+                {/* Google Weaving for Flux (Hybrid Mode) */}
+                <div className="mt-4 pt-4 border-t border-purple-500/20">
+                    <div className="flex items-center gap-3 mb-3">
+                        <input
+                            id="useGoogleForWeaving"
+                            type="checkbox"
+                            checked={generationSettings.useGoogleForWeaving || false}
+                            onChange={(e) => handleSettingsChange('useGoogleForWeaving', e.target.checked)}
+                            disabled={isLoading}
+                            className="h-4 w-4 rounded border-gray-600 bg-gray-900/50 text-purple-600 focus:ring-purple-500"
+                        />
+                        <label htmlFor="useGoogleForWeaving" className="font-semibold text-gray-300">
+                            Use Google Gemini for Weaving
+                        </label>
+                    </div>
+                    <p className="text-xs text-gray-400 mb-3">
+                        Enable this to use Google Gemini for prompt enhancement and weaving, while keeping Flux for image generation. Requires separate Google Cloud credentials.
+                    </p>
+
+                    {generationSettings.useGoogleForWeaving && (
+                        <div className="space-y-3 pl-7">
+                            <div>
+                                <label htmlFor="weavingProjectId" className="font-semibold text-gray-300 block mb-2 text-sm">
+                                    Google Cloud Project ID (for weaving)
+                                </label>
+                                <input
+                                    id="weavingProjectId"
+                                    type="text"
+                                    placeholder="e.g., my-gcp-project-123"
+                                    value={generationSettings.weavingProjectId || ''}
+                                    onChange={(e) => handleSettingsChange('weavingProjectId', e.target.value)}
+                                    disabled={isLoading}
+                                    className="w-full bg-gray-900/50 border border-gray-600 rounded-md p-2 text-sm text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors disabled:bg-gray-800/50"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="weavingAccessToken" className="font-semibold text-gray-300 block mb-2 text-sm">
+                                    OAuth2 Access Token (for weaving)
+                                </label>
+                                <input
+                                    id="weavingAccessToken"
+                                    type="password"
+                                    placeholder="Enter Google access token for Gemini"
+                                    value={generationSettings.weavingAccessToken || ''}
+                                    onChange={(e) => handleSettingsChange('weavingAccessToken', e.target.value)}
+                                    disabled={isLoading}
+                                    className="w-full bg-gray-900/50 border border-gray-600 rounded-md p-2 text-sm text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors disabled:bg-gray-800/50"
+                                />
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Generate token: <code className="bg-gray-700 px-1 rounded">gcloud auth print-access-token</code>
+                                    <br/>or use localStorage: <code className="bg-gray-700 px-1 rounded">localStorage.setItem("weavingToken", "YOUR_TOKEN")</code>
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         )}
 
