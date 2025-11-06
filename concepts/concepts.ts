@@ -1,6 +1,8 @@
 import type { PromptData } from '../types';
 import { indianModelVariants } from './subjects';
 import { generateSeductressConceptByIntimacy, intimacyLevels } from './seductressAutoSelector';
+import { seductressNoirExpanded } from './seductressNoirExpanded';
+import { corporateSeductionCollection } from './corporateSeductionCollection';
 
 export interface ArtisticConcept {
   name: string;
@@ -497,5 +499,19 @@ export const artisticConcepts: ArtisticConcept[] = [
       indianModelVariants.find(v => v.name.includes("Glamour Seductress"))!.value,
       "A sleek, modern executive office at night, with glass walls, and the ambient glow of the city skyline out of focus in the background."
     ) as PromptData
-  }
+  },
+
+  // ============================================================================
+  // SEDUCTRESS NOIR EXPANDED COLLECTION
+  // 10 additional high-intimacy artistic concepts for Indian Glamour Seductress
+  // ============================================================================
+  ...seductressNoirExpanded,
+
+  // ============================================================================
+  // CORPORATE SEDUCTION COLLECTION
+  // 20 corporate office concepts featuring power, sensuality, and artistic excellence
+  // Environments: executive office, boardroom, reception, lounge, restroom, after-hours
+  // Photographer styles: Newton, Penn, Avedon, Leibovitz, Lindbergh, Roversi
+  // ============================================================================
+  ...corporateSeductionCollection
 ];
