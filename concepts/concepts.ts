@@ -4,6 +4,8 @@ import { generateSeductressConceptByIntimacy, intimacyLevels } from './seductres
 import { seductressNoirExpanded } from './seductressNoirExpanded';
 import { corporateSeductionCollection } from './corporateSeductionCollection';
 import { seductressMaxCollection } from './seductressMaxCollection';
+import { seductressNaturalParadise } from './seductressNaturalParadise';
+import { seductressSteamRoom } from './seductressSteamRoom';
 
 export interface ArtisticConcept {
   name: string;
@@ -525,5 +527,30 @@ export const artisticConcepts: ArtisticConcept[] = [
   // Maximum artistic expression with sophisticated high-fashion photography
   // Photographer styles: Newton, Penn, Avedon, Leibovitz, Lindbergh, Roversi
   // ============================================================================
-  ...seductressMaxCollection
+  ...seductressMaxCollection,
+
+  // ============================================================================
+  // NATURAL PARADISE COLLECTION
+  // 12 concepts celebrating bombshell curves in misty forest environments
+  // Themes: forest goddess, streams, waterfalls, ancient trees, cabin retreats
+  // rain-soaked nature, mossy rocks, moonlit pools, natural curved features
+  // Environmental emphasis matching body curves with nature's organic curves
+  // Misty evening woods, private cabin paradise, natural erotic beauty
+  // Focus on large hip curves, hourglass bombshell silhouette in nature
+  // Photographer styles: Newton, Penn, Avedon, Leibovitz, Lindbergh, Roversi
+  // ============================================================================
+  ...seductressNaturalParadise,
+
+  // ============================================================================
+  // STEAM ROOM PARADISE COLLECTION
+  // 10 concepts celebrating curves in humid spa environments
+  // Themes: steam rooms, hammam, sauna, hot stone massage, Vichy shower
+  // aromatherapy steam, Moroccan baths, temperature contrasts, plunge pools
+  // Emphasis on sweaty perspiration, steam condensation, humid atmosphere
+  // Glistening skin with oils, water, and steam effects on bombshell curves
+  // Private pampering sessions, luxury spa treatments, sensory experiences
+  // Focus on wide hips, narrow waist, hourglass form in humid heat
+  // Photographer styles: Newton, Penn, Avedon, Leibovitz, Lindbergh, Roversi
+  // ============================================================================
+  ...seductressSteamRoom
 ];
