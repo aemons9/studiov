@@ -191,10 +191,13 @@ export async function generateWithFlux(
   if (!createResponse.ok) {
     const errorText = await createResponse.text();
     console.error('❌ Replicate API error:', errorText);
+    console.error('❌ Status:', createResponse.status);
+    console.error('❌ Proxy URL:', PROXY_URL);
     throw new Error(`Replicate API error: ${createResponse.status} - ${errorText}`);
   }
 
   const prediction: ReplicateResponse = await createResponse.json();
+  console.log('📋 Full prediction response:', JSON.stringify(prediction, null, 2));
   console.log('📊 Prediction created:', {
     id: prediction.id,
     status: prediction.status,
@@ -220,13 +223,18 @@ export async function generateWithFlux(
     });
 
     if (!pollResponse.ok) {
-      throw new Error(`Failed to poll prediction: ${pollResponse.status}`);
+      const errorText = await pollResponse.text();
+      console.error(`❌ Poll failed (${pollResponse.status}):`, errorText);
+      throw new Error(`Failed to poll prediction: ${pollResponse.status} - ${errorText}`);
     }
 
     finalPrediction = await pollResponse.json();
     attempts++;
 
     console.log(`⏳ Polling attempt ${attempts}/${maxAttempts}: ${finalPrediction.status}`);
+    if (attempts === 1 || finalPrediction.status === 'failed' || finalPrediction.status === 'succeeded') {
+      console.log('📋 Poll response:', JSON.stringify(finalPrediction, null, 2));
+    }
   }
 
   if (finalPrediction.status === 'failed') {
