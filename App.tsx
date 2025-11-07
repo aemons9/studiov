@@ -15,6 +15,7 @@ import MasterGenerationControl, { MasterGenerateOptions } from './components/Mas
 import GalleryModal from './components/GalleryModal';
 import StorageConfigModal from './components/StorageConfigModal';
 import PromptReviewModal from './components/PromptReviewModal';
+import TextPromptEditor from './components/TextPromptEditor';
 import ExperimentalMode from './experimental/ExperimentalMode';
 import { mapNodesToPromptData } from './experimental/nodeToPromptMapper';
 
@@ -77,6 +78,8 @@ const MAX_HISTORY_SIZE = 20;
 
 const App: React.FC = () => {
   const [uiMode, setUiMode] = useState<'classic' | 'experimental'>('classic');
+  const [promptMode, setPromptMode] = useState<'json' | 'text'>('json');
+  const [textPrompt, setTextPrompt] = useState<string>('');
   const [promptData, setPromptData] = useState<PromptData>(JSON.parse(initialPromptJson));
   const [generatedImages, setGeneratedImages] = useState<GeneratedImageData[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -373,54 +376,113 @@ const App: React.FC = () => {
     let finalPrompt = '';
 
     try {
-      // 0. (Optional) Apply Advanced Selectors FIRST
-      const hasAdvancedSelections =
-        options.intimateWeaving?.enabled ||
-        options.wardrobeSelection?.enabled ||
-        options.qualityPreset?.enabled;
-
-      if (hasAdvancedSelections) {
-        console.log('🎨 Applying Advanced Super-Seductress Selectors...');
-        promptForNextStep = applyAdvancedSelections(promptForNextStep, {
-          intimateWeaving: options.intimateWeaving,
-          wardrobeSelection: options.wardrobeSelection,
-          qualityPreset: options.qualityPreset
-        });
-        setPromptData(promptForNextStep); // Update UI to show enhanced prompt
-      }
-
-      // 1. (Optional) Enhance Prompt
-      if (options.enhance.enabled) {
-        setGenerationStep('enhancing');
-        try {
-          const enhancedData = await enhancePrompt(promptForNextStep, generationSettings, options.enhance.style, lockedFields);
-          setPromptData(enhancedData);
-          promptForNextStep = enhancedData;
-        } catch (enhanceError) {
-          console.error('Enhancement failed:', enhanceError);
-          setError(`⚠️ Enhancement failed: ${enhanceError instanceof Error ? enhanceError.message : 'Unknown error'}. Proceeding with original prompt.`);
-          // Continue with original prompt - don't throw
+      // Check if we're in text mode
+      if (promptMode === 'text') {
+        if (!textPrompt.trim()) {
+          setError('Please enter a text prompt before generating.');
+          return;
         }
-      }
 
-      // 2. (Optional) Weave Prompt
-      if (options.weave.enabled) {
-        setGenerationStep('weaving');
-        try {
-          finalPrompt = await weavePrompt(promptForNextStep, generationSettings, {
-            adherence: options.weave.adherence,
-            lockFields: lockedFields,
-            weavingMode: options.weave.weavingMode
-          });
-          setWovenPrompt(finalPrompt);
-        } catch (weaveError) {
-          console.error('Weaving failed:', weaveError);
-          throw new Error(`Prompt weaving failed: ${weaveError instanceof Error ? weaveError.message : 'Unknown error'}`);
+        console.log('📝 Using direct text prompt mode');
+
+        // In text mode, we can still apply enhancement/weaving if requested
+        // But we start with the raw text instead of JSON
+
+        // 1. (Optional) Weave Text Prompt
+        if (options.weave.enabled && (generationSettings.provider === 'vertex-ai' || generationSettings.useGoogleForWeaving)) {
+          setGenerationStep('weaving');
+          try {
+            // For text mode weaving, we'll use the text as-is with Gemini to improve it
+            const response = await fetch(`https://us-east4-aiplatform.googleapis.com/v1/projects/${generationSettings.useGoogleForWeaving ? generationSettings.weavingProjectId : generationSettings.projectId}/locations/us-east4/publishers/google/models/gemini-2.5-pro:generateContent`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${generationSettings.useGoogleForWeaving ? generationSettings.weavingAccessToken : generationSettings.accessToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                contents: [{
+                  role: 'user',
+                  parts: [{ text: `You are a master photographer helping to refine an image generation prompt. Improve and expand this prompt for maximum clarity and detail, maintaining its original intent:\n\n${textPrompt}` }]
+                }],
+                generationConfig: {
+                  temperature: 0.3,
+                  maxOutputTokens: 2048,
+                }
+              })
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              finalPrompt = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || textPrompt;
+              setWovenPrompt(finalPrompt);
+              console.log('✅ Text prompt woven successfully');
+            } else {
+              throw new Error('Failed to weave text prompt');
+            }
+          } catch (weaveError) {
+            console.error('Weaving failed:', weaveError);
+            setError(`⚠️ Weaving failed: ${weaveError instanceof Error ? weaveError.message : 'Unknown error'}. Using original text prompt.`);
+            finalPrompt = textPrompt;
+            setWovenPrompt(`RAW TEXT PROMPT: ${finalPrompt}`);
+          }
+        } else {
+          // Use text prompt as-is
+          finalPrompt = textPrompt;
+          setWovenPrompt(`RAW TEXT PROMPT: ${finalPrompt}`);
         }
+
+        promptForNextStep = promptData; // Keep promptData for metadata/history
       } else {
-        // 3. (If no weave) Use Raw Prompt
-        finalPrompt = constructSimplePromptString(promptForNextStep);
-        setWovenPrompt(`RAW PROMPT: ${finalPrompt}`);
+        // JSON Mode - existing flow
+        // 0. (Optional) Apply Advanced Selectors FIRST
+        const hasAdvancedSelections =
+          options.intimateWeaving?.enabled ||
+          options.wardrobeSelection?.enabled ||
+          options.qualityPreset?.enabled;
+
+        if (hasAdvancedSelections) {
+          console.log('🎨 Applying Advanced Super-Seductress Selectors...');
+          promptForNextStep = applyAdvancedSelections(promptForNextStep, {
+            intimateWeaving: options.intimateWeaving,
+            wardrobeSelection: options.wardrobeSelection,
+            qualityPreset: options.qualityPreset
+          });
+          setPromptData(promptForNextStep); // Update UI to show enhanced prompt
+        }
+
+        // 1. (Optional) Enhance Prompt
+        if (options.enhance.enabled) {
+          setGenerationStep('enhancing');
+          try {
+            const enhancedData = await enhancePrompt(promptForNextStep, generationSettings, options.enhance.style, lockedFields);
+            setPromptData(enhancedData);
+            promptForNextStep = enhancedData;
+          } catch (enhanceError) {
+            console.error('Enhancement failed:', enhanceError);
+            setError(`⚠️ Enhancement failed: ${enhanceError instanceof Error ? enhanceError.message : 'Unknown error'}. Proceeding with original prompt.`);
+            // Continue with original prompt - don't throw
+          }
+        }
+
+        // 2. (Optional) Weave Prompt
+        if (options.weave.enabled) {
+          setGenerationStep('weaving');
+          try {
+            finalPrompt = await weavePrompt(promptForNextStep, generationSettings, {
+              adherence: options.weave.adherence,
+              lockFields: lockedFields,
+              weavingMode: options.weave.weavingMode
+            });
+            setWovenPrompt(finalPrompt);
+          } catch (weaveError) {
+            console.error('Weaving failed:', weaveError);
+            throw new Error(`Prompt weaving failed: ${weaveError instanceof Error ? weaveError.message : 'Unknown error'}`);
+          }
+        } else {
+          // 3. (If no weave) Use Raw Prompt
+          finalPrompt = constructSimplePromptString(promptForNextStep);
+          setWovenPrompt(`RAW PROMPT: ${finalPrompt}`);
+        }
       }
 
       // 3.5. (Optional) Show Prompt Review Modal
@@ -602,11 +664,63 @@ const App: React.FC = () => {
         // CLASSIC MODE: Traditional Prompt Editor
         <>
           <Header />
+
+          {/* Mode Toggle */}
+          <div className="p-4 md:px-8 md:pt-4 md:pb-0">
+            <div className="flex items-center justify-center gap-2 bg-gray-800 rounded-lg p-1 border border-gray-700 w-fit mx-auto">
+              <button
+                onClick={() => setPromptMode('json')}
+                disabled={isLoading}
+                className={`px-6 py-2 rounded-md font-semibold transition-all flex items-center gap-2 ${
+                  promptMode === 'json'
+                    ? 'bg-indigo-600 text-white shadow-md'
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+                JSON Mode
+              </button>
+              <button
+                onClick={() => setPromptMode('text')}
+                disabled={isLoading}
+                className={`px-6 py-2 rounded-md font-semibold transition-all flex items-center gap-2 ${
+                  promptMode === 'text'
+                    ? 'bg-emerald-600 text-white shadow-md'
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                </svg>
+                Text Mode
+              </button>
+            </div>
+            <p className="text-center text-sm text-gray-500 mt-2">
+              {promptMode === 'json' ? (
+                <>📋 Structured JSON editor with advanced controls</>
+              ) : (
+                <>✍️ Direct text prompt input - Just write and generate!</>
+              )}
+            </p>
+          </div>
+
           <main className="p-4 md:p-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <PromptEditor promptData={safePromptData} onPromptChange={handlePromptChange} isLoading={isLoading}
-                generationSettings={safeGenerationSettings} onGenerationSettingsChange={setGenerationSettings}
-                activeConcept={activeConcept} onConceptChange={handleConceptChange} />
+              {promptMode === 'json' ? (
+                <PromptEditor promptData={safePromptData} onPromptChange={handlePromptChange} isLoading={isLoading}
+                  generationSettings={safeGenerationSettings} onGenerationSettingsChange={setGenerationSettings}
+                  activeConcept={activeConcept} onConceptChange={handleConceptChange} />
+              ) : (
+                <TextPromptEditor
+                  textPrompt={textPrompt}
+                  onTextPromptChange={setTextPrompt}
+                  generationSettings={safeGenerationSettings}
+                  onSettingsChange={setGenerationSettings}
+                  isLoading={isLoading}
+                />
+              )}
               <div className="lg:sticky lg:top-8 self-start">
                 <ImageDisplay imageData={generatedImages} isLoading={isLoading} error={error} wovenPrompt={wovenPrompt} generationStep={generationStep} />
               </div>
