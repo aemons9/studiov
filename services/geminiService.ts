@@ -458,21 +458,32 @@ export async function weavePrompt(promptData: PromptData, settings: GenerationSe
 
   const safePromptData = dataToWeave;
 
-  // Apply safety replacements and enhancements ONLY to unlocked fields
-  if (safePromptData.wardrobe && !lockFields.includes('wardrobe')) {
-    safePromptData.wardrobe = enhanceWardrobeDescription(applySafetyReplacements(safePromptData.wardrobe));
-  }
-  if (safePromptData.lighting && !lockFields.includes('lighting')) {
-    safePromptData.lighting = enhanceLightingDescription(safePromptData.lighting);
-  }
-  if (safePromptData.subject?.pose && !lockFields.includes('subject.pose') && !lockFields.includes('subject')) {
-    safePromptData.subject.pose = applySafetyReplacements(safePromptData.subject.pose);
-  }
-  if (safePromptData.environment && !lockFields.includes('environment')) {
-    safePromptData.environment = applySafetyReplacements(safePromptData.environment);
-  }
-  if (safePromptData.figure_and_form && !lockFields.includes('figure_and_form')) {
-    safePromptData.figure_and_form = applySafetyReplacements(safePromptData.figure_and_form);
+  // Apply safety replacements and enhancements ONLY for Vertex AI
+  // Flux models don't need euphemisms and work better with direct language
+  const isVertexAI = settings.provider === 'vertex-ai';
+
+  if (isVertexAI) {
+    // Apply safety replacements ONLY to unlocked fields
+    if (safePromptData.wardrobe && !lockFields.includes('wardrobe')) {
+      safePromptData.wardrobe = enhanceWardrobeDescription(applySafetyReplacements(safePromptData.wardrobe));
+    }
+    if (safePromptData.lighting && !lockFields.includes('lighting')) {
+      safePromptData.lighting = enhanceLightingDescription(safePromptData.lighting);
+    }
+    if (safePromptData.subject?.pose && !lockFields.includes('subject.pose') && !lockFields.includes('subject')) {
+      safePromptData.subject.pose = applySafetyReplacements(safePromptData.subject.pose);
+    }
+    if (safePromptData.environment && !lockFields.includes('environment')) {
+      safePromptData.environment = applySafetyReplacements(safePromptData.environment);
+    }
+    if (safePromptData.figure_and_form && !lockFields.includes('figure_and_form')) {
+      safePromptData.figure_and_form = applySafetyReplacements(safePromptData.figure_and_form);
+    }
+  } else {
+    // For Flux: Keep lighting enhancements but skip euphemistic replacements
+    if (safePromptData.lighting && !lockFields.includes('lighting')) {
+      safePromptData.lighting = enhanceLightingDescription(safePromptData.lighting);
+    }
   }
 
   // ===========================================================================
@@ -528,9 +539,15 @@ export async function weavePrompt(promptData: PromptData, settings: GenerationSe
     const data = await response.json();
     if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
       let wovenPrompt = data.candidates[0].content.parts[0].text.trim().replace(/\s+/g, ' ');
-      if (!wovenPrompt.startsWith('As a professional creative art director')) {
-        wovenPrompt = `${ART_DIRECTOR_DECLARATION} ${wovenPrompt}`;
+
+      // IMPORTANT: Only add ART_DIRECTOR_DECLARATION for Vertex AI generation
+      // Flux models interpret this as NSFW content due to words like "sexual, pornographic"
+      if (settings.provider === 'vertex-ai') {
+        if (!wovenPrompt.startsWith('As a professional creative art director')) {
+          wovenPrompt = `${ART_DIRECTOR_DECLARATION} ${wovenPrompt}`;
+        }
       }
+
       // DON'T apply safety replacements here - locked fields would be modified
       // Safety is already applied to unlocked fields before weaving
       return wovenPrompt;
@@ -774,17 +791,20 @@ export async function enhancePrompt(promptData: PromptData, settings: Generation
         }
       }
 
-      // Final safety pass ONLY on UNLOCKED fields
+      // Final safety pass ONLY for Vertex AI and ONLY on UNLOCKED fields
       // CRITICAL: Do NOT apply safety replacements to locked fields!
-      const safetyFields = ['wardrobe', 'subject.pose', 'figure_and_form'];
-      safetyFields.forEach(fieldPath => {
-        if (!lockedFields.includes(fieldPath)) {
-          const currentValue = getNested(result, fieldPath);
-          if (currentValue && typeof currentValue === 'string') {
-            setNested(result, fieldPath, applySafetyReplacements(currentValue));
+      // Flux models don't need euphemisms - they work better with direct language
+      if (settings.provider === 'vertex-ai') {
+        const safetyFields = ['wardrobe', 'subject.pose', 'figure_and_form'];
+        safetyFields.forEach(fieldPath => {
+          if (!lockedFields.includes(fieldPath)) {
+            const currentValue = getNested(result, fieldPath);
+            if (currentValue && typeof currentValue === 'string') {
+              setNested(result, fieldPath, applySafetyReplacements(currentValue));
+            }
           }
-        }
-      });
+        });
+      }
 
       return result;
     }
