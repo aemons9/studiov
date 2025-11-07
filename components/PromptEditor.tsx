@@ -729,17 +729,19 @@ const PromptEditor: React.FC<PromptEditorProps> = ({
                         id="fluxSafetyTolerance"
                         type="range"
                         min="1"
-                        max="5"
+                        max="6"
                         value={generationSettings.fluxSafetyTolerance || 4}
                         onChange={(e) => handleSettingsChange('fluxSafetyTolerance', parseInt(e.target.value))}
                         disabled={isLoading}
                         className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600"
                     />
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Conservative</span>
-                        <span>Balanced</span>
-                        <span>Permissive</span>
+                        <span>1 (Strict)</span>
+                        <span>6 (Permissive)</span>
                     </div>
+                    <p className="text-xs text-gray-400 mt-1">
+                        Higher values allow more creative freedom. Recommended: 4-6 for intimate photography.
+                    </p>
                 </div>
 
                 {/* Google Weaving for Flux (Hybrid Mode) */}

@@ -58,7 +58,7 @@ export function getOptimalFluxSettings(intimacyLevel: number): Partial<Replicate
       numInferenceSteps: 40,
       guidanceScale: 3.5,
       outputQuality: 100,
-      safetyTolerance: 5,
+      safetyTolerance: 6, // Maximum permissiveness for artistic intimate photography
     };
   } else if (intimacyLevel >= 10) {
     // Night of Passion - High quality with artistic balance
@@ -68,7 +68,7 @@ export function getOptimalFluxSettings(intimacyLevel: number): Partial<Replicate
       numInferenceSteps: 35,
       guidanceScale: 3.0,
       outputQuality: 95,
-      safetyTolerance: 4,
+      safetyTolerance: 5, // High permissiveness for intimate content
     };
   } else if (intimacyLevel >= 6) {
     // Sensual sophistication - FLUX Pro for speed/quality balance
@@ -77,7 +77,7 @@ export function getOptimalFluxSettings(intimacyLevel: number): Partial<Replicate
       numInferenceSteps: 28,
       guidanceScale: 3.5,
       outputQuality: 90,
-      safetyTolerance: 3,
+      safetyTolerance: 4, // Balanced for sensual fashion
     };
   } else {
     // Professional levels - FLUX Dev for cost efficiency
@@ -86,7 +86,7 @@ export function getOptimalFluxSettings(intimacyLevel: number): Partial<Replicate
       numInferenceSteps: 28,
       guidanceScale: 3.5,
       outputQuality: 85,
-      safetyTolerance: 2,
+      safetyTolerance: 3, // Conservative for professional fashion
     };
   }
 }
