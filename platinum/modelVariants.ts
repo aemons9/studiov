@@ -540,4 +540,19 @@ const artStudioWardrobe: PlatinumWardrobeItem[] = [
   }
 ];
 
-// Continue in next message due to length...
+// ============================================================================
+// EXPORTS - All Wardrobe Collections
+// ============================================================================
+
+export {
+  midnightSeductressWardrobe,
+  fitnessBombshellWardrobe,
+  graphicEditorialWardrobe,
+  privateBoudoirWardrobe,
+  luxuryLoungeWardrobe,
+  spaTubWardrobe,
+  rooftopMidnightWardrobe,
+  hotelSuiteWardrobe,
+  undergroundClubWardrobe,
+  artStudioWardrobe
+};

@@ -7,7 +7,7 @@
 import type { PlatinumModelVariant } from './types';
 
 // Import wardrobe collections from modelVariants
-export {
+import {
   midnightSeductressWardrobe,
   fitnessBombshellWardrobe,
   graphicEditorialWardrobe,
@@ -19,6 +19,20 @@ export {
   undergroundClubWardrobe,
   artStudioWardrobe
 } from './modelVariants';
+
+// Re-export for convenience
+export {
+  midnightSeductressWardrobe,
+  fitnessBombshellWardrobe,
+  graphicEditorialWardrobe,
+  privateBoudoirWardrobe,
+  luxuryLoungeWardrobe,
+  spaTubWardrobe,
+  rooftopMidnightWardrobe,
+  hotelSuiteWardrobe,
+  undergroundClubWardrobe,
+  artStudioWardrobe
+};
 
 export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
   {
@@ -41,7 +55,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Confident seductress with midnight allure and classic elegance',
     expertise: ['Evening seduction photography', 'Midnight intimate sessions', 'Classic erotic art', 'Silk and lace specialist'],
-    wardrobeCollection: [], // Populated from import
+    wardrobeCollection: midnightSeductressWardrobe,
     personalPhotographer: {
       name: 'Marco Noir',
       style: 'Classic erotic elegance with midnight sophistication',
@@ -99,7 +113,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Confident fitness goddess with athletic seduction and curve emphasis',
     expertise: ['Fitness glamour photography', 'Athletic seduction', 'Lower body emphasis', 'Gym and studio sessions'],
-    wardrobeCollection: [],
+    wardrobeCollection: fitnessBombshellWardrobe,
     personalPhotographer: {
       name: 'Viktor Sculpt',
       style: 'Athletic glamour with curve emphasis and fitness seduction',
@@ -157,7 +171,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Bold graphic editorial confidence with erotic movie star presence',
     expertise: ['Graphic nude art photography', 'Editorial maximum curves', 'Erotic cinema aesthetic', 'Avant-garde bold expression'],
-    wardrobeCollection: [],
+    wardrobeCollection: graphicEditorialWardrobe,
     personalPhotographer: {
       name: 'Alejandro Provocateur',
       style: 'Graphic editorial with bold nude art and erotic movie cinematography',
@@ -215,7 +229,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Intimate enchantress with bedroom roleplay expertise and private seduction',
     expertise: ['Boudoir photography', 'Intimate roleplay', 'Bedroom seduction', 'Private encounters'],
-    wardrobeCollection: [],
+    wardrobeCollection: privateBoudoirWardrobe,
     personalPhotographer: {
       name: 'Pierre Intime',
       style: 'Intimate boudoir with romantic seductive atmosphere',
@@ -273,7 +287,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Sophisticated goddess with penthouse elegance and curve-focused seduction',
     expertise: ['Penthouse photography', 'Luxury lounge seduction', 'Sophisticated intimacy', 'Evening elegance'],
-    wardrobeCollection: [],
+    wardrobeCollection: luxuryLoungeWardrobe,
     personalPhotographer: {
       name: 'Sebastian Luxe',
       style: 'Luxury sophistication with penthouse seduction and curve emphasis',
@@ -331,7 +345,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Water temptress with spa seduction and wet photography expertise',
     expertise: ['Water photography', 'Spa and tub sessions', 'Wet fabric aesthetics', 'Bath seduction'],
-    wardrobeCollection: [],
+    wardrobeCollection: spaTubWardrobe,
     personalPhotographer: {
       name: 'Aqua Sensuelle',
       style: 'Water photography with wet elegance and spa seduction',
@@ -389,7 +403,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Urban muse with midnight confidence and rooftop seduction expertise',
     expertise: ['Rooftop photography', 'Urban night sessions', 'Cityscape seduction', 'Midnight outdoor'],
-    wardrobeCollection: [],
+    wardrobeCollection: rooftopMidnightWardrobe,
     personalPhotographer: {
       name: 'Urban Noir',
       style: 'Urban night photography with city seduction and midnight atmosphere',
@@ -447,7 +461,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Sophisticated vixen with hotel seduction and travel encounter expertise',
     expertise: ['Hotel photography', 'Travel seduction', 'Suite intimacy', 'Private encounters'],
-    wardrobeCollection: [],
+    wardrobeCollection: hotelSuiteWardrobe,
     personalPhotographer: {
       name: 'Voyageur Intime',
       style: 'Hotel luxury photography with travel seduction and private encounters',
@@ -505,7 +519,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Bold club siren with late night energy and underground seduction',
     expertise: ['Club photography', 'Neon and UV aesthetics', 'Late night sessions', 'Party seduction'],
-    wardrobeCollection: [],
+    wardrobeCollection: undergroundClubWardrobe,
     personalPhotographer: {
       name: 'Neon Provocateur',
       style: 'Underground club photography with neon vibes and late night seduction',
@@ -563,7 +577,7 @@ export const PLATINUM_VARIANTS: PlatinumModelVariant[] = [
     },
     personality: 'Creative provocateur with artistic nude expertise and midnight studio mastery',
     expertise: ['Art nude photography', 'Midnight creative sessions', 'Studio provocateur', 'Artistic bold expression'],
-    wardrobeCollection: [],
+    wardrobeCollection: artStudioWardrobe,
     personalPhotographer: {
       name: 'Atelier Midnight',
       style: 'Artistic nude photography with creative midnight sessions and bold expression',
