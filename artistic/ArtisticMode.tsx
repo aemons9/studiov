@@ -35,12 +35,14 @@ import type {
 interface ArtisticModeProps {
   onGenerate: (prompt: string, settings: any) => Promise<void>;
   onExit: () => void;
+  onMigrateToMain: (prompt: string) => void;
   generationSettings: any; // From main app
 }
 
 const ArtisticMode: React.FC<ArtisticModeProps> = ({
   onGenerate,
   onExit,
+  onMigrateToMain,
   generationSettings
 }) => {
   // Configuration state
@@ -177,17 +179,33 @@ const ArtisticMode: React.FC<ArtisticModeProps> = ({
       // Get calibrated settings
       const calibratedSettings = IntimacyCalibrator.calibrateSettings(config);
 
-      await onGenerate(generatedPrompt, {
-        ...generationSettings,
-        ...calibratedSettings,
-        intimacyLevel: config.intimacyLevel
-      });
+      // Map artistic settings to main app settings format
+      const mappedSettings = {
+        safetySetting: calibratedSettings.imagenSafetyFilter,
+        personGeneration: calibratedSettings.imagenPersonGeneration,
+        fluxSafetyTolerance: calibratedSettings.fluxSafetyTolerance,
+        fluxRawMode: calibratedSettings.fluxRawMode,
+        fluxGuidanceScale: calibratedSettings.fluxGuidanceScale,
+        aspectRatio: calibratedSettings.aspectRatio,
+        numberOfImages: calibratedSettings.numberOfImages
+      };
+
+      await onGenerate(generatedPrompt, mappedSettings);
     } catch (error) {
       console.error('Generation error:', error);
       alert(`Generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  // Migrate to main mode
+  const handleMigrateToMain = () => {
+    if (!generatedPrompt) {
+      alert('Please build a prompt first before migrating to main mode');
+      return;
+    }
+    onMigrateToMain(generatedPrompt);
   };
 
   const intimacyDescription = IntimacyCalibrator.getIntimacyDescription(config.intimacyLevel);
@@ -455,9 +473,20 @@ const ArtisticMode: React.FC<ArtisticModeProps> = ({
             <button
               onClick={handleGenerate}
               disabled={isGenerating || !generatedPrompt}
-              className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg font-semibold transition-colors"
+              className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-700 rounded-lg font-semibold transition-colors mb-3"
             >
               {isGenerating ? 'Generating...' : 'Generate Image'}
+            </button>
+
+            <button
+              onClick={handleMigrateToMain}
+              disabled={!generatedPrompt}
+              className="w-full py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 rounded-lg font-semibold transition-colors text-sm flex items-center justify-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 11H13a1 1 0 100-2H9.414l1.293-1.293z" clipRule="evenodd" />
+              </svg>
+              Migrate to Main Mode
             </button>
           </div>
 

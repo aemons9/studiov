@@ -711,6 +711,28 @@ const App: React.FC = () => {
     setUiMode('classic');
   };
 
+  const handleMigrateFromArtistic = (prompt: string) => {
+    // Switch to text mode in classic UI
+    setPromptMode('text');
+    setTextPrompt(prompt);
+    setUiMode('classic');
+    // Show success message
+    setTimeout(() => {
+      alert('Artistic prompt migrated to text mode! You can now generate using the main engine.');
+    }, 100);
+  };
+
+  const handleMigrateFromCorporate = (prompt: string) => {
+    // Switch to text mode in classic UI
+    setPromptMode('text');
+    setTextPrompt(prompt);
+    setUiMode('classic');
+    // Show success message
+    setTimeout(() => {
+      alert('Corporate prompt migrated to text mode! You can now generate using the main engine.');
+    }, 100);
+  };
+
   // Defensive rendering - ensure we always have valid state
   const safePromptData = promptData || JSON.parse(initialPromptJson);
   const safeGenerationSettings = generationSettings || {
@@ -741,6 +763,7 @@ const App: React.FC = () => {
         <ArtisticMode
           onGenerate={handleArtisticGenerate}
           onExit={handleExitArtistic}
+          onMigrateToMain={handleMigrateFromArtistic}
           generationSettings={safeGenerationSettings}
         />
       ) : uiMode === 'corporate' ? (
@@ -748,6 +771,7 @@ const App: React.FC = () => {
         <CorporateMode
           onGenerate={handleCorporateGenerate}
           onExit={handleExitCorporate}
+          onMigrateToMain={handleMigrateFromCorporate}
           generationSettings={safeGenerationSettings}
         />
       ) : (
