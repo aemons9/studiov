@@ -848,6 +848,32 @@ const App: React.FC = () => {
     }, 100);
   };
 
+  const handleMigrateFromExperimental = (selectedNodes: string[], levels: CalculatedLevels) => {
+    // Convert node configuration to complete PromptData
+    const configuredPrompt = mapNodesToPromptData(selectedNodes, levels, promptData);
+
+    // Set the mapped data
+    setPromptData(configuredPrompt);
+    setPromptMode('json');
+    setUiMode('classic');
+
+    // Generate warning message based on levels
+    let warningMsg = 'Experimental configuration migrated to JSON mode! All fields populated from node selection.';
+    if (levels.boundary >= 16) {
+      warningMsg += '\n⚠️ WARNING: High boundary level (Premium Tier) - Review safety settings.';
+    }
+    if (levels.intimacy >= 15) {
+      warningMsg += '\n⚠️ High intimacy level detected.';
+    }
+    if (levels.eroticism >= 12) {
+      warningMsg += '\n⚠️ High eroticism level detected.';
+    }
+
+    setTimeout(() => {
+      alert(warningMsg);
+    }, 100);
+  };
+
   // Defensive rendering - ensure we always have valid state
   const safePromptData = promptData || JSON.parse(initialPromptJson);
   const safeGenerationSettings = generationSettings || {
@@ -871,6 +897,7 @@ const App: React.FC = () => {
         // EXPERIMENTAL MODE: Visual Node-Based Configuration
         <ExperimentalMode
           onGenerateWithConfig={handleExperimentalGenerate}
+          onMigrateToMain={handleMigrateFromExperimental}
           onExit={handleExitExperimental}
         />
       ) : uiMode === 'artistic' ? (

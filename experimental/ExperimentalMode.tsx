@@ -7,10 +7,11 @@ import type { CalculatedLevels } from '../types';
 
 interface ExperimentalModeProps {
   onGenerateWithConfig: (selectedNodes: string[], levels: CalculatedLevels) => void;
+  onMigrateToMain: (selectedNodes: string[], levels: CalculatedLevels) => void;
   onExit: () => void;
 }
 
-const ExperimentalMode: React.FC<ExperimentalModeProps> = ({ onGenerateWithConfig, onExit }) => {
+const ExperimentalMode: React.FC<ExperimentalModeProps> = ({ onGenerateWithConfig, onMigrateToMain, onExit }) => {
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [calculatedLevels, setCalculatedLevels] = useState<CalculatedLevels>({
     intimacy: 1,
@@ -49,6 +50,14 @@ const ExperimentalMode: React.FC<ExperimentalModeProps> = ({ onGenerateWithConfi
 
   const handleGenerate = () => {
     onGenerateWithConfig(selectedNodes, calculatedLevels);
+  };
+
+  const handleMigrateToMain = () => {
+    if (selectedNodes.length === 0) {
+      alert('Please select at least one node before migrating to main mode');
+      return;
+    }
+    onMigrateToMain(selectedNodes, calculatedLevels);
   };
 
   const selectedNodeObjects = selectedNodes.map((id) => getNodeById(id)).filter((n) => n !== undefined);
@@ -235,6 +244,32 @@ const ExperimentalMode: React.FC<ExperimentalModeProps> = ({ onGenerateWithConfi
             >
               <span style={{ fontSize: '20px' }}>✨</span>
               Generate with Configuration
+            </button>
+
+            {/* Migrate to Main Button */}
+            <button
+              onClick={handleMigrateToMain}
+              disabled={selectedNodes.length === 0}
+              style={{
+                width: '100%',
+                padding: '12px',
+                marginTop: '12px',
+                backgroundColor: selectedNodes.length === 0 ? '#374151' : '#10B981',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: selectedNodes.length === 0 ? 'not-allowed' : 'pointer',
+                fontSize: '13px',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                opacity: selectedNodes.length === 0 ? 0.5 : 1,
+              }}
+            >
+              <span style={{ fontSize: '16px' }}>🔄</span>
+              Migrate to JSON Mode
             </button>
 
             {/* Quick Level Summary */}

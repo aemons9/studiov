@@ -9,6 +9,7 @@ import { seductressSteamRoom } from './seductressSteamRoom';
 import { superSeductressArtistConcepts } from './superSeductressArtistConcepts';
 import { artisticModeConcepts } from './artisticModeConcepts';
 import { corporateModeConcepts } from './corporateModeConcepts';
+import { experimentalModeConcepts } from './experimentalModeConcepts';
 
 export interface ArtisticConcept {
   name: string;
@@ -651,5 +652,36 @@ export const artisticConcepts: ArtisticConcept[] = [
   //
   // Covers all 7 corporate roles with diverse office environments and power dynamics
   // ============================================================================
-  ...corporateModeConcepts
+  ...corporateModeConcepts,
+
+  // ============================================================================
+  // EXPERIMENTAL MODE CONCEPTS (10 concepts)
+  // Curated node combinations organized by theme and WARNING LEVEL
+  // Pre-built concepts from Experimental Mode with explicit boundary ratings
+  //
+  // SAFE TIER (Boundary 1-8) - Professional Editorial (3 concepts):
+  // - EXP-SAFE: Classic Editorial Portrait
+  // - EXP-SAFE: Corporate Power Portrait
+  // - EXP-SAFE: Natural Beauty Editorial
+  //
+  // MODERATE TIER (Boundary 9-12) - High Fashion & Seductive (3 concepts):
+  // - EXP-MOD: High Fashion Seduction
+  // - EXP-MOD: Confident Allure Portrait
+  // - EXP-MOD: Fashion Forward Sensuality
+  //
+  // ARTISTIC TIER (Boundary 13-15) - Artistic Erotic & Boudoir (3 concepts):
+  // - EXP-ART: Intimate Boudoir Artistry
+  // - EXP-ART: Artistic Erotic Portrait
+  // - EXP-ART: Sensual Art Photography
+  //
+  // PREMIUM TIER (Boundary 16+) - Maximum Artistic Expression (3 concepts):
+  // ⚠️ WARNING: Highest intimacy/boundary levels - Museum-quality fine art only
+  // - EXP-PREMIUM: Maximum Artistic Expression
+  // - EXP-PREMIUM: Avant-Garde Erotic Art
+  // - EXP-PREMIUM: Fine Art Erotic Mastery
+  //
+  // Each concept includes explicit warning levels and themed organization
+  // Covers complete range from safe editorial to premium artistic expression
+  // ============================================================================
+  ...experimentalModeConcepts
 ];
