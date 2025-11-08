@@ -4,7 +4,8 @@
  * All fields fully populated with variant-specific details
  */
 
-import type { ArtisticConcept, PromptData } from '../types';
+import type { PromptData } from '../types';
+import type { ArtisticConcept } from './concepts';
 
 export const platinumModeConcepts: ArtisticConcept[] = [
   {
