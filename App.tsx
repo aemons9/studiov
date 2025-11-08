@@ -14,6 +14,8 @@ import LockFieldsDropdown from './components/LockFieldsDropdown';
 import MasterGenerationControl, { MasterGenerateOptions } from './components/MasterGenerationControl';
 import GalleryModal from './components/GalleryModal';
 import StorageConfigModal from './components/StorageConfigModal';
+import PlatinumSuite from './components/PlatinumSuite';
+import type { DirectorOutput, ConceptVariation } from './services/platinumEngine';
 
 const initialPromptJson = `{
   "shot": "Masterful portrait (4:5), capturing the interplay of light and emotion with profound depth.",
@@ -100,6 +102,8 @@ const App: React.FC = () => {
     driveFolderName: DEFAULT_DRIVE_FOLDER,
     driveAccessToken: '',
   });
+  const [isPlatinumModalOpen, setIsPlatinumModalOpen] = useState(false);
+  const [batchConcepts, setBatchConcepts] = useState<DirectorOutput[]>([]);
 
 
   const handlePromptChange = useCallback((newPromptData: PromptData) => {
@@ -356,6 +360,69 @@ const App: React.FC = () => {
     }
   };
 
+  // Platinum Engine Handlers
+  const handleConceptGenerated = (concept: DirectorOutput) => {
+    setPromptData(concept.promptData);
+    setActiveConcept(concept.conceptName);
+    setIsPlatinumModalOpen(false);
+    console.log(`✨ Platinum concept generated: ${concept.conceptName}`);
+  };
+
+  const handleVariationsGenerated = (variations: ConceptVariation[]) => {
+    console.log(`✨ Generated ${variations.length} variations`);
+    // Store variations as batch concepts that user can browse
+    const variantConcepts: DirectorOutput[] = variations.map(v => ({
+      conceptName: v.name,
+      promptData: v.promptData,
+      creativeRationale: v.changeSummary
+    }));
+    setBatchConcepts(variantConcepts);
+    alert(`Generated ${variations.length} variations! Use the batch browser below to explore them.`);
+  };
+
+  const handleBatchGenerated = (concepts: DirectorOutput[]) => {
+    console.log(`✨ Generated ${concepts.length} batch concepts`);
+    setBatchConcepts(concepts);
+    setIsPlatinumModalOpen(false);
+    alert(`Generated ${concepts.length} concepts! Use the batch browser below to explore them.`);
+  };
+
+  // Handle generation from Platinum Collection Mode
+  const handlePlatinumGenerate = async (prompt: string, collectionSettings: any) => {
+    resetGenerationState();
+    setIsLoading(true);
+
+    try {
+      // Merge collection settings with generation settings
+      const mergedSettings = {
+        ...generationSettings,
+        safetySetting: collectionSettings.safetySetting || generationSettings.safetySetting,
+        personGeneration: collectionSettings.personGeneration || generationSettings.personGeneration,
+        aspectRatio: collectionSettings.aspectRatio || generationSettings.aspectRatio,
+        numberOfImages: collectionSettings.numberOfImages || generationSettings.numberOfImages
+      };
+
+      setGenerationStep('generating');
+      const images = await generateImage(prompt, mergedSettings);
+
+      const newImageData = images.map(b64 => ({
+        url: `data:image/jpeg;base64,${b64}`,
+        settings: {
+          modelId: mergedSettings.modelId,
+          seed: mergedSettings.seed,
+          aspectRatio: mergedSettings.aspectRatio
+        }
+      }));
+
+      setGeneratedImages(newImageData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Generation failed');
+    } finally {
+      setIsLoading(false);
+      setGenerationStep(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 font-sans">
       <Header />
@@ -370,7 +437,46 @@ const App: React.FC = () => {
         </div>
       </main>
       
+      {/* Platinum Batch Browser */}
+      {batchConcepts.length > 0 && (
+        <div className="p-4 bg-gradient-to-r from-purple-900/50 to-pink-900/50 border-t border-purple-500">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">💎</span>
+                <h3 className="text-lg font-bold text-purple-300">
+                  Platinum Batch ({batchConcepts.length} concepts)
+                </h3>
+              </div>
+              <button
+                onClick={() => setBatchConcepts([])}
+                className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm"
+              >
+                Clear
+              </button>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {batchConcepts.map((concept, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleConceptGenerated(concept)}
+                  className="flex-shrink-0 px-4 py-3 bg-gray-800 hover:bg-gray-700 border border-purple-500/30 rounded-lg text-left transition-all"
+                >
+                  <div className="text-sm font-semibold text-purple-300">{concept.conceptName}</div>
+                  <div className="text-xs text-gray-400 mt-1 max-w-xs truncate">
+                    {concept.creativeRationale}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="sticky bottom-0 left-0 right-0 p-4 bg-gray-900/80 backdrop-blur-sm border-t border-gray-700 flex justify-center items-center gap-2 sm:gap-4 flex-wrap">
+        <button onClick={() => setIsPlatinumModalOpen(true)} disabled={isLoading} className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-base rounded-lg shadow-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300">
+          <span className="text-xl">💎</span>Platinum
+        </button>
         <button onClick={handleOpenLoadModal} disabled={isLoading} className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 text-white font-semibold text-base rounded-lg shadow-md hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed transition-all duration-300">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>Load
         </button>
@@ -433,6 +539,38 @@ const App: React.FC = () => {
           setActiveConcept(metadata.conceptName);
         }}
       />
+
+      {/* Platinum Suite Modal */}
+      {isPlatinumModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-gray-900 rounded-xl border-2 border-purple-500 shadow-2xl">
+            <div className="sticky top-0 bg-gray-900 p-4 border-b border-purple-500 flex justify-between items-center z-10">
+              <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                💎 Platinum Suite
+              </h2>
+              <button
+                onClick={() => setIsPlatinumModalOpen(false)}
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+            <div className="p-6">
+              <PlatinumSuite
+                currentPromptData={promptData}
+                currentConceptName={activeConcept}
+                settings={generationSettings}
+                onConceptGenerated={handleConceptGenerated}
+                onVariationsGenerated={handleVariationsGenerated}
+                onBatchGenerated={handleBatchGenerated}
+                onGenerate={handlePlatinumGenerate}
+                onClose={() => setIsPlatinumModalOpen(false)}
+                isLoading={isLoading}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
