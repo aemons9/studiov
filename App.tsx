@@ -18,6 +18,7 @@ import PromptReviewModal from './components/PromptReviewModal';
 import TextPromptEditor from './components/TextPromptEditor';
 import ExperimentalMode from './experimental/ExperimentalMode';
 import { mapNodesToPromptData } from './experimental/nodeToPromptMapper';
+import ArtisticMode from './artistic/ArtisticMode';
 
 const initialPromptJson = `{
   "shot": "Masterful portrait (4:5), capturing the interplay of light and emotion with profound depth.",
@@ -77,7 +78,7 @@ const HISTORY_STORAGE_key = 'ai-image-studio-history';
 const MAX_HISTORY_SIZE = 20;
 
 const App: React.FC = () => {
-  const [uiMode, setUiMode] = useState<'classic' | 'experimental'>('classic');
+  const [uiMode, setUiMode] = useState<'classic' | 'experimental' | 'artistic'>('classic');
   const [promptMode, setPromptMode] = useState<'json' | 'text'>('json');
   const [textPrompt, setTextPrompt] = useState<string>('');
   const [promptData, setPromptData] = useState<PromptData>(JSON.parse(initialPromptJson));
@@ -635,6 +636,43 @@ const App: React.FC = () => {
     setUiMode('classic');
   };
 
+  const handleArtisticGenerate = async (prompt: string, settings: any) => {
+    // Artistic mode passes a complete prompt and calibrated settings
+    setIsLoading(true);
+    setError(null);
+    setGenerationStep({ step: 'generating', message: 'Generating artistic image...' });
+
+    try {
+      const images = await generateImage(
+        prompt,
+        {
+          ...generationSettings,
+          ...settings,
+        }
+      );
+
+      setGeneratedImages(images.map(img => ({
+        imageUrl: img.imageUrl,
+        prompt: prompt,
+        provider: settings.provider || generationSettings.provider,
+        timestamp: new Date().toISOString()
+      })));
+
+      setWovenPrompt(prompt);
+      setGenerationStep(null);
+    } catch (err) {
+      console.error('Artistic generation error:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error during artistic generation');
+      setGenerationStep(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleExitArtistic = () => {
+    setUiMode('classic');
+  };
+
   // Defensive rendering - ensure we always have valid state
   const safePromptData = promptData || JSON.parse(initialPromptJson);
   const safeGenerationSettings = generationSettings || {
@@ -659,6 +697,13 @@ const App: React.FC = () => {
         <ExperimentalMode
           onGenerateWithConfig={handleExperimentalGenerate}
           onExit={handleExitExperimental}
+        />
+      ) : uiMode === 'artistic' ? (
+        // ARTISTIC MODE: Master Photographer Style Generator
+        <ArtisticMode
+          onGenerate={handleArtisticGenerate}
+          onExit={handleExitArtistic}
+          generationSettings={safeGenerationSettings}
         />
       ) : (
         // CLASSIC MODE: Traditional Prompt Editor
@@ -757,6 +802,14 @@ const App: React.FC = () => {
             >
               <span style={{ fontSize: '18px' }}>🔬</span>
               Experimental Mode
+            </button>
+            <button
+              onClick={() => setUiMode('artistic')}
+              disabled={isLoading}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-rose-500 text-white font-semibold text-base rounded-lg shadow-md hover:from-purple-400 hover:to-rose-400 disabled:from-gray-800 disabled:to-gray-800 disabled:cursor-not-allowed transition-all duration-300"
+            >
+              <span style={{ fontSize: '18px' }}>🎨</span>
+              Artistic Mode
             </button>
             <div className="flex-grow flex justify-center w-full sm:w-auto order-first sm:order-none gap-2 sm:gap-4">
               <MasterGenerationControl
