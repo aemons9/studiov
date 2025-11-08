@@ -20,7 +20,7 @@ import type {
 interface CorporateModeProps {
   onGenerate: (prompt: string, settings: any) => Promise<void>;
   onExit: () => void;
-  onMigrateToMain: (prompt: string) => void;
+  onMigrateToMain: (prompt: string, state: CorporatePowerState) => void;
   generationSettings: any;
 }
 
@@ -162,7 +162,7 @@ const CorporateMode: React.FC<CorporateModeProps> = ({
       alert('Please build a prompt first before migrating to main mode');
       return;
     }
-    onMigrateToMain(generatedPrompt);
+    onMigrateToMain(generatedPrompt, corporateState);
   };
 
   return (

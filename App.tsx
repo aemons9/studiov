@@ -20,6 +20,10 @@ import ExperimentalMode from './experimental/ExperimentalMode';
 import { mapNodesToPromptData } from './experimental/nodeToPromptMapper';
 import ArtisticMode from './artistic/ArtisticMode';
 import CorporateMode from './corporate/CorporateMode';
+import type { ArtisticGenerationConfig } from './artistic/types';
+import type { CorporatePowerState } from './corporate/types';
+import { CORPORATE_ROLES } from './corporate/corporateRoles';
+import { OFFICE_ENVIRONMENTS } from './corporate/corporateEnvironments';
 
 const initialPromptJson = `{
   "shot": "Masterful portrait (4:5), capturing the interplay of light and emotion with profound depth.",
@@ -711,25 +715,56 @@ const App: React.FC = () => {
     setUiMode('classic');
   };
 
-  const handleMigrateFromArtistic = (prompt: string) => {
-    // Switch to text mode in classic UI
-    setPromptMode('text');
-    setTextPrompt(prompt);
+  const handleMigrateFromArtistic = (prompt: string, config: ArtisticGenerationConfig) => {
+    // Map artistic config to JSON promptData
+    const newPromptData: PromptData = {
+      ...promptData,
+      shot: `Fine-art ${config.masterStyle} photography. Intimacy level ${config.intimacyLevel}/10. ${config.qualityPreset} quality preset.`,
+      subject: {
+        ...promptData.subject,
+        variant: config.modelArchetype || promptData.subject.variant,
+        pose: config.customPose || promptData.subject.pose,
+      },
+      wardrobe: config.customWardrobe || promptData.wardrobe,
+      environment: config.selectedScene || promptData.environment,
+      lighting: `${config.masterStyle} style lighting with ${config.qualityPreset} quality`,
+      style: `Master photographer ${config.masterStyle} style with intimacy level ${config.intimacyLevel}`,
+    };
+
+    setPromptData(newPromptData);
+    setPromptMode('json');
     setUiMode('classic');
-    // Show success message
+
     setTimeout(() => {
-      alert('Artistic prompt migrated to text mode! You can now generate using the main engine.');
+      alert('Artistic configuration migrated to JSON mode! Review and adjust the fields as needed.');
     }, 100);
   };
 
-  const handleMigrateFromCorporate = (prompt: string) => {
-    // Switch to text mode in classic UI
-    setPromptMode('text');
-    setTextPrompt(prompt);
+  const handleMigrateFromCorporate = (prompt: string, state: CorporatePowerState) => {
+    // Map corporate state to JSON promptData
+    const role = state.selectedRole ? CORPORATE_ROLES.find(r => r.role === state.selectedRole) : null;
+    const environment = state.selectedEnvironment ? OFFICE_ENVIRONMENTS.find(e => e.type === state.selectedEnvironment) : null;
+
+    const newPromptData: PromptData = {
+      ...promptData,
+      shot: `Corporate power photography. Intimacy ${state.intimacyCalibration.level}/10, ${state.intimacyCalibration.powerDynamic} dynamic, ${state.intimacyCalibration.artisticExplicitness} explicitness.`,
+      subject: {
+        ...promptData.subject,
+        variant: `Indian ${role?.role.replace(/_/g, ' ') || 'executive'} with ${role?.sensualityStyle || 'sophisticated'} presence. ${state.modelVariant}`,
+        pose: state.customPose || role?.powerPoses[0] || promptData.subject.pose,
+      },
+      wardrobe: state.customWardrobe || `${state.intimacyCalibration.artisticExplicitness} corporate attire with wardrobe reveal level ${state.intimacyCalibration.wardrobeReveal}/10`,
+      environment: environment?.exclusiveSpaces[0] || promptData.environment,
+      lighting: environment?.lightingProfiles[0] || promptData.lighting,
+      style: `Corporate fine-art photography. Power level ${role?.powerLevel || 7}/10. ${environment?.aesthetic || 'Luxury corporate aesthetic'}`,
+    };
+
+    setPromptData(newPromptData);
+    setPromptMode('json');
     setUiMode('classic');
-    // Show success message
+
     setTimeout(() => {
-      alert('Corporate prompt migrated to text mode! You can now generate using the main engine.');
+      alert('Corporate configuration migrated to JSON mode! Review and adjust the fields as needed.');
     }, 100);
   };
 
