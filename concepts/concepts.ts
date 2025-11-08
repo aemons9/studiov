@@ -7,6 +7,8 @@ import { seductressMaxCollection } from './seductressMaxCollection';
 import { seductressNaturalParadise } from './seductressNaturalParadise';
 import { seductressSteamRoom } from './seductressSteamRoom';
 import { superSeductressArtistConcepts } from './superSeductressArtistConcepts';
+import { artisticModeConcepts } from './artisticModeConcepts';
+import { corporateModeConcepts } from './corporateModeConcepts';
 
 export interface ArtisticConcept {
   name: string;
@@ -585,5 +587,69 @@ export const artisticConcepts: ArtisticConcept[] = [
   // Uses advanced prompting framework, wardrobe selectors, quality presets
   // Photographer styles: Newton, Penn, Avedon, Leibovitz, Lindbergh, Roversi
   // ============================================================================
-  ...superSeductressArtistConcepts
+  ...superSeductressArtistConcepts,
+
+  // ============================================================================
+  // ARTISTIC MODE CONCEPTS (12 concepts)
+  // Pre-built concepts from Artistic Mode featuring Master Photographer Styles
+  //
+  // HELMUT NEWTON (3 concepts):
+  // - Newton - Modern Power Icon
+  // - Newton - Sensual Sophisticate
+  // - Newton - Bold Contemporary
+  //
+  // IRVING PENN (3 concepts):
+  // - Penn - Ethereal Classical Beauty
+  // - Penn - Editorial Chameleon
+  // - Penn - Art House Icon
+  //
+  // PAOLO ROVERSI (3 concepts):
+  // - Roversi - Ethereal Romance
+  // - Roversi - Sensual Vulnerability
+  // - Roversi - Timeless Grace
+  //
+  // HERB RITTS (3 concepts):
+  // - Ritts - Sculptural Power
+  // - Ritts - Natural Elegance
+  // - Ritts - Elemental Beauty
+  //
+  // Covers all 4 master photographer styles with Indian model archetypes
+  // ============================================================================
+  ...artisticModeConcepts,
+
+  // ============================================================================
+  // CORPORATE MODE CONCEPTS (14 concepts)
+  // Pre-built concepts from Corporate Mode featuring Executive Roles & Environments
+  //
+  // CHIEF EXECUTIVE (2 concepts):
+  // - CEO - MNC Power Office
+  // - CEO - Hotel Chain Luxury
+  //
+  // BOARD MEMBER (2 concepts):
+  // - Board Member - Real Estate Power
+  // - Board Member - Entertainment Empire
+  //
+  // PERSONAL SECRETARY (2 concepts):
+  // - Secretary - Corporate MNC
+  // - Secretary - Government Office
+  //
+  // HR EXECUTIVE (2 concepts):
+  // - HR Executive - Corporate MNC
+  // - HR Executive - Hotel Chain
+  //
+  // DESIGN EXECUTIVE (2 concepts):
+  // - Design Executive - Entertainment
+  // - Design Executive - Nightclub Chain
+  //
+  // GOVERNMENT OFFICIAL (2 concepts):
+  // - Government Official - Ministry Office
+  // - Government - Head of State Office
+  //
+  // LAWYER (2 concepts):
+  // - Lawyer - Corporate Law Firm
+  // - Lawyer - Government Legal Office
+  //
+  // Covers all 7 corporate roles with diverse office environments and power dynamics
+  // ============================================================================
+  ...corporateModeConcepts
 ];

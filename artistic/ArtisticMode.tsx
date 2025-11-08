@@ -35,7 +35,7 @@ import type {
 interface ArtisticModeProps {
   onGenerate: (prompt: string, settings: any) => Promise<void>;
   onExit: () => void;
-  onMigrateToMain: (prompt: string, config: ArtisticGenerationConfig) => void;
+  onMigrateToMain: (prompt: string, config: ArtisticGenerationConfig, sceneData: {scene: string, wardrobe: string, lighting: string, composition: string}) => void;
   generationSettings: any; // From main app
 }
 
@@ -205,7 +205,7 @@ const ArtisticMode: React.FC<ArtisticModeProps> = ({
       alert('Please build a prompt first before migrating to main mode');
       return;
     }
-    onMigrateToMain(generatedPrompt, config);
+    onMigrateToMain(generatedPrompt, config, { scene, wardrobe, lighting, composition });
   };
 
   const intimacyDescription = IntimacyCalibrator.getIntimacyDescription(config.intimacyLevel);

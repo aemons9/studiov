@@ -24,6 +24,8 @@ import type { ArtisticGenerationConfig } from './artistic/types';
 import type { CorporatePowerState } from './corporate/types';
 import { CORPORATE_ROLES } from './corporate/corporateRoles';
 import { OFFICE_ENVIRONMENTS } from './corporate/corporateEnvironments';
+import { INDIAN_MODEL_ARCHETYPES, getModelArchetype } from './artistic/indianModels';
+import { MASTER_STYLES, getMasterStyle } from './artistic/masterStyles';
 
 const initialPromptJson = `{
   "shot": "Masterful portrait (4:5), capturing the interplay of light and emotion with profound depth.",
@@ -715,20 +717,58 @@ const App: React.FC = () => {
     setUiMode('classic');
   };
 
-  const handleMigrateFromArtistic = (prompt: string, config: ArtisticGenerationConfig) => {
-    // Map artistic config to JSON promptData
+  const handleMigrateFromArtistic = (prompt: string, config: ArtisticGenerationConfig, sceneData: {scene: string, wardrobe: string, lighting: string, composition: string}) => {
+    // Get master style and model archetype details
+    const masterStyle = getMasterStyle(config.masterStyle);
+    const modelArchetype = getModelArchetype(config.modelArchetype);
+
+    // Default camera settings based on master style and quality
+    const cameraDefaults = {
+      newton: { focal_length: '50mm', aperture: 'f/2.8', distance: '3 m', angle: 'Low angle, powerful perspective' },
+      penn: { focal_length: '85mm', aperture: 'f/4.0', distance: '2.5 m', angle: 'Eye-level, direct connection' },
+      roversi: { focal_length: '85mm f/1.4', aperture: 'f/1.8', distance: '2 m', angle: 'Intimate eye-level' },
+      ritts: { focal_length: '70mm', aperture: 'f/5.6', distance: '4 m', angle: 'Natural perspective' }
+    };
+
+    const camera = cameraDefaults[config.masterStyle] || cameraDefaults.newton;
+
+    // Map artistic config to complete JSON promptData
     const newPromptData: PromptData = {
-      ...promptData,
-      shot: `Fine-art ${config.masterStyle} photography. Intimacy level ${config.intimacyLevel}/10. ${config.qualityPreset} quality preset.`,
+      shot: `${masterStyle.displayName}-style fine-art photography. Intimacy level ${config.intimacyLevel}/10. ${config.qualityPreset} quality.`,
       subject: {
-        ...promptData.subject,
-        variant: config.modelArchetype || promptData.subject.variant,
-        pose: config.customPose || promptData.subject.pose,
+        variant: modelArchetype ? `Indian ${modelArchetype.name}. ${modelArchetype.physicalTraits.figure}. ${modelArchetype.physicalTraits.skinTone}. ${modelArchetype.physicalTraits.features}` : `Indian model with ${config.modelArchetype} aesthetic`,
+        pose: sceneData.composition || 'Confident natural pose expressing feminine power and grace',
+        hair_color: config.intimacyLevel >= 7 ? 'jet black' : 'dark',
+        hair_style: config.intimacyLevel >= 8 ? 'loose flowing waves' : config.intimacyLevel >= 5 ? 'styled with natural volume' : 'elegantly styled',
+        skin_finish: config.qualityPreset === 'gallery' ? 'Natural luminous glow with authentic texture' : 'Natural healthy radiance',
+        hand_and_nail_details: 'Impeccably manicured with graceful natural placement',
+        tattoos: 'none',
+        piercings: 'none',
+        body_art: 'none',
+        nail_art: config.intimacyLevel >= 7 ? 'Classic red polish' : 'Natural neutral manicure',
+        high_heels: config.intimacyLevel >= 6 ? 'Sharp stiletto heels' : 'not visible'
       },
-      wardrobe: config.customWardrobe || promptData.wardrobe,
-      environment: config.selectedScene || promptData.environment,
-      lighting: `${config.masterStyle} style lighting with ${config.qualityPreset} quality`,
-      style: `Master photographer ${config.masterStyle} style with intimacy level ${config.intimacyLevel}`,
+      wardrobe: sceneData.wardrobe,
+      environment: sceneData.scene,
+      lighting: sceneData.lighting,
+      camera: {
+        focal_length: camera.focal_length,
+        aperture: camera.aperture,
+        distance: camera.distance,
+        angle: camera.angle,
+        framing: sceneData.composition
+      },
+      color_grade: masterStyle.technicalSpecs.saturation === 'muted' ? 'High-contrast monochrome or desaturated tones' :
+                   masterStyle.technicalSpecs.saturation === 'warm' ? 'Warm romantic tones with soft highlights' :
+                   'Balanced natural color with cinematic depth',
+      style: `${masterStyle.displayName} ${masterStyle.description}. ${masterStyle.examplePromptFragment}`,
+      quality: config.qualityPreset === 'gallery' ? 'Museum-quality 8K fine-art photography with impeccable detail and texture' :
+               config.qualityPreset === 'premium' ? 'Premium 8K photography with exceptional clarity and professional retouching' :
+               'Professional 8K photography with natural authentic quality',
+      figure_and_form: `Artistic emphasis on feminine form and sculptural composition, ${masterStyle.compositionStyle}`,
+      skin_micro_details: 'High-resolution authentic skin texture with visible pores, natural imperfections, and subtle subsurface scattering. No airbrushing.',
+      fabric_physics: 'Realistic fabric draping with natural creases and folds following the body. Visible fabric weave and texture upon close inspection.',
+      material_properties: 'Natural material properties with authentic light interaction, soft matte to subtle specular highlights depending on fabric type'
     };
 
     setPromptData(newPromptData);
@@ -736,7 +776,7 @@ const App: React.FC = () => {
     setUiMode('classic');
 
     setTimeout(() => {
-      alert('Artistic configuration migrated to JSON mode! Review and adjust the fields as needed.');
+      alert('Artistic configuration migrated to JSON mode! All fields populated - review and adjust as needed.');
     }, 100);
   };
 
@@ -745,18 +785,58 @@ const App: React.FC = () => {
     const role = state.selectedRole ? CORPORATE_ROLES.find(r => r.role === state.selectedRole) : null;
     const environment = state.selectedEnvironment ? OFFICE_ENVIRONMENTS.find(e => e.type === state.selectedEnvironment) : null;
 
+    // Get model archetype details
+    const modelArchetype = getModelArchetype(state.modelVariant);
+
+    // Camera settings based on power level and environment
+    const cameraSettings = {
+      focal_length: role && role.powerLevel >= 8 ? '35mm' : '50mm',
+      aperture: role && role.powerLevel >= 8 ? 'f/2.8' : 'f/4.0',
+      distance: role && role.powerLevel >= 8 ? '4 m' : '3 m',
+      angle: state.intimacyCalibration.powerDynamic === 'dominant' ? 'Low angle emphasizing power and authority' :
+             state.intimacyCalibration.powerDynamic === 'submissive' ? 'High angle suggesting vulnerability within power' :
+             'Eye-level balanced perspective',
+      framing: role && role.powerLevel >= 8 ? 'Full body or wide medium shot showing environment and power' : 'Medium shot emphasizing presence'
+    };
+
+    // Complete PromptData with all fields populated
     const newPromptData: PromptData = {
-      ...promptData,
-      shot: `Corporate power photography. Intimacy ${state.intimacyCalibration.level}/10, ${state.intimacyCalibration.powerDynamic} dynamic, ${state.intimacyCalibration.artisticExplicitness} explicitness.`,
+      shot: `Corporate power photography in ${state.intimacyCalibration.artisticExplicitness} style. Intimacy ${state.intimacyCalibration.level}/10, ${state.intimacyCalibration.powerDynamic} power dynamic.`,
       subject: {
-        ...promptData.subject,
-        variant: `Indian ${role?.role.replace(/_/g, ' ') || 'executive'} with ${role?.sensualityStyle || 'sophisticated'} presence. ${state.modelVariant}`,
-        pose: state.customPose || role?.powerPoses[0] || promptData.subject.pose,
+        variant: modelArchetype ?
+          `Indian ${modelArchetype.name} as ${role?.role.replace(/_/g, ' ') || 'executive'}. ${modelArchetype.physicalTraits.figure}. ${modelArchetype.physicalTraits.skinTone}. ${modelArchetype.physicalTraits.features}. ${role?.sensualityStyle || 'sophisticated'} presence.` :
+          `Indian ${role?.role.replace(/_/g, ' ') || 'executive'} with ${role?.sensualityStyle || 'sophisticated'} presence and commanding authority`,
+        pose: state.customPose || role?.powerPoses[0] || 'Confident executive power stance expressing authority and sensuality',
+        hair_color: 'jet black',
+        hair_style: state.intimacyCalibration.powerDynamic === 'dominant' ? 'Sleek professional styling with sharp lines' :
+                    state.intimacyCalibration.powerDynamic === 'balanced' ? 'Sophisticated styled waves with professional finish' :
+                    'Elegant flowing style with soft framing',
+        skin_finish: 'Luminous professional finish with natural radiance',
+        hand_and_nail_details: 'Executive manicure with impeccable attention to detail',
+        tattoos: 'none',
+        piercings: 'none',
+        body_art: 'none',
+        nail_art: state.intimacyCalibration.level >= 7 ? 'Bold red executive polish' : 'Professional neutral manicure',
+        high_heels: state.intimacyCalibration.level >= 5 ? 'Designer stiletto power heels' : 'not visible'
       },
-      wardrobe: state.customWardrobe || `${state.intimacyCalibration.artisticExplicitness} corporate attire with wardrobe reveal level ${state.intimacyCalibration.wardrobeReveal}/10`,
-      environment: environment?.exclusiveSpaces[0] || promptData.environment,
-      lighting: environment?.lightingProfiles[0] || promptData.lighting,
-      style: `Corporate fine-art photography. Power level ${role?.powerLevel || 7}/10. ${environment?.aesthetic || 'Luxury corporate aesthetic'}`,
+      wardrobe: state.customWardrobe || role?.wardrobeSignature || `${state.intimacyCalibration.artisticExplicitness} corporate power attire with reveal level ${state.intimacyCalibration.wardrobeReveal}/10, combining executive authority with strategic sensuality`,
+      environment: environment?.exclusiveSpaces[0] || `Luxury ${environment?.type.replace(/_/g, ' ') || 'corporate'} setting with ${environment?.aesthetic || 'modern executive aesthetic'}`,
+      lighting: environment?.lightingProfiles[0] || 'Dramatic executive lighting emphasizing power and sensuality',
+      camera: cameraSettings,
+      color_grade: state.intimacyCalibration.artisticExplicitness === 'minimal' ? 'Cool professional tones with corporate precision' :
+                   state.intimacyCalibration.artisticExplicitness === 'suggestive' ? 'Warm luxury tones with sophisticated depth' :
+                   state.intimacyCalibration.artisticExplicitness === 'revealing' ? 'Rich dramatic tones with sensual warmth' :
+                   'Bold artistic color with high-end luxury grading',
+      style: `Corporate fine-art photography celebrating feminine executive power. ${role?.sensualityStyle || 'Authoritative'} sensuality style. Power level ${role?.powerLevel || 7}/10. ${environment?.aesthetic || 'Luxury modern corporate aesthetic'}.`,
+      quality: 'Ultra-high-end 8K corporate fashion photography with impeccable detail, professional retouching maintaining authentic texture',
+      figure_and_form: `${state.intimacyCalibration.powerDynamic === 'dominant' ? 'Commanding sculptural form emphasizing executive authority and confident sensuality' :
+                         state.intimacyCalibration.powerDynamic === 'balanced' ? 'Balanced elegant form combining professional poise with artistic sensuality' :
+                         'Sophisticated form suggesting power through subtle feminine grace'}`,
+      skin_micro_details: 'Premium high-resolution skin texture with executive-level retouching, maintaining authentic pores and natural radiance while perfecting professional appearance',
+      fabric_physics: `Luxury corporate fabric with precise tailoring and strategic draping. ${state.intimacyCalibration.artisticExplicitness === 'artistically_explicit' ? 'Revealing cuts showing architectural precision and body interaction' : 'Professional draping with subtle body-conscious elements'}.`,
+      material_properties: environment ?
+        `Luxury materials from environment: ${environment.materialPalette.slice(0, 3).join(', ')}. Executive-level fabrics with premium light interaction and tactile richness.` :
+        'Premium corporate materials with sophisticated light interaction, combining matte executive fabrics with strategic specular highlights'
     };
 
     setPromptData(newPromptData);
@@ -764,7 +844,7 @@ const App: React.FC = () => {
     setUiMode('classic');
 
     setTimeout(() => {
-      alert('Corporate configuration migrated to JSON mode! Review and adjust the fields as needed.');
+      alert('Corporate configuration migrated to JSON mode! All fields fully populated - review and customize as needed.');
     }, 100);
   };
 
